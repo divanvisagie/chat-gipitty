@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 eframe = "0.21.3"
+openai = "1.0.0-alpha.8"
+tokio = { version = "1.27.0", features = ["full"] }
