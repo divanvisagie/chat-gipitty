@@ -1,24 +1,27 @@
 use std::collections::HashMap;
 
-pub struct ChatEntry {
-    pub name: String,
-    pub message: String,
-}
+use crate::components::chat_list_item::ChatListItem;
+
+
 pub struct AppState {
     counter: i32,
-    chat_tree: HashMap<String, ChatEntry>,
+    chat_tree: HashMap<String, Vec<ChatListItem>>,
+}
+
+impl AppState {
+    fn new_chat(&mut self, topic: String) {
+        self.chat_tree.insert(topic, Vec::new());
+    }
 }
 
 impl Default for AppState {
     fn default() -> Self {
         let mut chat_tree = HashMap::new();
-        chat_tree.insert("test".to_string(), ChatEntry {
-            name: "test".to_string(),
-            message: "test".to_string(),
-        });
+        let mut messages = Vec::new();
+        chat_tree.insert("test topic".to_string(), messages);
         Self {
             counter: 0,
-            chat_tree: HashMap::new(),
+            chat_tree,
         }
     }
 }
@@ -28,10 +31,18 @@ impl eframe::App for AppState {
         eframe::egui::SidePanel::left("side-panel").show(ctx, |ui|{
             ui.with_layout(eframe::egui::Layout::top_down(eframe::egui::Align::Center), |ui| {
                 ui.heading("Left Panel");
-                eframe::egui::Grid::new("my_grid").striped(true).show(ui, |ui| {
-                    ui.label("Label");
+                eframe::egui::Grid::new("my_grid").striped(true).min_col_width(200.).show(ui, |ui| {
+                    for (key, _value) in self.chat_tree.iter() {
+                        ui.label(format!("{}", key));
+                        if ui.button("Select").clicked() {
+                            println!("Selected {}", key);
+                        }
+                        ui.end_row();
+                    } 
                 });
-                ui.add(eframe::egui::widgets::Button::new("Button"));
+                if ui.button("New Chat").clicked() {
+                    self.new_chat("New Chat".to_string());
+                }
             }); 
         }); 
         eframe::egui::CentralPanel::default().show(ctx, |ui| {

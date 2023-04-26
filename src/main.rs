@@ -1,6 +1,8 @@
 use crate::app::AppState;
 
 mod app;
+mod components;
+
 fn main() {
     //init eframe window
     let app = eframe::NativeOptions::default();
