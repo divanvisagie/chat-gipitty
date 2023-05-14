@@ -44,7 +44,14 @@ fn parse_response(json_str: &str) -> Result<ChatResponse> {
     serde_json::from_str(json_str)
 }
 
-async fn get_response(content: String) -> String {
+async fn get_response(text: String) -> String {
+    let system_prompt = r#"
+        You are a helpul command line assistant running in a terminal, users can
+        pass you the standard output from their command line and you will try and 
+        help them debug their issues or answer questions.
+    "#;
+
+
     // Retrieve the API key from the environment variable
     let api_key = env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
 
@@ -64,8 +71,11 @@ async fn get_response(content: String) -> String {
     let chat_request = ChatRequest {
         model: "gpt-3.5-turbo".to_string(),
         messages: vec![Message {
+            role: "system".to_string(),
+            content: system_prompt.trim().to_string(),
+        },Message {
             role: "user".to_string(),
-            content: content.trim().to_string(),
+            content: text.trim().to_string(),
         }],
     };
 
@@ -93,6 +103,7 @@ async fn main() {
         .read_to_string(&mut content)
         .expect("Failed to read from stdin");
 
+a
     let response_text = get_response(content).await;
 
     println!("{}", response_text);
