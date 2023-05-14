@@ -103,7 +103,6 @@ async fn main() {
         .read_to_string(&mut content)
         .expect("Failed to read from stdin");
 
-a
     let response_text = get_response(content).await;
 
     println!("{}", response_text);
