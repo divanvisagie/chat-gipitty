@@ -1,4 +1,5 @@
 # Chat Gipity
+![crates.io](https://img.shields.io/crates/v/cgip.svg)
 
 Chat gipity is a command line client for ChatGPT. It allows you to chat with the GPT-3 model in a terminal and even pipe output into it.
 
