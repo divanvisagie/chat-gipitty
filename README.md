@@ -6,7 +6,7 @@ Chat gipity is a command line client for ChatGPT. It allows you to chat with the
 For example, say you wanted to debug your rust program that doesnt compile and want ChatGPT to explain it, you can type
 
 ```sh
-cargo run 2>&1 | cg
+cargo run 2>&1 | cgip
 ```
 
 The error output will then be forwarded to ChatGPT which will return the following
@@ -20,7 +20,7 @@ It seems like there are three errors in the codebase:
 ```
 
 # Installation
-Download this repository and then install the `cg` command
+Download this repository and then install the `cgip` command
 ```bash
 cargo install --path .
 ```
@@ -30,6 +30,6 @@ Next, set up your OpenAI key by exporting it as `OPENAI_API_KEY`
 export OPENAI_API_KEY=your_key_here
 ```
 
-You can now pipe data to `cg`, remember to use 2>&1 to convert `stderr` to `stdout` if you are debugging, as the app can only read `stdin`
+You can now pipe data to `cgip`, remember to use 2>&1 to convert `stderr` to `stdout` if you are debugging, as the app can only read `stdin`
 
 
