@@ -1,6 +1,6 @@
 [package]
 name = "cgip"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 repository = "https://github.com/divanvisagie/chat-gipity"
 authors = ["Divan Visagie <me@divanv.com>"]
@@ -9,7 +9,7 @@ description = "Terminal client for Chat GPT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = "4.2.7"
+clap = { version = "4.2.7", features = ["derive"] }
 reqwest = "0.11.17"
 tokio = { version = "1.27.0", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }

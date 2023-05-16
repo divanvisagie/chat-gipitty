@@ -21,11 +21,20 @@ It seems like there are three errors in the codebase:
 ```
 
 # Installation
+
+## Install via crates.io
+
+```bash
+cargo install cgip
+```
+
+## Manual installation
 Download this repository and then install the `cgip` command
 ```bash
 cargo install --path .
 ```
 
+## Set up API Key
 Next, set up your OpenAI key by exporting it as `OPENAI_API_KEY`
 ```
 export OPENAI_API_KEY=your_key_here
