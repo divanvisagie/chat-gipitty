@@ -12,7 +12,7 @@ struct Args {
     query: Option<String>,
 
     /// Enter interactive chat mode after asking the initial question (not recommended if passing
-    /// in data via stdin (Experimental)
+    /// in data via stdin) !!!Experimental!!!
     #[arg(short, long)]
     interactive: bool
 }
