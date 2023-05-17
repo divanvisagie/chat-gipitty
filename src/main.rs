@@ -1,9 +1,8 @@
+use chatgpt::GptClient;
+use clap::{command, Parser};
 use std::io::{self, Read};
-use clap::{Parser, command};
 
 mod chatgpt;
-
-use crate::chatgpt::get_response;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -14,25 +13,26 @@ struct Args {
 }
 
 #[tokio::main]
-async fn main() { 
+async fn main() {
     let args = Args::parse();
-    
+    let mut cli = GptClient::new();
+
     if let Some(query) = args.query {
         // Handle the case when the query is not provided
-        let response_text = get_response(query).await;
+        cli.add_message(chatgpt::Role::User, query);
+        let response_text = cli.complete().await;
         println!("{}", response_text);
-        return
+        return;
     } else {
-
         let mut content = String::new();
         io::stdin()
             .read_to_string(&mut content)
             .expect("Failed to read from stdin");
 
-        let response_text = get_response(content).await;
+        cli.add_message(chatgpt::Role::User, content);
+
+        let response_text = cli.complete().await;
 
         println!("{}", response_text);
     }
 }
-
-
