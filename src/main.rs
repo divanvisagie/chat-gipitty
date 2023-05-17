@@ -1,6 +1,6 @@
 use chatgpt::GptClient;
 use clap::{command, Parser};
-use std::{io::{self, Read, Write}, future::Future};
+use std::io::{self, Read, Write};
 
 mod chatgpt;
 
@@ -35,22 +35,6 @@ fn get_logged_in_user_name() -> String {
         .expect("Failed to get logged in user name");
     let user_name = String::from_utf8(output.stdout).unwrap();
     user_name.trim().to_string()
-}
-
-fn get_user_input(cli: &mut GptClient ,response_text: String) {
-    println!("chat-gipity> {}", response_text);
-    let username = get_logged_in_user_name();
-    print!("\n{}> ", username);
-    let mut input = String::new();
-    io::stdin() 
-        .read_line(&mut input)
-        .expect("Failed to read from stdin");
-
-    cli.add_message(chatgpt::Role::Assistant, response_text.clone());
-    cli.add_message(chatgpt::Role::User, input.trim().to_string());
-
-    let response_text = cli.complete();
-    get_user_input(cli, response_text);
 }
 
 fn main() {
