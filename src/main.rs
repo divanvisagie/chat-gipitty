@@ -11,11 +11,8 @@ struct Args {
     #[arg(short, long)]
     query: Option<String>,
 
-    /// Still read from stdin when other options are provided (can break if no stdin is provided)
-    #[arg(short, long)]
-    stdin: bool,
-
-    /// Enter interactive chat mode after asking the initial question
+    /// Enter interactive chat mode after asking the initial question (not recommended if passing
+    /// in data via stdin (Experimental)
     #[arg(short, long)]
     interactive: bool
 }
@@ -43,34 +40,32 @@ fn main() {
 
     if let Some(query) = args.query {
         cli.add_message(chatgpt::Role::User, query);
-        if args.stdin {
-            let content = get_stdin();
-            cli.add_message(chatgpt::Role::User, content);
-        } 
+
+        let mut response_text = cli.complete();
+
+        if args.interactive {
+            loop {
+                println!("chat-gipity> {}", response_text);
+                let username = get_logged_in_user_name();
+                print!("{}> ", username);    
+                io::stdout().flush().unwrap();
+                let mut input = String::new();
+                io::stdin() 
+                    .read_line(&mut input)
+                    .expect("Failed to read from stdin");
+
+                cli.add_message(chatgpt::Role::Assistant, response_text.clone());
+                cli.add_message(chatgpt::Role::User, input.trim().to_string());
+
+                response_text = cli.complete();
+            }
+        }
+
     } else {
         let content = get_stdin();
         cli.add_message(chatgpt::Role::User, content);
-    }
 
-    let mut response_text = cli.complete();
-
-    if args.interactive {
-        loop {
-            println!("chat-gipity> {}", response_text);
-            let username = get_logged_in_user_name();
-            print!("{}> ", username);    
-            io::stdout().flush().unwrap();
-            let mut input = String::new();
-            io::stdin() 
-                .read_line(&mut input)
-                .expect("Failed to read from stdin");
-
-            cli.add_message(chatgpt::Role::Assistant, response_text.clone());
-            cli.add_message(chatgpt::Role::User, input.trim().to_string());
-
-            response_text = cli.complete();
-        }
-    } else {
+        let response_text = cli.complete();
         println!("{}", response_text);
     }
 }
