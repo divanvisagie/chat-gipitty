@@ -10,6 +10,19 @@ struct Args {
     /// What you want to ask Chat GPT
     #[arg(short, long)]
     query: Option<String>,
+
+    /// Still read from stdin when other options are provided (can break if no stdin is provided)
+    #[arg(short, long)]
+    stdin: bool
+}
+
+fn get_stdin() -> String {
+    let mut content = String::new();
+    io::stdin()
+        .read_to_string(&mut content)
+        .expect("Failed to read from stdin");
+
+    content
 }
 
 #[tokio::main]
@@ -18,21 +31,16 @@ async fn main() {
     let mut cli = GptClient::new();
 
     if let Some(query) = args.query {
-        // Handle the case when the query is not provided
         cli.add_message(chatgpt::Role::User, query);
-        let response_text = cli.complete().await;
-        println!("{}", response_text);
-        return;
+        if args.stdin {
+            let content = get_stdin();
+            cli.add_message(chatgpt::Role::User, content);
+        } 
     } else {
-        let mut content = String::new();
-        io::stdin()
-            .read_to_string(&mut content)
-            .expect("Failed to read from stdin");
-
+        let content = get_stdin();
         cli.add_message(chatgpt::Role::User, content);
-
-        let response_text = cli.complete().await;
-
-        println!("{}", response_text);
     }
+
+    let response_text = cli.complete().await;
+    println!("{}", response_text);
 }

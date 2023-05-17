@@ -16,6 +16,12 @@ struct Message {
     content: String,
 }
 
+impl fmt::Display for Message {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}: {}", self.role, self.content)
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChatResponse {
     pub id: String,
@@ -97,7 +103,7 @@ impl GptClient {
             env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
 
         let client = reqwest::Client::new();
-        let url = "https://api.openai.com/v1/engines/davinci/completions";
+        let url = "https://api.openai.com/v1/chat/completions";
 
         let mut headers = header::HeaderMap::new();
         headers.insert(
@@ -109,23 +115,29 @@ impl GptClient {
             header::HeaderValue::from_str(&format!("Bearer {}", api_key)).unwrap(),
         );
 
+        println!("{:?}", self.messages);
+
         let chat_request = ChatRequest {
-            model: "davinci".to_string(),
+            model: "gpt-3.5-turbo".to_string(),
             messages: self.messages,
         };
 
         let request_body = serde_json::to_string(&chat_request).unwrap();
-
+        
         let response = client
             .post(url)
             .headers(headers)
             .body(request_body)
             .send()
-            .await
-            .unwrap();
+            .await;
 
-        let response_text = response.text().await.unwrap();
+        let response = match response {
+            Ok(response) => response.text().await,
+            Err(e) => panic!("Error: {}", e),
+        };
 
+        let response_text = response.unwrap();
+         
         let response_object = parse_response(&response_text).unwrap();
 
         response_object.choices[0].message.content.clone()
