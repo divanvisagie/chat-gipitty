@@ -10,7 +10,7 @@ struct ChatRequest {
     pub messages: Vec<Message>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 struct Message {
     role: String,
     content: String,
@@ -57,6 +57,7 @@ pub struct GptClient {
 pub enum Role {
     System,
     User,
+    Assistant,
 }
 
 impl fmt::Display for Role {
@@ -64,6 +65,7 @@ impl fmt::Display for Role {
         match self {
             Role::System => write!(f, "system"),
             Role::User => write!(f, "user"),
+            Role::Assistant => write!(f, "assistant"),
         }
     }
 }
@@ -85,10 +87,6 @@ impl GptClient {
     }
 
     pub fn add_message(&mut self, role: Role, text: String) -> &mut Self {
-        let role = match role {
-            Role::System => "system",
-            Role::User => "user",
-        };
         self.messages.push(Message {
             role: role.to_string(),
             content: text.trim().to_string(),
@@ -97,12 +95,12 @@ impl GptClient {
     }
 
     //complete method
-    pub async fn complete(self) -> String {
+    pub fn complete(&mut self) -> String {
         // Retrieve the API key from the environment variable
         let api_key =
             env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
 
-        let client = reqwest::Client::new();
+        let client = reqwest::blocking::Client::new();
         let url = "https://api.openai.com/v1/chat/completions";
 
         let mut headers = header::HeaderMap::new();
@@ -115,11 +113,10 @@ impl GptClient {
             header::HeaderValue::from_str(&format!("Bearer {}", api_key)).unwrap(),
         );
 
-        println!("{:?}", self.messages);
 
         let chat_request = ChatRequest {
             model: "gpt-3.5-turbo".to_string(),
-            messages: self.messages,
+            messages: self.messages.clone(),
         };
 
         let request_body = serde_json::to_string(&chat_request).unwrap();
@@ -128,11 +125,10 @@ impl GptClient {
             .post(url)
             .headers(headers)
             .body(request_body)
-            .send()
-            .await;
+            .send();
 
         let response = match response {
-            Ok(response) => response.text().await,
+            Ok(response) => response.text(),
             Err(e) => panic!("Error: {}", e),
         };
 
