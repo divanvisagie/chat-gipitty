@@ -1,6 +1,7 @@
 use chatgpt::GptClient;
 use clap::{command, Parser};
 use std::io::{self, Read, Write};
+use std::fs;
 
 mod chatgpt;
 
@@ -10,6 +11,14 @@ struct Args {
     /// What you want to ask Chat GPT
     #[arg(short, long)]
     query: Option<String>,
+
+    /// Read query from a file
+    #[arg(short, long)]
+    file: Option<String>,
+
+    /// Format is JSON
+    #[arg(short, long)]
+    json: bool,
 
     /// Enter interactive chat mode after asking the initial question (not recommended if passing
     /// in data via stdin) !!!Experimental!!!
@@ -34,14 +43,32 @@ fn get_logged_in_user_name() -> String {
     user_name.trim().to_string()
 }
 
+fn get_file_contents_from_path(path: String) -> String {
+    // read file contents from filesyste
+    fs::read_to_string(path)
+        .expect("Something went wrong reading the file")
+}
+
 fn main() {
     let args = Args::parse();
     let mut cli = GptClient::new();
 
-    if let Some(query) = args.query {
-        cli.add_message(chatgpt::Role::User, query);
+    // Check if any arguments have been passed in at all
+    if args.query.is_none() && args.file.is_none() {
+        let mut response_text: String;
+        let mut query = String::new();
+       
+        if let Some(q) = args.query {
+            query = q;
+        }
 
-        let mut response_text = cli.complete();
+        if let Some(file) = args.file {
+            query = get_file_contents_from_path(file);
+        }
+
+        cli.add_message(chatgpt::Role::User, query);
+        response_text = cli.complete();
+        println!("{}", response_text);
 
         if args.interactive {
             loop {
@@ -60,7 +87,6 @@ fn main() {
                 response_text = cli.complete();
             }
         }
-
     } else {
         let content = get_stdin();
         cli.add_message(chatgpt::Role::User, content);
