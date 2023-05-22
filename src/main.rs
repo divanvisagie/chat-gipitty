@@ -95,3 +95,20 @@ fn main() {
         println!("{}", response_text);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_stdin() {
+        let stdin = get_stdin();
+        assert_eq!(stdin, "test\n");
+    }
+
+    #[test]
+    fn test_get_file_contents_from_path() {
+        let file_contents = get_file_contents_from_path("./test_data/test.txt".to_string());
+        assert_eq!(file_contents, "test\n");
+    }
+}
