@@ -8,16 +8,18 @@ mod chatgpt;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// What you want to ask Chat GPT
+    /// What you want to ask Chat GPT. Query is optional but is added to the prompt
+    /// before file if file is present. If this is present stdin is ignored.
     #[arg(short, long)]
     query: Option<String>,
 
-    /// Read query from a file
+    /// Read query from a file. If query is present this is added to the prompt after query.
+    /// If this is present stdin is ignored.
     #[arg(short, long)]
     file: Option<String>,
 
-    /// Enter interactive chat mode after asking the initial question (not recommended if passing
-    /// in data via stdin) !!!Experimental!!!
+    /// Enter interactive chat mode after asking the initial question.
+    /// This will be ignored if reading from stdin.
     #[arg(short, long)]
     interactive: bool
 }
@@ -50,19 +52,18 @@ fn main() {
     let mut cli = GptClient::new();
 
     let mut response_text: String;
-    let mut query = String::new();
    
     if let Some(q) = args.query.clone() {
-        query = q;
+        cli.add_message(chatgpt::Role::User, q);
     }
 
     if let Some(file) = args.file.clone() {
-        query = get_file_contents_from_path(file);
+        let q = get_file_contents_from_path(file);
+        cli.add_message(chatgpt::Role::User, q);
     }
     
     if !args.query.is_none() || !args.file.is_none() { // Only run the loop if not reading stdin
 
-        cli.add_message(chatgpt::Role::User, query);
         response_text = cli.complete();
         println!("{}", response_text);
 
