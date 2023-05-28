@@ -16,10 +16,6 @@ struct Args {
     #[arg(short, long)]
     file: Option<String>,
 
-    /// Format is JSON
-    #[arg(short, long)]
-    json: bool,
-
     /// Enter interactive chat mode after asking the initial question (not recommended if passing
     /// in data via stdin) !!!Experimental!!!
     #[arg(short, long)]
