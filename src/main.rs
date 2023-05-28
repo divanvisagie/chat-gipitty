@@ -53,18 +53,18 @@ fn main() {
     let args = Args::parse();
     let mut cli = GptClient::new();
 
-    // Check if any arguments have been passed in at all
-    if args.query.is_none() && args.file.is_none() {
-        let mut response_text: String;
-        let mut query = String::new();
-       
-        if let Some(q) = args.query {
-            query = q;
-        }
+    let mut response_text: String;
+    let mut query = String::new();
+   
+    if let Some(q) = args.query.clone() {
+        query = q;
+    }
 
-        if let Some(file) = args.file {
-            query = get_file_contents_from_path(file);
-        }
+    if let Some(file) = args.file.clone() {
+        query = get_file_contents_from_path(file);
+    }
+    
+    if !args.query.is_none() || !args.file.is_none() { // Only run the loop if not reading stdin
 
         cli.add_message(chatgpt::Role::User, query);
         response_text = cli.complete();
