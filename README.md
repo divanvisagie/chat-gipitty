@@ -38,6 +38,12 @@ cgip -q "convert this to python" -f src/main.rs
 cargo install cgip
 ```
 
+## Install via homebrew
+```bash
+brew tap divanvisagie/homebrew-tap
+brew install cgip
+```
+
 ## Manual installation
 Download this repository and then install the `cgip` command
 ```bash
