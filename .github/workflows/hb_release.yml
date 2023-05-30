@@ -16,7 +16,10 @@ jobs:
       with:
         command: build
         args: --release
-
+    
+    - name: Set execution permissions
+      run: chmod +x target/release/cgip
+      
     - name: Publish
       uses: softprops/action-gh-release@v1
       with:
