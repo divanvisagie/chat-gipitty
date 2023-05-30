@@ -6,23 +6,30 @@ on:
       - '*'
 
 jobs:
-  build:
+  release:
+    name: release
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --release
-    
-    - name: Set execution permissions
-      run: chmod +x target/release/cgip
-      
-    - name: Publish
-      uses: softprops/action-gh-release@v1
-      with:
-        files: target/release/cgip
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Install cargo-release
+        run: cargo install cargo-release
+
+      - name: Install cross
+        run: cargo install cross
+
+      - name: Release
+        run: |
+          cargo release --execute --verbose
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROSS_BUILD_TARGET: x86_64-unknown-linux-gnu,x86_64-apple-darwin
