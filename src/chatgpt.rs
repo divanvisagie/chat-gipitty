@@ -125,6 +125,7 @@ impl GptClient {
             .post(url)
             .headers(headers)
             .body(request_body)
+            .timeout(std::time::Duration::from_secs(10))
             .send();
 
         let response = match response {
