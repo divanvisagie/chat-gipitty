@@ -2,6 +2,7 @@ use chatgpt::GptClient;
 use clap::{command, Parser};
 use std::io::{self, Read, Write};
 use std::fs;
+use spinners::{Spinner, Spinners};
 
 mod chatgpt;
 
@@ -63,8 +64,11 @@ fn main() {
     }
     
     if !args.query.is_none() || !args.file.is_none() { // Only run the loop if not reading stdin
-
+        let mut sp = Spinner::new(Spinners::Dots9, "Thinking...".into());
         response_text = cli.complete();
+        sp.stop(); 
+        print!("\x1B[2K"); // Clear the current line
+        print!("\r"); // Move the cursor to the beginning of the current line
         println!("{}", response_text);
 
         if args.interactive {
