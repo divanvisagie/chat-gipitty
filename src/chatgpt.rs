@@ -3,7 +3,6 @@ use std::{fmt, env};
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
-
 #[derive(Debug, Serialize, Deserialize)]
 struct ChatRequest {
     pub model: String,
@@ -72,11 +71,13 @@ impl fmt::Display for Role {
 
 impl GptClient {
     pub fn new() -> Self {
-        let system_prompt = r#"
-            You are a helpul command line assistant running in a terminal, users can
+        let os = env::consts::OS;
+
+        let system_prompt = format!(r#"
+            You are a helpul command line assistant running in a terminal on {}, users can
             pass you the standard output from their command line and you will try and 
             help them debug their issues or answer questions.
-        "#;
+        "#, os);
 
         GptClient {
             messages: vec![Message {
