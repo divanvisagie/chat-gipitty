@@ -32,4 +32,4 @@ jobs:
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CROSS_BUILD_TARGET: x86_64-unknown-linux-gnu,x86_64-apple-darwin
+          CROSS_BUILD_TARGET: x86_64-apple-darwin
