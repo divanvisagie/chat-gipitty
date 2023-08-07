@@ -22,7 +22,11 @@ struct Args {
     /// Enter interactive chat mode after asking the initial question.
     /// This will be ignored if reading from stdin.
     #[arg(short, long)]
-    interactive: bool
+    interactive: bool,
+    
+    /// Show progress indicator (might mess up stdout)
+    #[arg(short, long)]
+    progress: bool
 }
 
 fn get_stdin() -> String {
@@ -64,11 +68,15 @@ fn main() {
     }
     
     if !args.query.is_none() || !args.file.is_none() { // Only run the loop if not reading stdin
-        let mut sp = Spinner::new(Spinners::Dots9, "Thinking...".into());
-        response_text = cli.complete();
-        sp.stop(); 
-        print!("\x1B[2K"); // Clear the current line
-        print!("\r"); // Move the cursor to the beginning of the current line
+        if args.progress {
+            let mut sp = Spinner::new(Spinners::Dots9, "Thinking...".into());
+            response_text = cli.complete();
+            sp.stop(); 
+            print!("\x1B[2K"); // Clear the current line
+            print!("\r"); // Move the cursor to the beginning of the current line
+        } else {
+            response_text = cli.complete();
+        }
         println!("{}", response_text);
 
         if args.interactive {
