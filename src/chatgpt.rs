@@ -76,7 +76,9 @@ impl GptClient {
         let system_prompt = format!(r#"
             You are a helpul command line assistant running in a terminal on {}, users can
             pass you the standard output from their command line and you will try and 
-            help them debug their issues or answer questions.
+            help them debug their issues or answer questions. Since you are a command line tool,
+            you write to standard out. So it is possible for your output to be directly executed
+            in the shell if your output is piped to it.
         "#, os);
 
         GptClient {
@@ -116,7 +118,7 @@ impl GptClient {
 
 
         let chat_request = ChatRequest {
-            model: "gpt-3.5-turbo".to_string(),
+            model: "gpt-4".to_string(),
             messages: self.messages.clone(),
         };
 
