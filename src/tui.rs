@@ -43,6 +43,10 @@ fn run(
 ) -> Result<(), Box<dyn Error>> {
     let username = get_logged_in_user_name();
     let mut input_buffer = String::new();
+    let mut is_loading = false;
+    
+    let spinner_frames = vec!["|", "/", "-", "\\"];
+    let mut spinner_frame = 0;
 
     Ok(loop {
         terminal.draw(|frame| {
@@ -62,11 +66,18 @@ fn run(
 
             let chat_paragraph = Paragraph::new(chat_text.join("\n")).wrap(Wrap { trim: true });
             frame.render_widget(chat_paragraph, chat_area);
-
+            
+            let loading_text = if is_loading { spinner_frames[spinner_frame] } else { "" };
             let input_paragraph =
-                Paragraph::new(format!("{}> {}", username, input_buffer)).wrap(Wrap { trim: true });
+                Paragraph::new(format!("{}> {} {}", username, input_buffer, loading_text)).wrap(Wrap { trim: true });
             frame.render_widget(input_paragraph, input_area);
-        })?;
+        })?; 
+
+        if is_loading {
+            spinner_frame = (spinner_frame + 1) % spinner_frames.len();
+            std::thread::sleep(std::time::Duration::from_millis(100));
+        }
+
         if event::poll(Duration::from_millis(250))? {
             if let Event::Key(key_event) = event::read()? {
                 match key_event.code {
@@ -77,7 +88,9 @@ fn run(
                     }
                     KeyCode::Enter => {
                         cli.add_message(Role::User, input_buffer.clone());
+                        is_loading = true;
                         cli.complete();
+                        is_loading = false;
                         input_buffer.clear();
                     }
                     _ => {
