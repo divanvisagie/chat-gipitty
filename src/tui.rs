@@ -47,7 +47,7 @@ fn run(
     Ok(loop {
         terminal.draw(|frame| {
             let size = frame.size();
-            let chat_area = Rect::new(0, 0, size.width, size.height - 1); // The chat takes up everything except the last line
+            let chat_area = Rect::new(0, 0, size.width - 7, size.height - 1); // The chat takes up everything except the last line
             let input_area = Rect::new(0, size.height - 1, size.width, 1); // The input takes up only the last line
 
             let chat_text: Vec<String> = cli
@@ -59,7 +59,7 @@ fn run(
                 })
                 .collect();
 
-            let chat_paragraph = Paragraph::new(chat_text.join("\n"));
+            let chat_paragraph = Paragraph::new(chat_text.join("\n")).wrap(Wrap { trim: true });
             frame.render_widget(chat_paragraph, chat_area);
 
             let input_paragraph = Paragraph::new(format!("{}> {}", username, input_buffer));
