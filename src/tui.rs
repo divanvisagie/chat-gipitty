@@ -54,15 +54,17 @@ fn run(
                 .messages
                 .iter()
                 .map(|msg| match msg.role.parse().expect("can't parse role") {
-                    Role::User => format!("{}> {}", username, msg.content),
-                    _ => format!("{}> {}", msg.role, msg.content),
+                    Role::User => format!("{}> {}\n", username, msg.content),
+                    Role::System => "".to_string(),
+                    _ => format!("{}> {}\n", msg.role, msg.content),
                 })
                 .collect();
 
             let chat_paragraph = Paragraph::new(chat_text.join("\n")).wrap(Wrap { trim: true });
             frame.render_widget(chat_paragraph, chat_area);
 
-            let input_paragraph = Paragraph::new(format!("{}> {}", username, input_buffer));
+            let input_paragraph =
+                Paragraph::new(format!("{}> {}", username, input_buffer)).wrap(Wrap { trim: true });
             frame.render_widget(input_paragraph, input_area);
         })?;
         if event::poll(Duration::from_millis(250))? {
