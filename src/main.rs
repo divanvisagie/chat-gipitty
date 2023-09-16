@@ -4,7 +4,7 @@ use clap::Parser;
 use cli::run_cli_mode;
 use utils::{get_stdin, get_file_contents_from_path};
 
-use crate::{tui::run_tui_mode, utils::get_logged_in_user_name};
+use crate::tui::run_tui_mode;
 
 mod cli;
 mod tui;
@@ -31,9 +31,7 @@ fn main() {
     }
 
     if args.interactive {
-        let username = get_logged_in_user_name();
-        print!("Lets run tui mode");
-        run_tui_mode(&mut client, username).expect("Failed to run tui mode");
+        run_tui_mode(&mut client).expect("Failed to run tui mode");
     } else {
         run_cli_mode(&args, &mut client);
     }

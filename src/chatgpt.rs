@@ -3,6 +3,8 @@ use std::{fmt, env};
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
+use std::str::FromStr;
+
 #[derive(Debug, Serialize, Deserialize)]
 struct ChatRequest {
     pub model: String,
@@ -10,9 +12,9 @@ struct ChatRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-struct Message {
-    role: String,
-    content: String,
+pub struct Message {
+    pub role: String,
+    pub content: String,
 }
 
 impl fmt::Display for Message {
@@ -50,13 +52,26 @@ fn parse_response(json_str: &str) -> Result<ChatResponse> {
 }
 
 pub struct GptClient {
-    messages: Vec<Message>,
+    pub messages: Vec<Message>,
 }
 
 pub enum Role {
     System,
     User,
     Assistant,
+}
+
+impl FromStr for Role {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        match s {
+            "system" => Ok(Role::System),
+            "user" => Ok(Role::User),
+            "assistant" => Ok(Role::Assistant),
+            _ => Err("Invalid role"),
+        }
+    }
 }
 
 impl fmt::Display for Role {

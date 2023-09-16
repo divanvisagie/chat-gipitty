@@ -1,7 +1,11 @@
-use crate::chatgpt::GptClient;
+use crate::{
+    chatgpt::{GptClient, Role},
+    utils::get_logged_in_user_name,
+};
 use std::{
+    error::Error,
     io::{self, Stdout},
-    time::Duration, error::Error,
+    time::Duration,
 };
 
 use crossterm::{
@@ -11,9 +15,9 @@ use crossterm::{
 };
 use ratatui::{prelude::*, widgets::*};
 
-pub fn run_tui_mode(cli: &mut GptClient, username: String)-> Result<(), Box<dyn Error>> {
+pub fn run_tui_mode(cli: &mut GptClient) -> Result<(), Box<dyn Error>> {
     let mut terminal = setup_terminal()?;
-    run(&mut terminal)?;
+    run(&mut terminal, cli)?;
     restore_terminal(&mut terminal)?;
     Ok(())
 }
@@ -33,16 +37,52 @@ fn restore_terminal(
     Ok(terminal.show_cursor()?)
 }
 
-fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<(), Box<dyn Error>> {
+fn run(
+    terminal: &mut Terminal<CrosstermBackend<Stdout>>,
+    cli: &mut GptClient,
+) -> Result<(), Box<dyn Error>> {
+    let username = get_logged_in_user_name();
+    let mut input_buffer = String::new();
+
     Ok(loop {
         terminal.draw(|frame| {
-            let greeting = Paragraph::new("Hello World!");
-            frame.render_widget(greeting, frame.size());
+            let size = frame.size();
+            let chat_area = Rect::new(0, 0, size.width, size.height - 1); // The chat takes up everything except the last line
+            let input_area = Rect::new(0, size.height - 1, size.width, 1); // The input takes up only the last line
+
+            let chat_text: Vec<String> = cli
+                .messages
+                .iter()
+                .map(|msg| match msg.role.parse().expect("can't parse role") {
+                    Role::User => format!("{}> {}", username, msg.content),
+                    _ => format!("{}> {}", msg.role, msg.content),
+                })
+                .collect();
+
+            let chat_paragraph = Paragraph::new(chat_text.join("\n"));
+            frame.render_widget(chat_paragraph, chat_area);
+
+            let input_paragraph = Paragraph::new(format!("{}> {}", username, input_buffer));
+            frame.render_widget(input_paragraph, input_area);
         })?;
         if event::poll(Duration::from_millis(250))? {
-            if let Event::Key(key) = event::read()? {
-                if KeyCode::Char('q') == key.code {
-                    break;
+            if let Event::Key(key_event) = event::read()? {
+                // if KeyCode::Char('q') == key_event.code {
+                //     break;
+                // }
+                match key_event.code {
+                    KeyCode::Char('q') => break,
+                    KeyCode::Char(c) => input_buffer.push(c),
+                    KeyCode::Backspace => {
+                        input_buffer.pop();
+                    }
+                    KeyCode::Enter => {
+                        cli.add_message(Role::User, input_buffer.clone());
+                        input_buffer.clear();
+                    }
+                    _ => {
+                        println!("key_event: {:?}", key_event);
+                    }
                 }
             }
         }
