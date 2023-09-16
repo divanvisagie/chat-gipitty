@@ -155,7 +155,9 @@ impl GptClient {
          
         let response_object = parse_response(&response_text).unwrap();
 
-        response_object.choices[0].message.content.clone()
+        let result = response_object.choices[0].message.content.clone();
+        self.add_message(Role::Assistant, result.clone());
+        result
     }
 }
 

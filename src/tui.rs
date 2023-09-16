@@ -67,9 +67,6 @@ fn run(
         })?;
         if event::poll(Duration::from_millis(250))? {
             if let Event::Key(key_event) = event::read()? {
-                // if KeyCode::Char('q') == key_event.code {
-                //     break;
-                // }
                 match key_event.code {
                     KeyCode::Char('q') => break,
                     KeyCode::Char(c) => input_buffer.push(c),
@@ -78,6 +75,7 @@ fn run(
                     }
                     KeyCode::Enter => {
                         cli.add_message(Role::User, input_buffer.clone());
+                        cli.complete();
                         input_buffer.clear();
                     }
                     _ => {
