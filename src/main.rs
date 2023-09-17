@@ -31,7 +31,13 @@ fn main() {
     }
 
     if args.interactive {
-        run_tui_mode(&mut client).expect("Failed to run tui mode");
+        let res = run_tui_mode(&mut client);
+        match res {
+            Ok(_) => {}
+            Err(_e) => {
+                eprintln!("You cannot enter interactive mode if you have stdin input");
+            }
+        }
     } else {
         run_cli_mode(&args, &mut client);
     }
