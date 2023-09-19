@@ -131,7 +131,6 @@ impl GptClient {
             header::HeaderValue::from_str(&format!("Bearer {}", api_key)).unwrap(),
         );
 
-
         let chat_request = ChatRequest {
             model: "gpt-4".to_string(),
             messages: self.messages.clone(),

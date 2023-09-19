@@ -1,7 +1,7 @@
 use args::Args;
 use chatgpt::GptClient;
 use clap::Parser;
-use cli::run_cli_mode;
+use cli::run;
 use utils::{get_stdin, get_file_contents_from_path};
 
 mod cli;
@@ -12,6 +12,10 @@ mod args;
 fn main() {
     let args = Args::parse();
     let mut client = GptClient::new();
+    
+    if let Some(query) = args.query.clone() {
+        client.add_message(chatgpt::Role::User, query);
+    }
 
     let content = get_stdin();
     if !content.is_empty() {
@@ -22,10 +26,6 @@ fn main() {
         let question = get_file_contents_from_path(file);
         client.add_message(chatgpt::Role::User, question);
     }
-    
-    if let Some(question) = args.query.clone() {
-        client.add_message(chatgpt::Role::User, question);
-    }
-
-    run_cli_mode(&args, &mut client);
+  
+    run(&args, &mut client);
 }
