@@ -11,7 +11,9 @@ fn format_messages_as_table(messages: &Vec<Message>) -> String {
     for msg in messages {
         let role = format!("{: <10}", msg.role);
         let mut lines = msg.content.split('\n').peekable();
-        
+        if msg.role == "system" { // Skip system messages
+            continue;
+        }
         if let Some(first_line) = lines.next() {
             output.push_str(&format!("{} {}\n", role, first_line));
         }

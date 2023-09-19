@@ -16,7 +16,9 @@ pub struct Args {
     /// Show progress indicator (might mess up stdout)
     #[arg(short, long)]
     pub progress: bool,
-
+    
+    /// Prints not only the output from OpenAI but the chat context wiht all
+    /// assistant and user messages.
     #[arg(short,long)]
     pub show_context: bool
 }
