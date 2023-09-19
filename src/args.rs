@@ -13,11 +13,6 @@ pub struct Args {
     #[arg(short, long)]
     pub file: Option<String>,
 
-    /// Enter interactive chat mode after asking the initial question.
-    /// This will be ignored if reading from stdin.
-    #[arg(short, long)]
-    pub interactive: bool,
-
     /// Show progress indicator (might mess up stdout)
     #[arg(short, long)]
     pub progress: bool,

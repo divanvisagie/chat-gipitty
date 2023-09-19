@@ -4,10 +4,7 @@ use clap::Parser;
 use cli::run_cli_mode;
 use utils::{get_stdin, get_file_contents_from_path};
 
-use crate::tui::run_tui_mode;
-
 mod cli;
-mod tui;
 mod chatgpt;
 mod utils;
 mod args;
@@ -30,15 +27,5 @@ fn main() {
         client.add_message(chatgpt::Role::User, question);
     }
 
-    if args.interactive {
-        let res = run_tui_mode(&mut client);
-        match res {
-            Ok(_) => {}
-            Err(_e) => {
-                eprintln!("You cannot enter interactive mode if you have stdin input");
-            }
-        }
-    } else {
-        run_cli_mode(&args, &mut client);
-    }
+    run_cli_mode(&args, &mut client);
 }

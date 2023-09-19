@@ -21,16 +21,7 @@ pub fn get_stdin() -> String {
     lines.join("\n")
 }
 
-pub fn get_logged_in_user_name() -> String {
-    let output = std::process::Command::new("whoami")
-        .output()
-        .expect("Failed to get logged in user name");
-    let user_name = String::from_utf8(output.stdout).unwrap();
-    user_name.trim().to_string()
-}
-
 pub fn get_file_contents_from_path(path: String) -> String {
-    // read file contents from filesyste
     fs::read_to_string(path).expect("Something went wrong reading the file")
 }
 
