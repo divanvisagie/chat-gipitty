@@ -16,5 +16,8 @@ pub struct Args {
     /// Show progress indicator (might mess up stdout)
     #[arg(short, long)]
     pub progress: bool,
+
+    #[arg(short,long)]
+    pub show_context: bool
 }
 

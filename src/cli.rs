@@ -2,8 +2,28 @@ use spinners::{Spinner, Spinners};
 
 use crate::{
     args::Args,
-    chatgpt::GptClient,
+    chatgpt::{GptClient, Message},
 };
+
+fn format_messages_as_table(messages: &Vec<Message>) -> String {
+    let mut output = String::from("Role       Content\n");
+
+    for msg in messages {
+        let role = format!("{: <10}", msg.role);
+        let mut lines = msg.content.split('\n').peekable();
+        
+        if let Some(first_line) = lines.next() {
+            output.push_str(&format!("{} {}\n", role, first_line));
+        }
+        
+        for line in lines {
+            output.push_str(&format!("{: <10} {}\n", "", line));
+        }
+    }
+
+    output
+}
+
 
 pub fn run(args: &Args, client: &mut GptClient) {
     let response_text: String;
@@ -16,6 +36,12 @@ pub fn run(args: &Args, client: &mut GptClient) {
         print!("\r"); // Move the cursor to the beginning of the current line
     } else {
         response_text = client.complete();
+    }
+
+    if args.show_context { 
+        let context = format_messages_as_table(&client.messages);
+        println!("{}", context);
+        return;
     }
     println!("{}", response_text);
 }
