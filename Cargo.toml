@@ -1,6 +1,6 @@
 [package]
 name = "cgip"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2021"
 repository = "https://github.com/divanvisagie/chat-gipity"
 authors = ["Divan Visagie <me@divanv.com>"]
@@ -12,11 +12,8 @@ description = "Terminal client for Chat GPT"
 anyhow = "1.0.75"
 atty = "0.2.14"
 clap = { version = "4.2.7", features = ["derive"] }
-crossterm = "0.27.0"
-ratatui = { version = "0.23.0", features = ["all-widgets"] }
 reqwest = { version = "0.11.17", features = ["blocking"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 spinners = "4.1.0"
-termion = "2.0.1"
 serde_yaml = "0.8"
