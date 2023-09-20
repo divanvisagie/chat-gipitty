@@ -11,13 +11,14 @@ fn format_messages_as_table(messages: &Vec<Message>) -> String {
     for msg in messages {
         let role = format!("{: <10}", msg.role);
         let mut lines = msg.content.split('\n').peekable();
-        if msg.role == "system" { // Skip system messages
+        if msg.role == "system" {
+            // Skip system messages
             continue;
         }
         if let Some(first_line) = lines.next() {
             output.push_str(&format!("{} {}\n", role, first_line));
         }
-        
+
         for line in lines {
             output.push_str(&format!("{: <10} {}\n", "", line));
         }
@@ -25,7 +26,6 @@ fn format_messages_as_table(messages: &Vec<Message>) -> String {
 
     output
 }
-
 
 pub fn run(args: &Args, client: &mut GptClient) {
     let response_text: String;
@@ -40,8 +40,13 @@ pub fn run(args: &Args, client: &mut GptClient) {
         response_text = client.complete();
     }
 
-    if args.show_context { 
-        let context = format_messages_as_table(&client.messages);
+    if args.show_context {
+        if args.table {
+            let context = format_messages_as_table(&client.messages);
+            println!("{}", context);
+            return;
+        }
+        let context = client.to_yaml(true);
         println!("{}", context);
         return;
     }

@@ -112,6 +112,20 @@ impl GptClient {
         self
     }
 
+    pub fn to_yaml(&self, exclude_system: bool) -> String {
+        let filtered_messages: Vec<Message> = if exclude_system {
+            self.messages
+                .iter()
+                .filter(|msg| msg.role.to_lowercase() != "system")
+                .cloned()
+                .collect()
+        } else {
+            self.messages.clone()
+        };
+        
+        serde_yaml::to_string(&filtered_messages).unwrap()
+    }
+
     //complete method
     pub fn complete(&mut self) -> String {
         // Retrieve the API key from the environment variable

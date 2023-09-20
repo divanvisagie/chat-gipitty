@@ -20,6 +20,10 @@ pub struct Args {
     /// Prints not only the output from OpenAI but the chat context wiht all
     /// assistant and user messages.
     #[arg(short,long)]
-    pub show_context: bool
+    pub show_context: bool,
+    
+    //Show context in human readable table
+    #[arg(short,long)]
+    pub table: bool
 }
 

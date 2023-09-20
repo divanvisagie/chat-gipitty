@@ -12,7 +12,6 @@ description = "Terminal client for Chat GPT"
 anyhow = "1.0.75"
 atty = "0.2.14"
 clap = { version = "4.2.7", features = ["derive"] }
-clippy = "0.0.302"
 crossterm = "0.27.0"
 ratatui = { version = "0.23.0", features = ["all-widgets"] }
 reqwest = { version = "0.11.17", features = ["blocking"] }
@@ -20,3 +19,4 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 spinners = "4.1.0"
 termion = "2.0.1"
+serde_yaml = "0.8"
