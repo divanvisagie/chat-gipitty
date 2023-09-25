@@ -4,17 +4,17 @@ use args::Args;
 use chatgpt::{GptClient, Message, Role};
 use clap::Parser;
 use cli::run;
-use utils::{get_stdin, get_file_contents_from_path};
 use serde_yaml::Error;
+use utils::{get_file_contents_from_path, get_stdin};
 
-mod cli;
-mod chatgpt;
-mod utils;
 mod args;
+mod chatgpt;
+mod cli;
+mod utils;
 
 fn is_valid_yaml(yaml_str: &str) -> Result<bool, Error> {
     let messages: Result<Vec<Message>, Error> = serde_yaml::from_str(yaml_str);
-    
+
     match messages {
         Ok(msgs) => {
             for msg in msgs {
@@ -24,14 +24,13 @@ fn is_valid_yaml(yaml_str: &str) -> Result<bool, Error> {
                 // Add more validation logic if needed
             }
             Ok(true)
-        },
+        }
         Err(_) => Ok(false),
     }
 }
 fn main() {
     let args = Args::parse();
     let mut client = GptClient::new();
-    
 
     let stdin_text = get_stdin();
     if !stdin_text.is_empty() {
@@ -46,14 +45,30 @@ fn main() {
         }
     }
 
+    if args.view {
+        let initial = String::from("");
+        let md = client
+            .messages
+            .iter()
+            .fold(initial, |acc, msg| {
+                if msg.role == "system" {
+                    return acc;
+                }
+                
+                format!("{}**{}**: {}\n\n", acc, msg.role, msg.content)
+            });
+        println!("{}", md);
+        return;
+    }
+
     if let Some(query) = args.query.clone() {
         client.add_message(chatgpt::Role::User, query);
     }
-    
+
     if let Some(file) = args.file.clone() {
         let question = get_file_contents_from_path(file);
         client.add_message(chatgpt::Role::User, question);
     }
-  
+
     run(&args, &mut client);
 }
