@@ -23,8 +23,8 @@ pub struct Args {
     pub show_context: bool,
     
     //Show context in human readable table
-    #[arg(short,long)]
-    pub table: bool,
+    #[arg(long)]
+    pub human: bool,
 
     ///View only mode for visualising context
     #[arg(long)]

@@ -5,7 +5,8 @@ use chatgpt::{GptClient, Message, Role};
 use clap::Parser;
 use cli::run;
 use serde_yaml::Error;
-use utils::{get_file_contents_from_path, get_stdin};
+use utils::{get_file_contents_from_path, get_stdin, markdown_from_messages};
+
 
 mod args;
 mod chatgpt;
@@ -46,17 +47,8 @@ fn main() {
     }
 
     if args.view {
-        let initial = String::from("");
-        let md = client
-            .messages
-            .iter()
-            .fold(initial, |acc, msg| {
-                if msg.role == "system" {
-                    return acc;
-                }
-                
-                format!("{}**{}**: {}\n\n", acc, msg.role, msg.content)
-            });
+        let visible_messages = client.messages.iter().cloned().filter(|msg| msg.role != "system").collect();      
+        let md = markdown_from_messages(visible_messages);
         println!("{}", md);
         return;
     }

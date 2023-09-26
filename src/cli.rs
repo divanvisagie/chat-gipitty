@@ -2,30 +2,8 @@ use spinners::{Spinner, Spinners};
 
 use crate::{
     args::Args,
-    chatgpt::{GptClient, Message},
+    chatgpt::GptClient, utils::markdown_from_messages,
 };
-
-fn format_messages_as_table(messages: &Vec<Message>) -> String {
-    let mut output = String::from("Role       Content\n");
-
-    for msg in messages {
-        let role = format!("{: <10}", msg.role);
-        let mut lines = msg.content.split('\n').peekable();
-        if msg.role == "system" {
-            // Skip system messages
-            continue;
-        }
-        if let Some(first_line) = lines.next() {
-            output.push_str(&format!("{} {}\n", role, first_line));
-        }
-
-        for line in lines {
-            output.push_str(&format!("{: <10} {}\n", "", line));
-        }
-    }
-
-    output
-}
 
 pub fn run(args: &Args, client: &mut GptClient) {
     let response_text: String;
@@ -41,8 +19,15 @@ pub fn run(args: &Args, client: &mut GptClient) {
     }
 
     if args.show_context {
-        if args.table {
-            let context = format_messages_as_table(&client.messages);
+        if args.human {
+            let visible_messages = client
+                .messages
+                .iter()
+                .cloned()
+                .filter(|msg| msg.role != "system")
+                .collect();
+            let context = markdown_from_messages(visible_messages);
+
             println!("{}", context);
             return;
         }

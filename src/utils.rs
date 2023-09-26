@@ -4,6 +4,18 @@ use std::{
 };
 use atty::Stream;
 
+use crate::chatgpt::Message;
+
+pub fn markdown_from_messages(messages: Vec<Message>) -> String {
+    let initial = String::from("");
+    let md = messages
+        .iter()
+        .fold(initial, |acc, msg| {
+            format!("{}**{}**: {}\n\n", acc, msg.role, msg.content)
+        });
+    md
+}
+
 pub fn get_stdin() -> String {
     let mut lines: Vec<String> = Vec::new();
 
