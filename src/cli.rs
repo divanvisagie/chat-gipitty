@@ -8,7 +8,7 @@ use crate::{
 pub fn run(args: &Args, client: &mut GptClient) {
     let response_text: String;
 
-    if args.progress {
+    if args.show_progress {
         let mut sp = Spinner::new(Spinners::Dots9, "Thinking...".into());
         response_text = client.complete();
         sp.stop();
@@ -19,7 +19,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
     }
 
     if args.show_context {
-        if args.human {
+        if args.markdown {
             let visible_messages = client
                 .messages
                 .iter()

@@ -14,20 +14,31 @@ pub struct Args {
     pub file: Option<String>,
 
     /// Show progress indicator (might mess up stdout)
-    #[arg(short, long)]
-    pub progress: bool,
+    #[arg(short = 'p', long)]
+    pub show_progress: bool,
     
     /// Prints not only the output from OpenAI but the chat context wiht all
     /// assistant and user messages.
-    #[arg(short,long)]
+    #[arg(short = 'c',long)]
     pub show_context: bool,
     
     //Show context in human readable table
-    #[arg(long)]
-    pub human: bool,
-
-    ///View only mode for visualising context
-    #[arg(long)]
-    pub view: bool
+    #[arg(short, long)]
+    pub markdown: bool,
+    
+    #[command(subcommand)]
+    pub subcmd: Option<SubCommands>
 }
 
+#[derive(Parser, Debug)]
+pub enum SubCommands {
+
+    /// Render the context without running a query against the Model
+    View(ViewSubCommand)
+}
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct ViewSubCommand {
+    // You can add options and arguments specific to the `view` subcommand here.
+}
