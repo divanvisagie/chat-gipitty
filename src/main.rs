@@ -46,7 +46,7 @@ fn main() {
         }
     }
 
-    if let Some(_) = args.subcmd {
+    if let Some(_) = args.subcmd { // If view mode
         let visible_messages = client.messages.iter().cloned().filter(|msg| msg.role != "system").collect();      
         let md = markdown_from_messages(visible_messages);
         println!("{}", md);
