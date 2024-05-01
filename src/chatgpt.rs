@@ -140,9 +140,16 @@ impl GptClient {
             header::CONTENT_TYPE,
             header::HeaderValue::from_static("application/json"),
         );
+        
+        let auth_header = match header::HeaderValue::from_str(
+                &format!("Bearer {}", api_key)
+        ) {
+            Ok(header) => header,
+            Err(e) => panic!("Error while assigning auth header: {}", e),
+        };
         headers.insert(
             header::AUTHORIZATION,
-            header::HeaderValue::from_str(&format!("Bearer {}", api_key)).unwrap(),
+            auth_header
         );
 
         let chat_request = ChatRequest {
@@ -150,7 +157,10 @@ impl GptClient {
             messages: self.messages.clone(),
         };
 
-        let request_body = serde_json::to_string(&chat_request).unwrap();
+        let request_body = match  serde_json::to_string(&chat_request) {
+            Ok(body) => body,
+            Err(e) => panic!("Error while serializing request body: {}", e),
+        };
         
         let response = client
             .post(url)
@@ -161,12 +171,18 @@ impl GptClient {
 
         let response = match response {
             Ok(response) => response.text(),
-            Err(e) => panic!("Error: {}", e),
+            Err(e) => panic!("Error in response: {}", e),
         };
 
-        let response_text = response.unwrap();
+        let response_text = match response {
+            Ok(response) => response,
+            Err(e) => panic!("Error in response text: {}", e),
+        };
          
-        let response_object = parse_response(&response_text).unwrap();
+        let response_object = match parse_response(&response_text) {
+            Ok(response) => response,
+            Err(e) => panic!("Error while parsing response object: {}", e),
+        };
 
         let result = response_object.choices[0].message.content.clone();
         self.add_message(Role::Assistant, result.clone());
