@@ -41,7 +41,6 @@ pub struct ErrorResponse{
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ErrorDetail{
     message: String,
-    #[serde(default)]
     type_:String,
     param:Option<String>,
     code:Option<String>,
