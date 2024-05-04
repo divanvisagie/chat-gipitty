@@ -34,6 +34,20 @@ pub struct ChatResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct ErrorResponse{
+    pub error: ErrorDetail,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ErrorDetail{
+    message: String,
+    #[serde(default)]
+    type_:String,
+    param:Option<String>,
+    code:Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 struct Usage {
     prompt_tokens: u64,
     completion_tokens: u64,
@@ -48,6 +62,10 @@ struct Choice {
 }
 
 fn parse_response(json_str: &str) -> Result<ChatResponse> {
+    serde_json::from_str(json_str)
+}
+
+fn parse_error_response(json_str: &str) -> Result<ErrorResponse> {
     serde_json::from_str(json_str)
 }
 
@@ -181,7 +199,13 @@ impl GptClient {
          
         let response_object = match parse_response(&response_text) {
             Ok(response) => response,
-            Err(e) => panic!("Error while parsing response object: {}", e),
+            Err(e) => {
+                if let Ok(error_response) = parse_error_response(&response_text){
+                    panic!("Error while parsing response object: {}", error_response.error.message)
+                }else{
+                    panic!("Error while parsing response object: {}", e);
+                }
+            }
         };
 
         let result = response_object.choices[0].message.content.clone();
