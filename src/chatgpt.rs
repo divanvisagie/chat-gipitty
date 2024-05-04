@@ -1,4 +1,4 @@
-use std::{fmt, env};
+use std::{env, fmt};
 
 use reqwest::header;
 use serde::{Deserialize, Serialize};
@@ -34,17 +34,13 @@ pub struct ChatResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ErrorResponse{
+pub struct ErrorResponse {
     pub error: ErrorDetail,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ErrorDetail{
+pub struct ErrorDetail {
     message: String,
-    #[serde(default)]
-    type_:String,
-    param:Option<String>,
-    code:Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -106,13 +102,16 @@ impl GptClient {
     pub fn new() -> Self {
         let os = env::consts::OS;
 
-        let system_prompt = format!(r#"
+        let system_prompt = format!(
+            r#"
             You are a helpul command line assistant running in a terminal on {}, users can
             pass you the standard output from their command line and you will try and 
             help them debug their issues or answer questions. Since you are a command line tool,
             you write to standard out. So it is possible for your output to be directly executed
             in the shell if your output is piped to it.
-        "#, os);
+        "#,
+            os
+        );
 
         GptClient {
             messages: vec![Message {
@@ -140,7 +139,7 @@ impl GptClient {
         } else {
             self.messages.clone()
         };
-        
+
         serde_yaml::to_string(&filtered_messages).unwrap()
     }
 
@@ -158,28 +157,23 @@ impl GptClient {
             header::CONTENT_TYPE,
             header::HeaderValue::from_static("application/json"),
         );
-        
-        let auth_header = match header::HeaderValue::from_str(
-                &format!("Bearer {}", api_key)
-        ) {
+
+        let auth_header = match header::HeaderValue::from_str(&format!("Bearer {}", api_key)) {
             Ok(header) => header,
             Err(e) => panic!("Error while assigning auth header: {}", e),
         };
-        headers.insert(
-            header::AUTHORIZATION,
-            auth_header
-        );
+        headers.insert(header::AUTHORIZATION, auth_header);
 
         let chat_request = ChatRequest {
             model: "gpt-4".to_string(),
             messages: self.messages.clone(),
         };
 
-        let request_body = match  serde_json::to_string(&chat_request) {
+        let request_body = match serde_json::to_string(&chat_request) {
             Ok(body) => body,
             Err(e) => panic!("Error while serializing request body: {}", e),
         };
-        
+
         let response = client
             .post(url)
             .headers(headers)
@@ -196,13 +190,16 @@ impl GptClient {
             Ok(response) => response,
             Err(e) => panic!("Error in response text: {}", e),
         };
-         
+
         let response_object = match parse_response(&response_text) {
             Ok(response) => response,
             Err(e) => {
-                if let Ok(error_response) = parse_error_response(&response_text){
-                    panic!("Error while parsing response object: {}", error_response.error.message)
-                }else{
+                if let Ok(error_response) = parse_error_response(&response_text) {
+                    panic!(
+                        "Error while parsing response object: {}",
+                        error_response.error.message
+                    )
+                } else {
                     panic!("Error while parsing response object: {}", e);
                 }
             }
@@ -213,4 +210,3 @@ impl GptClient {
         result
     }
 }
-
