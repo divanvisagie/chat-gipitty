@@ -144,7 +144,7 @@ impl GptClient {
     }
 
     //complete method
-    pub fn complete(&mut self) -> String {
+    pub fn complete(&mut self, model: &str) -> String {
         // Retrieve the API key from the environment variable
         let api_key =
             env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
@@ -165,7 +165,7 @@ impl GptClient {
         headers.insert(header::AUTHORIZATION, auth_header);
 
         let chat_request = ChatRequest {
-            model: "gpt-4".to_string(),
+            model: model.to_string(),
             messages: self.messages.clone(),
         };
 

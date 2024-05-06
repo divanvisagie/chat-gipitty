@@ -33,11 +33,19 @@ pub struct Args {
     #[arg(short, long)]
     pub file: Option<String>,
 
+    /// The model to use. Defaults to `gpt-4`
+    #[arg(short = 'o', long)]
+    pub model: Option<String>,
+    
+    /// List the available models
+    #[arg(short = 'l', long)]
+    pub list_models:bool,
+
     /// Show progress indicator (might mess up stdout)
     #[arg(short = 'p', long)]
     pub show_progress: bool,
     
-    /// Prints not only the output from OpenAI but the chat context wiht all
+    /// Prints not only the output from OpenAI but the chat context with all
     /// assistant and user messages.
     #[arg(short = 'c',long)]
     pub show_context: bool,
