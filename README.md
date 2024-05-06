@@ -1,8 +1,7 @@
 # Chat Gipity
 [![crates.io](https://img.shields.io/crates/v/cgip.svg)](https://crates.io/crates/cgip)
 
-Chat gipity is a command line client for ChatGPT. It allows you to chat with the 
-GPT-4 model in a terminal and even pipe output into it.
+Chat gipity is a command line client for ChatGPT. It allows you to chat with your chosen model of ChatGPT in a terminal and even pipe output into it. The default model is GPT-4.
 
 For example, say you wanted to debug your rust program that doesnt compile and 
 want ChatGPT to explain it, you can pipe the output through chat-gipityto help you
@@ -14,7 +13,7 @@ Another usage is reading from a file. In this example we read from a file and as
 ChatGPT to convert that file to another programming language:
 
 ```sh
-cgip -q "convert this to python" -f src/main.rs
+cgip "convert this to python" -f src/main.rs
 ```
 
 # Installation
