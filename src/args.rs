@@ -34,11 +34,11 @@ pub struct Args {
     pub file: Option<String>,
 
     /// The model to use. Defaults to `gpt-4`
-    #[arg(short = 'o', long)]
+    #[arg(short = 'M', long)]
     pub model: Option<String>,
     
     /// List the available models
-    #[arg(short = 'l', long)]
+    #[arg(short, long)]
     pub list_models:bool,
 
     /// Show progress indicator (might mess up stdout)
