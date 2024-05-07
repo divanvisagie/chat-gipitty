@@ -7,7 +7,6 @@ use cli::run;
 use serde_yaml::Error;
 use utils::{get_file_contents_from_path, get_stdin, markdown_from_messages};
 
-
 mod args;
 mod chatgpt;
 mod cli;

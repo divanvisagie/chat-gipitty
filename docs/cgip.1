@@ -1,0 +1,49 @@
+.TH CGIP 1 "2024-05-07" "version 0.2.4" "CGIP MAN PAGE"
+.SH NAME
+cgip \- interact with ChatGPT based on contextual input from files or standard input.
+.SH SYNOPSIS
+.B cgip
+[OPTION]... [QUERY]
+.SH DESCRIPTION
+Queries can be piped in through stdin and will be added to the context first. The query passed in as the first argument will then be added to the context second. Files read using \fB\-f\fR will be added last to the context.
+.SH EXAMPLES
+To pipe input in from ls, run:
+.P
+.RS
+ls | \fBcgip\fR "what can you tell me about these files?"\f
+.P
+.RE
+To pipe your failing build output in to get some debugging help:
+.RS
+.P
+cargo build \fB2>&1\fR | \fBcgip\fR "what does this error mean?"\f
+.RE
+.SH OPTIONS
+.TP
+\fB\-f\fR, \fB\-\-file\fR=\fIFILE\fR
+Read query from a file. If query is present, this is added to the prompt after query. If this is present, stdin is ignored.
+.TP
+\fB\-p\fR, \fB\-\-show\-progress\fR
+Show progress indicator (might mess up stdout).
+.TP
+\fB\-c\fR, \fB\-\-show\-context\fR
+Prints not only the output from OpenAI but the chat context with all assistant and user messages.
+.TP
+\fB\-\-markdown\fR
+Show context in human-readable table.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print this help message.
+.SH SUBCOMMANDS
+.SS view
+Render the context without running a query against the model.
+.SH AUTHOR
+Written by Divan Visagie and Anna L. Smith.
+.SH "SEE ALSO"
+.BR ls(1),
+.BR cat(1),
+.BR echo(1),
+.BR tree(1)
