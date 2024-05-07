@@ -25,7 +25,10 @@ cgip -q "convert this to python" -f src/main.rs
 cargo install cgip
 ```
 
-## Install via homebrew
+## Install via homebrew (May be out of date)
+** Note **: This may be out of date, please use the crates.io version or build
+from source if you want the latet features
+
 ```bash
 brew tap divanvisagie/homebrew-tap
 brew install cgip
@@ -34,7 +37,7 @@ brew install cgip
 ## Manual installation
 Download this repository and then install the `cgip` command
 ```bash
-cargo install --path .
+sudo make install
 ```
 
 ## Set up API Key
@@ -43,7 +46,7 @@ Next, set up your OpenAI key by exporting it as `OPENAI_API_KEY`
 export OPENAI_API_KEY=your_key_here
 ```
 
-You can now pipe data to `cgip`, remember to use 2>&1 to convert `stderr` to 
+You can now pipe data to `cgip`, remember to use `2>&1` to convert `stderr` to 
 `stdout` if you are debugging, as the app can only read `stdin`
 
 
