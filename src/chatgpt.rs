@@ -1,9 +1,29 @@
-use std::{env, fmt};
-
+use config::{Config, File as ConfigFile, FileFormat};
+use dirs::config_dir;
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
+use std::fs::{self, File};
+use std::io::Write;
+use std::path::PathBuf;
 use std::str::FromStr;
+use std::{env, fmt};
+use toml;
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct AppConfig {
+    pub model: String,
+    pub show_progress: bool,
+}
+
+impl Default for AppConfig {
+    fn default() -> Self {
+        Self {
+            model: "gpt-4".to_string(),
+            show_progress: false,
+        }
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct ChatRequest {
@@ -66,6 +86,7 @@ fn parse_error_response(json_str: &str) -> Result<ErrorResponse> {
 }
 
 pub struct GptClient {
+    pub config: AppConfig,
     pub messages: Vec<Message>,
 }
 
@@ -99,7 +120,46 @@ impl fmt::Display for Role {
 }
 
 impl GptClient {
+    pub fn setup_config(config_dir: &PathBuf) {
+        let cgip_config_dir = config_dir.join("cgip");
+        if !cgip_config_dir.exists() {
+            fs::create_dir_all(&cgip_config_dir).expect("Failed to create cgip config directory");
+        }
+
+        let config_path = cgip_config_dir.join("config.toml");
+        if !config_path.exists() {
+            let config = AppConfig::default();
+            let contents = toml::to_string(&config).expect("Failed to serialize config");
+            let mut file = File::create(&config_path).expect("Failed to create config file");
+            file.write_all(contents.as_bytes())
+                .expect("Failed to write to config file");
+        }
+    }
+
+    pub fn load_config(config_dir: &PathBuf) -> AppConfig {
+        let config_path = config_dir.join("cgip").join("config.toml");
+        let defaults = Config::try_from(&AppConfig::default()).unwrap();
+        let config = Config::builder()
+            .add_source(defaults)
+            .add_source(ConfigFile::new(
+                config_path.to_str().unwrap(),
+                FileFormat::Toml,
+            ))
+            .build()
+            .unwrap();
+        let loaded_config = config
+            .try_deserialize::<AppConfig>()
+            .expect("Failed to deserialize config");
+
+        loaded_config
+    }
+
     pub fn new() -> Self {
+        let config_directory = config_dir().expect("Failed to find config directory");
+        Self::setup_config(&config_directory);
+
+        let config = Self::load_config(&config_directory);
+
         let os = env::consts::OS;
 
         let system_prompt = format!(
@@ -114,6 +174,7 @@ impl GptClient {
         );
 
         GptClient {
+            config,
             messages: vec![Message {
                 role: Role::System.to_string().to_lowercase(),
                 content: system_prompt.trim().to_string(),
@@ -143,8 +204,8 @@ impl GptClient {
         serde_yaml::to_string(&filtered_messages).unwrap()
     }
 
-    //complete method
-    pub fn complete(&mut self, model: &str) -> String {
+    //complete method, generates response text in cli.rs within run
+    pub fn complete(&mut self) -> String {
         // Retrieve the API key from the environment variable
         let api_key =
             env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
@@ -165,7 +226,7 @@ impl GptClient {
         headers.insert(header::AUTHORIZATION, auth_header);
 
         let chat_request = ChatRequest {
-            model: model.to_string(),
+            model: self.config.model.clone(),
             messages: self.messages.clone(),
         };
 
@@ -208,5 +269,33 @@ impl GptClient {
         let result = response_object.choices[0].message.content.clone();
         self.add_message(Role::Assistant, result.clone());
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::PathBuf;
+    use tempfile::TempDir;
+
+    #[test]
+    fn test_default_config() {
+        let temp_dir = TempDir::new().unwrap();
+        let config_dir_path = temp_dir.path().join("cgip");
+        let config_dir_path_buf = PathBuf::from(&config_dir_path);
+
+        assert!(
+            !config_dir_path_buf.join("config.toml").exists(),
+            "Config file should not exist for this test"
+        );
+
+        GptClient::setup_config(&config_dir_path_buf);
+        let config = GptClient::load_config(&config_dir_path_buf);
+
+        assert_eq!(config.model, "gpt-4", "Model should default to 'gpt-4'");
+        assert_eq!(
+            config.show_progress, false,
+            "show_progress should default to false"
+        );
     }
 }

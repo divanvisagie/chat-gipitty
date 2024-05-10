@@ -28,6 +28,7 @@ fn is_valid_yaml(yaml_str: &str) -> Result<bool, Error> {
         Err(_) => Ok(false),
     }
 }
+
 fn main() {
     let args = Args::parse();
     let mut client = GptClient::new();
