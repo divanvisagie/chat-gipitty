@@ -49,4 +49,11 @@ export OPENAI_API_KEY=your_key_here
 You can now pipe data to `cgip`, remember to use `2>&1` to convert `stderr` to 
 `stdout` if you are debugging, as the app can only read `stdin`
 
+# Development
+
+## Ubuntu
+
+```sh
+sudo apt-get install build-essential dh-make debhelper devscripts
+```
 
