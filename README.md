@@ -18,18 +18,19 @@ cgip "convert this to python" -f src/main.rs
 
 # Installation
 
-## Install via crates.io
+## Install from crates.io with cargo
 
 ```bash
 cargo install cgip
 ```
 
-## Install via homebrew (May be out of date)
-** Note **: This may be out of date, please use the crates.io version or build
-from source if you want the latet features
-
+## Install via homebrew
+If you dont have the tap, add it:
 ```bash
 brew tap divanvisagie/homebrew-tap
+```
+Install cgip with brew:
+```
 brew install cgip
 ```
 
