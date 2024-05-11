@@ -75,11 +75,11 @@ pub struct ViewSubCommand {
 #[derive(Parser, Debug)]
 #[command(author, version, about = "Set or get configuration values", long_about = None)]
 pub struct ConfigSubCommand {
-    /// Set a configuration value in the application.
+    /// Set a configuration value in your config.toml 
     #[arg(short, long)]
     pub set: Option<String>,
 
-    /// Get a configuration value from the application.
+    /// Get your current configuration value
     #[arg(short, long)]
     pub get: Option<String>,
 }
