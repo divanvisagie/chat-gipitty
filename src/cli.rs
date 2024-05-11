@@ -6,7 +6,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
     let response_text: String;
     // Override model from config if it was provided in args
     if let Some(ref model) = args.model {
-        client.config.model = model.clone();
+        client.config_manager.config.model = model.clone();
     }
 
     // List available models
@@ -19,7 +19,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
     }
 
     // Override show_progress from config if it was provided in args
-    let show_progress = args.show_progress || client.config.show_progress;
+    let show_progress = args.show_progress || client.config_manager.config.show_progress;
 
     if show_progress {
         let mut sp = Spinner::new(Spinners::Dots9, "Thinking...".into());
@@ -31,8 +31,8 @@ pub fn run(args: &Args, client: &mut GptClient) {
         response_text = client.complete();
     }
 
-    let show_context = args.show_context || client.config.show_context;
-    let markdown = args.markdown || client.config.markdown;
+    let show_context = args.show_context || client.config_manager.config.show_context;
+    let markdown = args.markdown || client.config_manager.config.markdown;
 
     if show_context {
         if markdown {
