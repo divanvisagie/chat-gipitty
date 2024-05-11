@@ -170,8 +170,12 @@ impl GptClient {
 
         match key {
             "model" => config.model = value.to_string(),
-            "show_progress" => config.show_progress = value.parse().expect("Invalid value for show_progress"),
-            "show_context" => config.show_context = value.parse().expect("Invalid value for show_context"),
+            "show_progress" => {
+                config.show_progress = value.parse().expect("Invalid value for show_progress")
+            }
+            "show_context" => {
+                config.show_context = value.parse().expect("Invalid value for show_context")
+            }
             "markdown" => config.markdown = value.parse().expect("Invalid value for markdown"),
             _ => eprintln!("Invalid configuration key"),
         }
@@ -179,7 +183,8 @@ impl GptClient {
         let contents = toml::to_string(&config).expect("Failed to serialize config");
         let config_path = cd.join("config.toml");
         let mut file = File::create(&config_path).expect("Failed to create config file");
-        file.write_all(contents.as_bytes()).expect("Failed to write to config file");
+        file.write_all(contents.as_bytes())
+            .expect("Failed to write to config file");
     }
     pub fn get_config_value(&self, key: &str) -> String {
         match key {
@@ -313,7 +318,6 @@ impl GptClient {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -329,7 +333,6 @@ mod tests {
             show_progress: true,
             show_context: false,
             markdown: false,
-
         };
         let config_path = config_dir_path.join("config.toml");
         let contents = toml::to_string(&custom_config).expect("Failed to serialize custom config");
@@ -344,10 +347,7 @@ mod tests {
             config.model, "gpt-3.5-turbo",
             "Model should be 'gpt-3.5-turbo'"
         );
-        assert_eq!(
-            config.show_progress, true,
-            "show_progress should be true"
-        );
+        assert_eq!(config.show_progress, true, "show_progress should be true");
     }
     #[test]
     fn test_custom_config_with_missing() {
@@ -364,14 +364,8 @@ mod tests {
 
         let config = GptClient::load_config(&config_dir_path);
         // maintain default values for missing fields
-        assert_eq!(
-            config.model, "gpt-4",
-            "Model should be 'gpt-4'"
-        );
-        assert_eq!(
-            config.show_progress, true,
-            "show_progress should be true"
-        );
+        assert_eq!(config.model, "gpt-4", "Model should be 'gpt-4'");
+        assert_eq!(config.show_progress, true, "show_progress should be true");
     }
     #[test]
     fn test_default_config() {
@@ -388,5 +382,4 @@ mod tests {
             "show_progress should default to false"
         );
     }
-
 }
