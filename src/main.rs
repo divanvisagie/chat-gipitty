@@ -1,37 +1,26 @@
 use std::str::FromStr;
 
-use args::Args;
+use args::{Args, SubCommands, ConfigSubCommand};
 use chatgpt::{GptClient, Message, Role};
 use clap::Parser;
 use cli::run;
-use serde_yaml::Error;
-use utils::{get_file_contents_from_path, get_stdin, markdown_from_messages};
+use utils::{get_file_contents_from_path, get_stdin, markdown_from_messages, is_valid_yaml};
 
 mod args;
 mod chatgpt;
 mod cli;
 mod utils;
 
-fn is_valid_yaml(yaml_str: &str) -> Result<bool, Error> {
-    let messages: Result<Vec<Message>, Error> = serde_yaml::from_str(yaml_str);
-
-    match messages {
-        Ok(msgs) => {
-            for msg in msgs {
-                if msg.role.is_empty() || msg.content.is_empty() {
-                    return Ok(false);
-                }
-                // Add more validation logic if needed
-            }
-            Ok(true)
-        }
-        Err(_) => Ok(false),
-    }
-}
-
 fn main() {
-    let args = Args::parse();
+
     let mut client = GptClient::new();
+    let args = Args::parse();
+
+    if let Some(SubCommands::Config(config_sc)) = &args.subcmd{
+        handle_config_subcommand(&mut client, config_sc);
+        return;
+    }
+
 
     let stdin_text = get_stdin();
     if !stdin_text.is_empty() {
@@ -63,4 +52,20 @@ fn main() {
     }
 
     run(&args, &mut client);
+}
+fn handle_config_subcommand(client: &mut chatgpt::GptClient, config_sc: &ConfigSubCommand) {
+    if let Some(ref set) = config_sc.set {
+        let parts: Vec<&str> = set.split('=').collect();
+        if parts.len() == 2 {
+            client.set_config_value(parts[0], parts[1]);
+            println!("Configuration set successfully for {} to {}", parts[0], parts[1])
+        } else {
+            println!("Invalid format for setting configuration. Use key=value");
+        }
+        // Additional logic to set the configuration
+    }
+    if let Some(ref get) = config_sc.get {
+        let value = client.get_config_value(get);
+        println!("Configuration for {} is {}", get, value);
+    }
 }
