@@ -1,9 +1,6 @@
 use spinners::{Spinner, Spinners};
 
-use crate::{
-    args::Args,
-    chatgpt::GptClient, utils::markdown_from_messages,
-};
+use crate::{args::Args, chatgpt::GptClient, utils::markdown_from_messages};
 
 pub fn run(args: &Args, client: &mut GptClient) {
     let response_text: String;
@@ -22,12 +19,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
     }
 
     // Override show_progress from config if it was provided in args
-    let show_progress: bool;
-    if args.show_progress {
-        show_progress = true
-    } else {
-        show_progress = client.config.show_progress;
-    }
+    let show_progress = args.show_progress || client.config.show_progress;
 
     if show_progress {
         let mut sp = Spinner::new(Spinners::Dots9, "Thinking...".into());
@@ -39,8 +31,11 @@ pub fn run(args: &Args, client: &mut GptClient) {
         response_text = client.complete();
     }
 
-    if args.show_context {
-        if args.markdown {
+    let show_context = args.show_context || client.config.show_context;
+    let markdown = args.markdown || client.config.markdown;
+
+    if show_context {
+        if markdown {
             let visible_messages = client
                 .messages
                 .iter()

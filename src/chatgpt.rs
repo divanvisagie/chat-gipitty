@@ -14,6 +14,8 @@ use toml;
 pub struct AppConfig {
     pub model: String,
     pub show_progress: bool,
+    pub show_context: bool,
+    pub markdown: bool,
 }
 
 impl Default for AppConfig {
@@ -21,6 +23,8 @@ impl Default for AppConfig {
         Self {
             model: "gpt-4".to_string(),
             show_progress: false,
+            show_context: false,
+            markdown: false,
         }
     }
 }
@@ -87,6 +91,7 @@ fn parse_error_response(json_str: &str) -> Result<ErrorResponse> {
 
 pub struct GptClient {
     pub config: AppConfig,
+    pub config_directory: PathBuf,
     pub messages: Vec<Message>,
 }
 
@@ -121,25 +126,26 @@ impl fmt::Display for Role {
 
 impl GptClient {
     pub fn setup_config(config_dir: &PathBuf) {
-        let cgip_config_dir = config_dir.join("cgip");
-        if !cgip_config_dir.exists() {
-            fs::create_dir_all(&cgip_config_dir).expect("Failed to create cgip config directory");
+        if !config_dir.exists() {
+            // Config dir like /home/user/.config/cgip
+            // Cross platform because of dirs crate used
+            fs::create_dir_all(&config_dir).expect("Failed to create cgip config directory");
         }
-
-        let config_path = cgip_config_dir.join("config.toml");
+        let config_path = config_dir.join("config.toml");
         if !config_path.exists() {
-            let config = AppConfig::default();
+            // if config.toml does not exist in correct place
+            let config = AppConfig::default(); // create a default config obj
             let contents = toml::to_string(&config).expect("Failed to serialize config");
             let mut file = File::create(&config_path).expect("Failed to create config file");
-            file.write_all(contents.as_bytes())
+            file.write_all(contents.as_bytes()) //write the default config to the file
                 .expect("Failed to write to config file");
         }
     }
 
     pub fn load_config(config_dir: &PathBuf) -> AppConfig {
-        let config_path = config_dir.join("cgip").join("config.toml");
+        let config_path = config_dir.join("config.toml");
         let defaults = Config::try_from(&AppConfig::default()).unwrap();
-        let config = Config::builder()
+        let config = Config::builder() // sources will be merged by priority
             .add_source(defaults)
             .add_source(ConfigFile::new(
                 config_path.to_str().unwrap(),
@@ -154,8 +160,42 @@ impl GptClient {
         loaded_config
     }
 
+    pub fn set_config_value(&mut self, key: &str, value: &str) {
+        let cd = self.config_directory.clone();
+        let mut config = if cd.exists() {
+            Self::load_config(&cd)
+        } else {
+            AppConfig::default()
+        };
+
+        match key {
+            "model" => config.model = value.to_string(),
+            "show_progress" => config.show_progress = value.parse().expect("Invalid value for show_progress"),
+            "show_context" => config.show_context = value.parse().expect("Invalid value for show_context"),
+            "markdown" => config.markdown = value.parse().expect("Invalid value for markdown"),
+            _ => eprintln!("Invalid configuration key"),
+        }
+
+        let contents = toml::to_string(&config).expect("Failed to serialize config");
+        let config_path = cd.join("config.toml");
+        let mut file = File::create(&config_path).expect("Failed to create config file");
+        file.write_all(contents.as_bytes()).expect("Failed to write to config file");
+    }
+    pub fn get_config_value(&self, key: &str) -> String {
+        match key {
+            "model" => self.config.model.clone(),
+            "show_progress" => self.config.show_progress.to_string(),
+            "show_context" => self.config.show_context.to_string(),
+            "markdown" => self.config.markdown.to_string(),
+            _ => "Invalid configuration key".to_string(),
+        }
+    }
+
     pub fn new() -> Self {
-        let config_directory = config_dir().expect("Failed to find config directory");
+        let config_directory = config_dir()
+            .expect("Failed to find config directory")
+            .join("cgip");
+
         Self::setup_config(&config_directory);
 
         let config = Self::load_config(&config_directory);
@@ -175,6 +215,7 @@ impl GptClient {
 
         GptClient {
             config,
+            config_directory,
             messages: vec![Message {
                 role: Role::System.to_string().to_lowercase(),
                 content: system_prompt.trim().to_string(),
@@ -272,25 +313,74 @@ impl GptClient {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
     use tempfile::TempDir;
 
+    #[test]
+    fn test_custom_config() {
+        let temp_dir = TempDir::new().unwrap();
+        let config_dir_path = temp_dir.path().join("cgip");
+        GptClient::setup_config(&config_dir_path);
+        let custom_config = AppConfig {
+            model: "gpt-3.5-turbo".to_string(),
+            show_progress: true,
+            show_context: false,
+            markdown: false,
+
+        };
+        let config_path = config_dir_path.join("config.toml");
+        let contents = toml::to_string(&custom_config).expect("Failed to serialize custom config");
+
+        let mut file = File::create(&config_path)
+            .expect("Failed to open config file for writing custom settings");
+        file.write_all(contents.as_bytes())
+            .expect("Failed to write custom config to file");
+
+        let config = GptClient::load_config(&config_dir_path);
+        assert_eq!(
+            config.model, "gpt-3.5-turbo",
+            "Model should be 'gpt-3.5-turbo'"
+        );
+        assert_eq!(
+            config.show_progress, true,
+            "show_progress should be true"
+        );
+    }
+    #[test]
+    fn test_custom_config_with_missing() {
+        let temp_dir = TempDir::new().unwrap();
+        let config_dir_path = temp_dir.path().join("cgip");
+        GptClient::setup_config(&config_dir_path);
+        let config_path = config_dir_path.join("config.toml");
+
+        let contents = "show_progress = true";
+        let mut file = File::create(&config_path)
+            .expect("Failed to open config file for writing custom settings");
+        file.write_all(contents.as_bytes())
+            .expect("Failed to write custom config to file");
+
+        let config = GptClient::load_config(&config_dir_path);
+        // maintain default values for missing fields
+        assert_eq!(
+            config.model, "gpt-4",
+            "Model should be 'gpt-4'"
+        );
+        assert_eq!(
+            config.show_progress, true,
+            "show_progress should be true"
+        );
+    }
     #[test]
     fn test_default_config() {
         let temp_dir = TempDir::new().unwrap();
         let config_dir_path = temp_dir.path().join("cgip");
-        let config_dir_path_buf = PathBuf::from(&config_dir_path);
 
-        assert!(
-            !config_dir_path_buf.join("config.toml").exists(),
-            "Config file should not exist for this test"
-        );
+        GptClient::setup_config(&config_dir_path);
 
-        GptClient::setup_config(&config_dir_path_buf);
-        let config = GptClient::load_config(&config_dir_path_buf);
+        let config = GptClient::load_config(&config_dir_path);
 
         assert_eq!(config.model, "gpt-4", "Model should default to 'gpt-4'");
         assert_eq!(
@@ -298,4 +388,5 @@ mod tests {
             "show_progress should default to false"
         );
     }
+
 }

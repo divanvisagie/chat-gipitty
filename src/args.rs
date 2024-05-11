@@ -61,11 +61,25 @@ pub struct Args {
 #[derive(Parser, Debug)]
 pub enum SubCommands {
     /// Render the context without running a query against the model.
-    View(ViewSubCommand)
+    View(ViewSubCommand),
+    /// Set or get configuration values.
+    Config(ConfigSubCommand),
 }
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct ViewSubCommand {
     // You can add options and arguments specific to the `view` subcommand here.
+}
+
+#[derive(Parser, Debug)]
+#[command(author, version, about = "Set or get configuration values", long_about = None)]
+pub struct ConfigSubCommand {
+    /// Set a configuration value in the application.
+    #[arg(short, long)]
+    pub set: Option<String>,
+
+    /// Get a configuration value from the application.
+    #[arg(short, long)]
+    pub get: Option<String>,
 }
