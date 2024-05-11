@@ -10,6 +10,7 @@ mod args;
 mod chatgpt;
 mod cli;
 mod utils;
+mod config_manager;
 
 fn main() {
     let mut client = GptClient::new();
@@ -61,7 +62,7 @@ fn handle_config_subcommand(client: &mut chatgpt::GptClient, config_sc: &ConfigS
     if let Some(ref set) = config_sc.set {
         let parts: Vec<&str> = set.split('=').collect();
         if parts.len() == 2 {
-            client.set_config_value(parts[0], parts[1]);
+            client.config_manager.set_config_value(parts[0], parts[1]);
             println!(
                 "Configuration set successfully for {} to {}",
                 parts[0], parts[1]
@@ -71,7 +72,7 @@ fn handle_config_subcommand(client: &mut chatgpt::GptClient, config_sc: &ConfigS
         }
     }
     if let Some(ref get) = config_sc.get {
-        let value = client.get_config_value(get);
+        let value = client.config_manager.get_config_value(get);
         println!("Configuration for {} is {}", get, value);
     }
 }

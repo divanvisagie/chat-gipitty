@@ -10,7 +10,7 @@ use atty::Stream;
 use serde_yaml::Error;
 
 use crate::chatgpt::Message;
-use crate::chatgpt::AppConfig;
+use crate::config_manager::AppConfig;
 
 pub fn markdown_from_messages(messages: Vec<Message>) -> String {
     let initial = String::from("");
