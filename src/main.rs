@@ -67,7 +67,7 @@ fn handle_config_subcommand(client: &mut chatgpt::GptClient, config_sc: &ConfigS
                 parts[0], parts[1]
             )
         } else {
-            println!("Invalid format for setting configuration. Use key=value");
+            println!("Invalid format for setting configuration. Use cgip config --set key=value");
         }
     }
     if let Some(ref get) = config_sc.get {
