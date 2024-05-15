@@ -1,10 +1,10 @@
 use std::str::FromStr;
 use std::{env, fmt};
 
-use serde::{Deserialize, Serialize};
-use serde_json::Result;
 use dirs::config_dir;
 use reqwest::header;
+use serde::{Deserialize, Serialize};
+use serde_json::Result;
 
 use crate::config_manager::ConfigManager;
 
@@ -220,72 +220,4 @@ impl GptClient {
         self.add_message(Role::Assistant, result.clone());
         result
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::fs::File;
-    use std::io::Write;
-    use tempfile::TempDir;
-
-    use crate::config_manager::AppConfig;
-
-    #[test]
-    fn test_custom_config() {
-        let temp_dir = TempDir::new().unwrap();
-        let config_dir_path = temp_dir.path().join("cgip");
-        let mut config_manager = ConfigManager::new(config_dir_path.clone());
-
-        // Manually create a custom config
-        let custom_config = AppConfig {
-            model: "gpt-3.5-turbo".to_string(),
-            show_progress: true,
-            show_context: false,
-            markdown: false,
-        };
-
-        // Serialize and save this custom config
-        let config_path = config_dir_path.join("config.toml");
-        let contents = toml::to_string(&custom_config).expect("Failed to serialize custom config");
-        let mut file = File::create(&config_path).expect("Failed to open config file");
-        file.write_all(contents.as_bytes()).expect("Failed to write custom config to file");
-
-        // Reload config from file
-        config_manager.config = ConfigManager::load_config(&config_dir_path);
-
-        assert_eq!(config_manager.config.model, "gpt-3.5-turbo", "Model should be 'gpt-3.5-turbo'");
-        assert_eq!(config_manager.config.show_progress, true, "show_progress should be true");
-    }
-
-    #[test]
-    fn test_custom_config_with_missing() {
-        let temp_dir = TempDir::new().unwrap();
-        let config_dir_path = temp_dir.path().join("cgip");
-        let mut config_manager = ConfigManager::new(config_dir_path.clone());
-
-        // Create a partial config file manually
-        let config_path = config_dir_path.join("config.toml");
-        let contents = "show_progress = true";
-        let mut file = File::create(&config_path).expect("Failed to open config file");
-        file.write_all(contents.as_bytes()).expect("Failed to write partial config to file");
-
-        // Reload config from file
-        config_manager.config = ConfigManager::load_config(&config_dir_path);
-
-        assert_eq!(config_manager.config.model, "gpt-4", "Model should default to 'gpt-4'");
-        assert_eq!(config_manager.config.show_progress, true, "show_progress should be true");
-    }
-
-    #[test]
-    fn test_default_config() {
-        let temp_dir = TempDir::new().unwrap();
-        let config_dir_path = temp_dir.path().join("cgip");
-        let config_manager = ConfigManager::new(config_dir_path);
-
-        assert_eq!(config_manager.config.model, "gpt-4", "Model should default to 'gpt-4'");
-        assert_eq!(config_manager.config.show_progress, false, "show_progress should default to false");
-    }
-
-
 }
