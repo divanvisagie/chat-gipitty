@@ -1,4 +1,4 @@
-.TH CGIP 1 "2024-05-07" "version 0.2.4" "CGIP MAN PAGE"
+.TH CGIP 1 "2024-05-17" "version 0.2.5" "CGIP MAN PAGE"
 .SH NAME
 cgip \- interact with ChatGPT based on contextual input from files or standard input.
 .SH SYNOPSIS
@@ -6,40 +6,58 @@ cgip \- interact with ChatGPT based on contextual input from files or standard i
 [OPTION]... [QUERY]
 .SH DESCRIPTION
 Queries can be piped in through stdin and will be added to the context first. The query passed in as the first argument will then be added to the context second. Files read using \fB\-f\fR will be added last to the context.
-.SH EXAMPLES
-To pipe input in from ls, run:
-.P
-.RS
-ls | \fBcgip\fR "what can you tell me about these files?"\f
-.P
-.RE
-To pipe your failing build output in to get some debugging help:
-.RS
-.P
-cargo build \fB2>&1\fR | \fBcgip\fR "what does this error mean?"\f
-.RE
+.SH COMMANDS
+.TP
+\fBview\fR
+Render the context without running a query against the model.
+.TP
+\fBconfig\fR
+Set or get default configuration values with your config.toml.
+.TP
+\fBhelp\fR
+Print this message or the help of the given subcommand(s).
+.SH ARGUMENTS
+.TP
+\fB[QUERY]\fR
+Optional. The primary query to send to the model. This is added to the context after stdin and file input.
 .SH OPTIONS
 .TP
-\fB\-f\fR, \fB\-\-file\fR=\fIFILE\fR
-Read query from a file. If query is present, this is added to the prompt after query. If this is present, stdin is ignored.
+\fB\-f\fR, \fB\-\-file=FILE\fR
+Read query from a file. If a query is present, it is added to the prompt after the query. If this option is present, stdin is ignored.
+.TP
+\fB\-M\fR, \fB\-\-model=MODEL\fR
+Specify the model to use. Defaults to `gpt-4`.
+.TP
+\fB\-l\fR, \fB\-\-list\-models\fR
+List all the available models.
 .TP
 \fB\-p\fR, \fB\-\-show\-progress\fR
-Show progress indicator (might mess up stdout).
+Show the progress indicator (might interfere with stdout).
 .TP
 \fB\-c\fR, \fB\-\-show\-context\fR
-Prints not only the output from OpenAI but the chat context with all assistant and user messages.
+Output the full context used in the query, including chat context with all assistant and user messages.
 .TP
-\fB\-\-markdown\fR
-Show context in human-readable table.
-.TP
-\fB\-V\fR, \fB\-\-version\fR
-Print version
+\fB\-m\fR, \fB\-\-markdown\fR
+Show context in a human-readable table.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-Print this help message.
-.SH SUBCOMMANDS
-.SS view
-Render the context without running a query against the model.
+Print help (see more with '--help').
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version.
+.SH EXAMPLES
+.P
+To pipe input from 'ls' and query about the files:
+.P
+.RS
+ls | \fBcgip\fR "What can you tell me about these files?"\f
+.P
+.RE
+To debug a failing build output:
+.RS
+.P
+cargo build \fB2>&1\fR | \fBcgip\fR "What does this error mean?"\f
+.RE
 .SH AUTHOR
 Written by Divan Visagie and Anna L. Smith.
 .SH "SEE ALSO"
