@@ -63,6 +63,19 @@ pub enum SubCommands {
     View(ViewSubCommand),
     /// Set or get default configuration values with your config.toml.
     Config(ConfigSubCommand),
+    /// Used for continuous chat session management and shell integration.
+    Session(SessionSubCommand),
+}
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct SessionSubCommand {
+    /// Used for creating unique session ids for session 
+    /// caching, add the following to your .bashrc or .zshrc to enable caching context
+    /// within a terminal session.
+    /// `export CGIP_SESSION_NAME=$(cgip session -i)`
+    #[arg(short, long)]
+    pub init: bool,
 }
 
 #[derive(Parser, Debug)]

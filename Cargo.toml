@@ -21,3 +21,4 @@ dirs = "5.0.1"
 config = "0.14.0"
 toml = "0.8.12"
 tempfile = "3.10.1"
+uuid = { version = "1.8.0", features = ["v4"] }

@@ -156,6 +156,14 @@ impl GptClient {
 
     //complete method, generates response text in cli.rs within run
     pub fn complete(&mut self) -> String {
+        // if the text of the last message is ping just return pong
+        if self.messages.last().unwrap().content.to_lowercase().trim() == "ping" {
+            self.add_message(Role::Assistant, "pong".to_string());
+            return "pong".to_string();
+        }
+
+
+
         // Retrieve the API key from the environment variable
         let api_key =
             env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
