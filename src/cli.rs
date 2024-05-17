@@ -10,7 +10,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
     }
 
     // List available models
-    let models = vec!["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"];
+    let models = vec!["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"];
     if args.list_models {
         for model in models {
             println!("{}", model);
