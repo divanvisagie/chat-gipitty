@@ -1,6 +1,6 @@
 use spinners::{Spinner, Spinners};
 
-use crate::{args::Args, chatgpt::GptClient, utils::markdown_from_messages};
+use crate::{args::Args, cache::save_to_tty_context, chatgpt::{GptClient, Message, Role}, utils::markdown_from_messages};
 
 pub fn run(args: &Args, client: &mut GptClient) {
     let response_text: String;
@@ -52,4 +52,10 @@ pub fn run(args: &Args, client: &mut GptClient) {
         return;
     }
     println!("{}", response_text);
+    let message = Message {
+        role: Role::Assistant.to_string().to_lowercase(),
+        content: response_text,
+    };
+    let messages_to_save = vec![message];
+    save_to_tty_context(messages_to_save);
 }

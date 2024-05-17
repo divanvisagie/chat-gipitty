@@ -34,6 +34,19 @@ pub fn get_tty_file_path() -> Result<PathBuf,()> {
     return Ok(tty_path);
 }
 
+pub fn delete_tty_context() {
+    let tty_path = match get_tty_file_path() {
+        Ok(val) => val,
+        Err(_) => {
+            return; //just silently exit this function
+        }
+    };
+
+    if tty_path.exists() {
+        fs::remove_file(tty_path).unwrap();
+    }
+}
+
 pub fn save_to_tty_context(messages: Vec<Message>) {
     let tty_path = match get_tty_file_path() {
         Ok(val) => val,

@@ -76,6 +76,10 @@ pub struct SessionSubCommand {
     /// `export CGIP_SESSION_NAME=$(cgip session -i)`
     #[arg(short, long)]
     pub init: bool,
+
+    /// Clear the current session context.
+    #[arg(short, long)]
+    pub clear: bool,
 }
 
 #[derive(Parser, Debug)]

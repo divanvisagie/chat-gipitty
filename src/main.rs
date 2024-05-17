@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use args::{Args, ConfigSubCommand, SubCommands};
-use cache::{read_from_tty_context, save_to_tty_context};
+use cache::{delete_tty_context, read_from_tty_context, save_to_tty_context};
 use chatgpt::{GptClient, Message, Role};
 use clap::Parser;
 use cli::run;
@@ -22,6 +22,9 @@ fn main() {
         if session_sc.init {
             let uuid = uuid::Uuid::new_v4();
             println!("{}", uuid);
+        }
+        if session_sc.clear {
+            delete_tty_context();
         }
         return;
     }
