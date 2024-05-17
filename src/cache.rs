@@ -51,6 +51,12 @@ pub fn save_to_tty_context(messages: Vec<Message>) {
     };
 
     tty_context.extend(messages);
+
+    // if the cache is more than 20 items long, remove the first item
+    if tty_context.len() > 20 {
+        tty_context.remove(0);
+    }
+
     match File::create(tty_path) {
         Ok(file) => {
             serde_json::to_writer(file, &tty_context).unwrap();
