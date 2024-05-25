@@ -1,4 +1,11 @@
-use crate::{chatgpt::Message, config_manager::ConfigManager};
+use std::str::FromStr;
+
+use crate::{
+    args::SessionSubCommand,
+    chatgpt::{GptClient, Message, Role},
+};
+
+use crate::config_manager::ConfigManager;
 use anyhow::Result;
 use std::{
     env,
@@ -59,7 +66,7 @@ pub fn save_to_tty_context(config_manager: &ConfigManager, messages: Vec<Message
     };
 
     tty_context.extend(messages);
-    
+
     let max_messages = config_manager.config.stored_context_length;
 
     // Keep context to a certain length
@@ -91,4 +98,31 @@ pub fn read_from_tty_context() -> Vec<Message> {
     let reader = BufReader::new(file);
     let tty_context: Vec<Message> = serde_json::from_reader(reader).unwrap();
     tty_context
+}
+
+pub fn run(subcmd: &SessionSubCommand, client: &GptClient) {
+    if subcmd.view {
+        let visible_messages: Vec<Message> = client
+            .messages
+            .iter()
+            .cloned()
+            .filter(|msg| msg.role != "system")
+            .collect();
+
+        for msg in visible_messages {
+            let role = Role::from_str(msg.role.as_str()).expect("could not convert role");
+            let role_str = role.to_string();
+            let content = msg.content;
+            if role_str == "user" {
+                println!("\x1b[1;34m{}\x1b[0m: {}", role_str, content);
+            } else {
+                println!("\x1b[1;31m{}\x1b[0m: {}", role_str, content);
+            }
+        }
+        return;
+    }
+    if subcmd.clear {
+        delete_tty_context();
+        return;
+    }
 }

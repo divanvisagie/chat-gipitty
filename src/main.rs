@@ -1,28 +1,20 @@
 use std::str::FromStr;
 
 use args::{Args, ConfigSubCommand, SubCommands};
-use chat::run;
 use chatgpt::{GptClient, Message, Role};
 use clap::Parser;
-use session::{delete_tty_context, read_from_tty_context, save_to_tty_context};
+use sub::session::{read_from_tty_context, save_to_tty_context};
 use utils::{get_file_contents_from_path, get_stdin, is_valid_yaml, markdown_from_messages};
 
 mod args;
 mod chat;
 mod chatgpt;
 mod config_manager;
-mod session;
 mod utils;
+mod sub;
 
 fn main() {
     let args = Args::parse();
-
-    if let Some(SubCommands::Session(session_sc)) = &args.subcmd {
-        if session_sc.clear {
-            delete_tty_context();
-            return;
-        }
-    }
 
     let mut client = GptClient::new();
     if let Some(SubCommands::Config(config_sc)) = &args.subcmd {
@@ -44,7 +36,6 @@ fn main() {
     }
 
     if let Some(SubCommands::View(_v_sc)) = &args.subcmd {
-        // If view mode
         let visible_messages = client
             .messages
             .iter()
@@ -63,27 +54,7 @@ fn main() {
     }
 
     if let Some(SubCommands::Session(subcmd)) = &args.subcmd {
-        if subcmd.view {
-            let visible_messages: Vec<Message> = client
-                .messages
-                .iter()
-                .cloned()
-                .filter(|msg| msg.role != "system")
-                .collect();
-
-            for msg in visible_messages {
-                let role = Role::from_str(msg.role.as_str()).expect("could not convert role");
-                let role_str = role.to_string();
-                let content = msg.content;
-                if role_str == "user" {
-                    println!("\x1b[1;34m{}\x1b[0m: {}", role_str, content);
-                } else {
-                    println!("\x1b[1;31m{}\x1b[0m: {}", role_str, content);
-                }
-            }
-            //println!("{}", md);
-            return;
-        }
+        sub::session::run(subcmd, &client)
     }
 
     let mut messages_to_save = Vec::new();
@@ -110,7 +81,7 @@ fn main() {
 
     save_to_tty_context(&client.config_manager, messages_to_save);
 
-    run(&args, &mut client);
+    chat::run(&args, &mut client);
 }
 
 fn handle_config_subcommand(client: &mut chatgpt::GptClient, config_subcommand: &ConfigSubCommand) {

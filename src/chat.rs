@@ -2,7 +2,7 @@ use spinners::{Spinner, Spinners};
 
 use crate::{
     args::Args,
-    session::save_to_tty_context,
+    sub::session::save_to_tty_context,
     chatgpt::{GptClient, Message, Role},
     utils::markdown_from_messages,
 };
