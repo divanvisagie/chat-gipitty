@@ -11,6 +11,7 @@ pub struct AppConfig {
     pub show_progress: bool,
     pub show_context: bool,
     pub markdown: bool,
+    pub stored_context_length: usize
 }
 
 impl Default for AppConfig {
@@ -20,6 +21,7 @@ impl Default for AppConfig {
             show_progress: false,
             show_context: false,
             markdown: false,
+            stored_context_length: 20
         }
     }
 }
@@ -99,6 +101,7 @@ impl ConfigManager {
             "show_progress" => self.config.show_progress.to_string(),
             "show_context" => self.config.show_context.to_string(),
             "markdown" => self.config.markdown.to_string(),
+            "stored_context_length" => self.config.stored_context_length.to_string(),
             _ => "Invalid configuration key".to_string(),
         }
     }
@@ -125,6 +128,7 @@ mod tests {
             show_progress: true,
             show_context: false,
             markdown: false,
+            stored_context_length: 20
         };
 
         // Serialize and save this custom config

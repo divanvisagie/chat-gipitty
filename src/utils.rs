@@ -1,10 +1,10 @@
+use std::fs::File;
+use std::io::Write;
+use std::path::PathBuf;
 use std::{
     fs,
     io::{self, BufRead},
 };
-use std::path::PathBuf;
-use std::fs::File;
-use std::io::Write;
 
 use atty::Stream;
 use serde_yaml::Error;
@@ -71,7 +71,6 @@ pub fn ensure_config_file(dir: &PathBuf) -> std::io::Result<PathBuf> {
     Ok(config_path)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -79,18 +78,16 @@ mod tests {
     use std::io::{Read, Write};
     use tempfile::TempDir;
 
+    #[cfg(test)]
+    mod tests {
+        use super::*;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_get_file_contents_from_path() {
-        let file_contents = get_file_contents_from_path("./test_data/test.txt".to_string());
-        assert_eq!(file_contents, "test\n");
+        #[test]
+        fn test_get_file_contents_from_path() {
+            let file_contents = get_file_contents_from_path("./test_data/test.txt".to_string());
+            assert_eq!(file_contents, "test\n");
+        }
     }
-}
-
 
     #[test]
     fn test_ensure_config_file() {
@@ -124,6 +121,7 @@ mod tests {
             show_progress: true,
             show_context: true,
             markdown: true,
+            stored_context_length: 20,
         };
         let custom_contents = toml::to_string(&custom_config).unwrap();
         File::create(&config_path)

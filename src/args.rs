@@ -49,9 +49,13 @@ pub struct Args {
     #[arg(short = 'c',long)]
     pub show_context: bool,
     
-    //Show context in human readable table
+    /// Show context in human readable table
     #[arg(short, long)]
     pub markdown: bool,
+
+    /// Don't use cache context
+    #[arg(short, long)]
+    pub no_context: bool,
     
     #[command(subcommand)]
     pub subcmd: Option<SubCommands>
@@ -64,22 +68,23 @@ pub enum SubCommands {
     /// Set or get default configuration values with your config.toml.
     Config(ConfigSubCommand),
     /// Used for continuous chat session management and shell integration.
+    /// To enable session caching in your terminal, add the following to your .bashrc or .zshrc:
+    /// export CGIP_SESSION_NAME=$(uuid) # for each new terminal session to be unique
+    /// or
+    /// export CGIP_SESSION_NAME=$(date -I) # for a session that will be the same for the entire day
     Session(SessionSubCommand),
 }
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct SessionSubCommand {
-    /// Used for creating unique session ids for session 
-    /// caching, add the following to your .bashrc or .zshrc to enable caching context
-    /// within a terminal session.
-    /// `export CGIP_SESSION_NAME=$(cgip session -i)`
-    #[arg(short, long)]
-    pub init: bool,
-
     /// Clear the current session context.
     #[arg(short, long)]
     pub clear: bool,
+
+    /// View the current session context
+    #[arg(short, long)]
+    pub view: bool
 }
 
 #[derive(Parser, Debug)]

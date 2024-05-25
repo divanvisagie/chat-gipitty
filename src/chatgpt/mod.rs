@@ -102,6 +102,12 @@ impl fmt::Display for Role {
     }
 }
 
+fn get_system_prompt() -> String {
+    let os = env::consts::OS.to_string();
+    let prompt = include_str!("prompt.txt").to_string();
+    prompt.replace("{{os_name}}", &os)
+}
+
 impl GptClient {
     pub fn new() -> Self {
         let config_directory = config_dir()
@@ -109,25 +115,13 @@ impl GptClient {
             .join("cgip");
 
         let config_manager = ConfigManager::new(config_directory);
-
-        let os = env::consts::OS;
-
-        let system_prompt = format!(
-            r#"
-            You are a helpul command line assistant running in a terminal on {}, users can
-            pass you the standard output from their command line and you will try and 
-            help them debug their issues or answer questions. Since you are a command line tool,
-            you write to standard out. So it is possible for your output to be directly executed
-            in the shell if your output is piped to it.
-        "#,
-            os
-        );
+        let system_prompt = get_system_prompt();
 
         GptClient {
             config_manager,
             messages: vec![Message {
                 role: Role::System.to_string().to_lowercase(),
-                content: system_prompt.trim().to_string(),
+                content: system_prompt.clone(),
             }],
         }
     }
@@ -161,8 +155,6 @@ impl GptClient {
             self.add_message(Role::Assistant, "pong".to_string());
             return "pong".to_string();
         }
-
-
 
         // Retrieve the API key from the environment variable
         let api_key =
@@ -227,5 +219,16 @@ impl GptClient {
         let result = response_object.choices[0].message.content.clone();
         self.add_message(Role::Assistant, result.clone());
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_system_prompt() {
+        let prompt = get_system_prompt();
+        assert!(!prompt.is_empty());
     }
 }

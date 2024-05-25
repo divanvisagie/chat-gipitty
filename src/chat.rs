@@ -1,17 +1,26 @@
 use spinners::{Spinner, Spinners};
 
-use crate::{args::Args, cache::save_to_tty_context, chatgpt::{GptClient, Message, Role}, utils::markdown_from_messages};
+use crate::{
+    args::Args,
+    session::save_to_tty_context,
+    chatgpt::{GptClient, Message, Role},
+    utils::markdown_from_messages,
+};
 
 pub fn run(args: &Args, client: &mut GptClient) {
     let response_text: String;
+
+    // TODO: Think about whether it is better to be passing this config around
+    // or go with someting more functional
+    //
     // Override model from config if it was provided in args
     if let Some(ref model) = args.model {
         client.config_manager.config.model = model.clone();
     }
 
     // List available models
-    let models = vec!["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"];
     if args.list_models {
+        let models = vec!["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"];
         for model in models {
             println!("{}", model);
         }
@@ -22,9 +31,9 @@ pub fn run(args: &Args, client: &mut GptClient) {
     let show_progress = args.show_progress || client.config_manager.config.show_progress;
 
     if show_progress {
-        let mut sp = Spinner::new(Spinners::Dots9, "Thinking...".into());
+        let mut spinner = Spinner::new(Spinners::Dots9, "Thinking...".into());
         response_text = client.complete();
-        sp.stop();
+        spinner.stop();
         print!("\x1B[2K"); // Clear the current line
         print!("\r"); // Move the cursor to the beginning of the current line
     } else {
@@ -57,5 +66,5 @@ pub fn run(args: &Args, client: &mut GptClient) {
         content: response_text,
     };
     let messages_to_save = vec![message];
-    save_to_tty_context(messages_to_save);
+    save_to_tty_context(&client.config_manager, messages_to_save);
 }
