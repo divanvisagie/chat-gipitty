@@ -7,8 +7,19 @@ default model is GPT-4.
 
 For example, say you wanted to debug your Rust program that doesn't compile and
 want ChatGPT to explain the error in depth, you can pipe the output through Chat
-Gipity to help you debug like this: 
-![Gif of Piping](docs/piping.gif)
+Gipity to help you debug like this, which would directly use the build error
+output as the prompt: 
+
+```sh
+cargo build 2>&1 | cgip
+```
+
+This would result in something like the following
+```sh
+❯ cargo build 2>&1 | cgip 'give me a short summary of the kind of error this is'
+The error you're encountering is a **lifetime error** in Rust, specifically an issue with **borrowed values not living long enough**.
+**borrowed values not living long enough**.
+```
 
 Another usage is reading from a file. In this example, we read from a file and
 ask ChatGPT to convert that file to another programming language: 
