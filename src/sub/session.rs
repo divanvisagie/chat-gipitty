@@ -125,3 +125,38 @@ pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>) {
         return;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run() {
+        let mut client = GptClient::new();
+        let _messages = vec![
+            Message {
+                role: Role::System.to_string().to_lowercase(),
+                content: "system message".to_string(),
+            },
+            Message {
+                role: Role::User.to_string().to_lowercase(),
+                content: "user message".to_string(),
+            },
+        ];
+        client.add_message(Role::System, "system message".to_string());
+        client.add_message(Role::User, "user message".to_string());
+
+        let subcmd = SessionSubCommand {
+            view: true,
+            clear: false,
+        };
+        run(&subcmd, &client.messages);
+    }
+
+
+    #[test]
+    fn test_get_tty_file_path() {
+        let path = get_tty_file_path().unwrap();
+        assert_eq!(path.exists(), true);
+    }
+}
