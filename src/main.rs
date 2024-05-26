@@ -54,7 +54,8 @@ fn main() {
     }
 
     if let Some(SubCommands::Session(subcmd)) = &args.subcmd {
-        sub::session::run(subcmd, &client)
+        sub::session::run(subcmd, &client);
+        return;
     }
 
     let mut messages_to_save = Vec::new();
