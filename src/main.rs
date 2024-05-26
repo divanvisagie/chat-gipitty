@@ -12,6 +12,7 @@ mod chatgpt;
 mod config_manager;
 mod sub;
 mod utils;
+mod printer;
 
 fn main() {
     let args = Args::parse();
@@ -47,7 +48,8 @@ fn main() {
     }
 
     if let Some(SubCommands::Session(subcmd)) = &args.subcmd {
-        sub::session::run(subcmd, &client.messages);
+        let mut printer = printer::Printer::Console(printer::ConsolePrinter {});
+        sub::session::run(subcmd, &client.messages, &mut printer);
         return;
     }
 

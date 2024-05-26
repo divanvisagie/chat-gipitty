@@ -2,7 +2,8 @@ use std::str::FromStr;
 
 use crate::{
     args::SessionSubCommand,
-    chatgpt::{GptClient, Message, Role},
+    chatgpt::{Message, Role},
+    printer::Printer,
 };
 
 use crate::config_manager::ConfigManager;
@@ -100,7 +101,7 @@ pub fn read_from_tty_context() -> Vec<Message> {
     tty_context
 }
 
-pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>) {
+pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>, printer: &mut Printer) {
     if subcmd.view {
         let visible_messages: Vec<Message> = messages
             .iter()
@@ -112,11 +113,7 @@ pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>) {
             let role = Role::from_str(msg.role.as_str()).expect("could not convert role");
             let role_str = role.to_string();
             let content = msg.content;
-            if role_str == "user" {
-                println!("\x1b[1;34m{}\x1b[0m: {}", role_str, content);
-            } else {
-                println!("\x1b[1;31m{}\x1b[0m: {}", role_str, content);
-            }
+            printer.print_message(role_str.as_str(), content.as_str());
         }
         return;
     }
@@ -128,31 +125,31 @@ pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>) {
 
 #[cfg(test)]
 mod tests {
+    use crate::{chatgpt::GptClient, printer::MockPrinter};
+
     use super::*;
 
     #[test]
-    fn test_run() {
+    fn test_run_view() {
         let mut client = GptClient::new();
-        let _messages = vec![
-            Message {
-                role: Role::System.to_string().to_lowercase(),
-                content: "system message".to_string(),
-            },
-            Message {
-                role: Role::User.to_string().to_lowercase(),
-                content: "user message".to_string(),
-            },
-        ];
         client.add_message(Role::System, "system message".to_string());
         client.add_message(Role::User, "user message".to_string());
+        client.add_message(Role::Assistant, "assistant message".to_string());
 
         let subcmd = SessionSubCommand {
             view: true,
             clear: false,
         };
-        run(&subcmd, &client.messages);
-    }
+        let mut mp = MockPrinter::new();
+        let mut printer = Printer::Mock(&mut mp);
+        run(&subcmd, &client.messages, &mut printer);
 
+        assert_eq!(mp.messages.len(), 2);
+        assert_eq!(mp.messages[0].0, "user");
+        assert_eq!(mp.messages[0].1, "user message");
+        assert_eq!(mp.messages[1].0, "assistant");
+        assert_eq!(mp.messages[1].1, "assistant message");
+    }
 
     #[test]
     fn test_get_tty_file_path() {
