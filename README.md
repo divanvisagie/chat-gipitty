@@ -27,7 +27,43 @@ ask ChatGPT to convert that file to another programming language:
 "convert this to python" -f src/main.rs 
 ```
 
-## Session management
+
+# Installation
+
+chat-gipity is designed to be run on POSIX compliant systems, you have mutliple options for installing released versions depending on your system. All systems should be able to install from source or from cargo, but a homebrew tap is also available as well as a debian package attacked to the github releases.
+
+### Install from crates.io with cargo 
+```sh
+cargo install cgip 
+```
+
+### Install via homebrew 
+If you don't have the tap, add it with: 
+```sh 
+brew tap divanvisagie/homebrew-tap 
+```
+
+Install cgip with brew: 
+```sh
+brew install cgip
+```
+
+### Manual Installation 
+Download this repository and then install the `cgip` command using:
+```sh 
+sudo make install 
+```
+
+## Set up API Key 
+Next, set up your OpenAI key by exporting it as `OPENAI_API_KEY`: 
+```sh
+export OPENAI_API_KEY=your_key_here 
+```
+
+You can now pipe data to `cgip`. Remember to use `2>&1` to convert `stderr` to
+`stdout` if you are debugging, as it can only read `stdin`.
+
+# Session management
 The `session` feature allows for continuous chat session management and shell
 integration. To enable session caching in your terminal, you need to provide the
 environment variable `CGIP_SESSION_NAME`. The uniqueness of your session is
@@ -62,40 +98,8 @@ context, you can use it to either view or clear the session, this can sometimes
 be useful if the context has become too long, or if the LLM has become confused
 by the context. 
 
-# Installation
 
-## Install from crates.io with cargo 
-```sh
-cargo install cgip 
-```
-
-## Install via homebrew 
-If you don't have the tap, add it with: 
-```sh 
-brew tap divanvisagie/homebrew-tap 
-```
-
-Install cgip with brew: 
-```sh
-brew install cgip
-```
-
-## Manual Installation 
-Download this repository and then install the `cgip` command using:
-```sh 
-sudo make install 
-```
-
-## Set up API Key 
-Next, set up your OpenAI key by exporting it as `OPENAI_API_KEY`: 
-```sh
-export OPENAI_API_KEY=your_key_here 
-```
-
-You can now pipe data to `cgip`. Remember to use `2>&1` to convert `stderr` to
-`stdout` if you are debugging, as it can only read `stdin`.
-
-# Development
+# Development Setup
 
 ## Ubuntu 
 
