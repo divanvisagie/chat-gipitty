@@ -1,24 +1,24 @@
 use std::str::FromStr;
 
-use args::{Args, ConfigSubCommand, SubCommands};
+use args::{Args, SubCommands};
 use chatgpt::{GptClient, Message, Role};
 use clap::Parser;
 use sub::session::{read_from_tty_context, save_to_tty_context};
-use utils::{get_file_contents_from_path, get_stdin, is_valid_yaml, markdown_from_messages};
+use utils::{get_file_contents_from_path, get_stdin, is_valid_yaml};
 
 mod args;
 mod chat;
 mod chatgpt;
 mod config_manager;
-mod utils;
 mod sub;
+mod utils;
 
 fn main() {
     let args = Args::parse();
 
     let mut client = GptClient::new();
     if let Some(SubCommands::Config(config_sc)) = &args.subcmd {
-        handle_config_subcommand(&mut client, config_sc);
+        sub::config::run(&mut client, config_sc);
         return;
     }
 
@@ -36,14 +36,7 @@ fn main() {
     }
 
     if let Some(SubCommands::View(_v_sc)) = &args.subcmd {
-        let visible_messages = client
-            .messages
-            .iter()
-            .cloned()
-            .filter(|msg| msg.role != "system")
-            .collect();
-        let md = markdown_from_messages(visible_messages);
-        println!("{}", md);
+        sub::view::run(&client.messages);
         return;
     }
 
@@ -54,7 +47,7 @@ fn main() {
     }
 
     if let Some(SubCommands::Session(subcmd)) = &args.subcmd {
-        sub::session::run(subcmd, &client);
+        sub::session::run(subcmd, &client.messages);
         return;
     }
 
@@ -83,23 +76,4 @@ fn main() {
     save_to_tty_context(&client.config_manager, messages_to_save);
 
     chat::run(&args, &mut client);
-}
-
-fn handle_config_subcommand(client: &mut chatgpt::GptClient, config_subcommand: &ConfigSubCommand) {
-    if let Some(ref set) = config_subcommand.set {
-        let parts: Vec<&str> = set.split('=').collect();
-        if parts.len() == 2 {
-            client.config_manager.set_config_value(parts[0], parts[1]);
-            println!(
-                "Configuration set successfully for {} to {}",
-                parts[0], parts[1]
-            )
-        } else {
-            println!("Invalid format for setting configuration. Use cgip config --set key=value");
-        }
-    }
-    if let Some(ref get) = config_subcommand.get {
-        let value = client.config_manager.get_config_value(get);
-        println!("Configuration for {} is {}", get, value);
-    }
 }

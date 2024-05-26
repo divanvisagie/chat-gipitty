@@ -100,10 +100,9 @@ pub fn read_from_tty_context() -> Vec<Message> {
     tty_context
 }
 
-pub fn run(subcmd: &SessionSubCommand, client: &GptClient) {
+pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>) {
     if subcmd.view {
-        let visible_messages: Vec<Message> = client
-            .messages
+        let visible_messages: Vec<Message> = messages
             .iter()
             .cloned()
             .filter(|msg| msg.role != "system")
