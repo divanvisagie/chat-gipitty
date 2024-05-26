@@ -79,8 +79,7 @@ The user has control over how unique their session is, for example to have a new
 session for every new terminal opened you can use `uuid`:
 
 ```sh
-export
-CGIP_SESSION_NAME=$(uuid) 
+export CGIP_SESSION_NAME=$(uuid) 
 ```
 However if you want the session to work across terminals you may do something
 like us the date as a session id instead:
