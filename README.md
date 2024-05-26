@@ -5,6 +5,8 @@ Chat Gipity is a command line client for ChatGPT. It allows you to chat with
 your chosen model of ChatGPT in a terminal and even pipe output into it. The
 default model is GPT-4.
 
+![Logo](docs/logo.png)
+
 For example, say you wanted to debug your Rust program that doesn't compile and
 want ChatGPT to explain the error in depth, you can pipe the output through Chat
 Gipity to help you debug like this, which would directly use the build error
