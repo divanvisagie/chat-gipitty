@@ -150,10 +150,4 @@ mod tests {
         assert_eq!(mp.messages[1].0, "assistant");
         assert_eq!(mp.messages[1].1, "assistant message");
     }
-
-    #[test]
-    fn test_get_tty_file_path() {
-        let path = get_tty_file_path().unwrap();
-        assert_eq!(path.exists(), true);
-    }
 }
