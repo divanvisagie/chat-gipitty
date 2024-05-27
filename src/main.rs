@@ -23,16 +23,28 @@ fn main() {
         return;
     }
 
+    let tty_context = read_from_tty_context();
+    for msg in tty_context {
+        let role = Role::from_str(msg.role.as_str()).expect("Could not convert role");
+        client.add_message(role, msg.content);
+    }
+
+    let mut messages_to_save = Vec::new();
     let stdin_text = get_stdin();
     if !stdin_text.is_empty() {
         if is_valid_yaml(&stdin_text).unwrap() {
             let messages: Vec<Message> = serde_yaml::from_str(&stdin_text).unwrap();
             for msg in messages {
                 let role = Role::from_str(msg.role.as_str()).expect("could not convert role");
-                client.add_message(role, msg.content);
+                client.add_message(role, msg.clone().content);
+                messages_to_save.push(msg);
             }
         } else {
-            client.add_message(chatgpt::Role::User, stdin_text);
+            client.add_message(chatgpt::Role::User, stdin_text.clone());
+            messages_to_save.push(Message {
+                role: Role::User.to_string().to_lowercase(),
+                content: stdin_text,
+            });
         }
     }
 
@@ -41,11 +53,6 @@ fn main() {
         return;
     }
 
-    let tty_context = read_from_tty_context();
-    for msg in tty_context {
-        let role = Role::from_str(msg.role.as_str()).expect("could not convert role");
-        client.add_message(role, msg.content);
-    }
 
     if let Some(SubCommands::Session(subcmd)) = &args.subcmd {
         let mut printer = printer::Printer::Console(printer::ConsolePrinter {});
@@ -53,7 +60,6 @@ fn main() {
         return;
     }
 
-    let mut messages_to_save = Vec::new();
     if let Some(query) = args.query.clone() {
         client.add_message(chatgpt::Role::User, query.clone());
         // save message to context

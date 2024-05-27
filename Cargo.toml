@@ -1,10 +1,10 @@
 [package]
 name = "cgip"
-version = "0.2.6"
+version = "0.2.7"
 edition = "2021"
 repository = "https://github.com/divanvisagie/chat-gipity"
 authors = ["Divan Visagie <me@divanv.com>"]
-license = "Apache-2.0"
+license = "GPL-2.0"
 description = "Terminal client for interacting with Chat GPT that allows you to build and manipulate contexts"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
