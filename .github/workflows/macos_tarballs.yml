@@ -22,30 +22,32 @@ jobs:
           override: true
 
       - name: Build and Package
-        env:
-          PLATFORM: $(uname -s | tr '[:upper:]' '[:lower:]')
-          ARCH: $(uname -m | tr '[:upper:]' '[:lower:]')
+        shell: bash
         run: |
           make release
           BINARY_NAME=cgip
           RELEASE_DIR=./release
-          tar -czf $RELEASE_DIR/$BINARY_NAME-${PLATFORM}-${ARCH}.tar.gz -C target/release $BINARY_NAME cgip.1
+          PLATFORM=$(uname -s | tr '[:upper:]' '[:lower:]')
+          ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
+          mkdir -p $RELEASE_DIR
+          cp docs/cgip.1 target/release/
+          tar -czf $RELEASE_DIR/$BINARY_NAME-$PLATFORM-$ARCH.tar.gz -C target/release $BINARY_NAME cgip.1
 
       - name: Determine Tag
         id: determine_tag
         run: |
           if [ -z "${{ github.ref }}" ]; then
             echo "No tag, using test-release"
-            echo "::set-output name=tag_name::test-release"
+            echo "tag_name=test-release" >> $GITHUB_ENV
           else
-            echo "::set-output name=tag_name::${{ github.ref }}"
+            echo "tag_name=${{ github.ref }}" >> $GITHUB_ENV
           fi
 
       - name: Check if Release Exists
         id: check_release
         uses: octokit/request-action@v2.x
         with:
-          route: GET /repos/${{ github.repository }}/releases/tags/${{ steps.determine_tag.outputs.tag_name }}
+          route: GET /repos/${{ github.repository }}/releases/tags/${{ env.tag_name }}
         continue-on-error: true
 
       - name: Create Release
@@ -55,19 +57,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.determine_tag.outputs.tag_name }}
-          release_name: Release ${{ steps.determine_tag.outputs.tag_name }}
+          tag_name: ${{ env.tag_name }}
+          release_name: Release ${{ env.tag_name }}
           draft: false
           prerelease: false
 
       - name: Upload Release Asset
+        if: steps.create_release.outputs.upload_url != ''
         env:
-          PLATFORM: $(uname -s | tr '[:upper:]' '[:lower:]')
-          ARCH: $(uname -m | tr '[:upper:]' '[:lower:]')
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/cgip-${PLATFORM}-${ARCH}.tar.gz
-          asset_name: cgip-${PLATFORM}-${ARCH}.tar.gz
+          asset_path: ./release/cgip-${{ env.PLATFORM }}-${{ env.ARCH }}.tar.gz
+          asset_name: cgip-${{ env.PLATFORM }}-${{ env.ARCH }}.tar.gz
           asset_content_type: application/gzip
-        if: steps.create_release.outputs.upload_url != ''
