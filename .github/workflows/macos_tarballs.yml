@@ -9,8 +9,8 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
-        target: [x86_64-apple-darwin, aarch64-apple-darwin, x86_64-unknown-linux-gnu, aarch64-unknown-linux-gnu] 
+        os: [macos-latest]
+        target: [x86_64-apple-darwin, aarch64-apple-darwin]
 
     steps:
       - name: Checkout repository
@@ -26,21 +26,10 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: brew install gh
 
-      - name: Install GitHub CLI on Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt update
-          sudo apt install -y curl
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          sudo apt update
-          sudo apt install gh -y
-
       - name: Authenticate GitHub CLI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
       - name: Run Makefile
-        run: make github-release
+        run: make release
