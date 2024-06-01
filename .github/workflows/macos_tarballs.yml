@@ -9,7 +9,6 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        os: [macos-latest]
         target: [x86_64-apple-darwin, aarch64-apple-darwin]
 
     steps:
@@ -22,13 +21,14 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Install GitHub CLI on macOS
-        if: matrix.os == 'macos-latest'
+      - name: Install GitHub CLI
         run: brew install gh
 
-      - name: Set up GitHub CLI authentication
+      - name: Configure GitHub CLI Authentication
         run: |
-          gh auth setup-git
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Makefile
         env:
