@@ -36,11 +36,11 @@ jobs:
       - name: Determine Tag
         id: determine_tag
         run: |
-          if [ -z "${{ github.ref }}" ]; then
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "tag_name=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          else
             echo "No tag, using test-release"
             echo "tag_name=test-release" >> $GITHUB_ENV
-          else
-            echo "tag_name=${{ github.ref }}" >> $GITHUB_ENV
           fi
 
       - name: Check if Release Exists
@@ -48,6 +48,8 @@ jobs:
         uses: octokit/request-action@v2.x
         with:
           route: GET /repos/${{ github.repository }}/releases/tags/${{ env.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
       - name: Create Release
@@ -64,11 +66,11 @@ jobs:
 
       - name: Upload Release Asset
         if: steps.create_release.outputs.upload_url != ''
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/cgip-${{ env.PLATFORM }}-${{ env.ARCH }}.tar.gz
-          asset_name: cgip-${{ env.PLATFORM }}-${{ env.ARCH }}.tar.gz
+          asset_path: ./release/cgip-*.tar.gz
+          asset_name: cgip-${{ env.tag_name }}.tar.gz
           asset_content_type: application/gzip
