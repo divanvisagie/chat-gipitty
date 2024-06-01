@@ -5,17 +5,13 @@ set -e
 
 # Variables
 PACKAGE_NAME=cgip
-VERSION=0.2.6
+VERSION=0.2.7
 ARCHITECTURE=amd64
 DEBIAN_FOLDER=debian_package
 BUILD_FOLDER=$DEBIAN_FOLDER/$PACKAGE_NAME-$ARCHITECTURE-$VERSION
 
 # Ensure cargo is available
 command -v cargo >/dev/null 2>&1 || { echo >&2 "Cargo is required but it's not installed. Exiting."; exit 1; }
-
-# Build the project
-echo "Building $PACKAGE_NAME..."
-cargo build --release
 
 # Create Debian directory structure
 echo "Creating Debian package structure..."
@@ -46,10 +42,17 @@ echo "Building DEB package..."
 dpkg-deb --build $BUILD_FOLDER
 
 # Move the DEB package to a more accessible location
-mv $DEBIAN_FOLDER/$PACKAGE_NAME-$ARCHITECTURE-$VERSION.deb .
+mv $DEBIAN_FOLDER/$PACKAGE_NAME-$ARCHITECTURE-$VERSION.deb ./release/
 
 # Cleanup
 echo "Cleaning up..."
 rm -rf $DEBIAN_FOLDER
 
 echo "DEB package created: $PACKAGE_NAME-$VERSION.deb"
+
+# if the first param is 'publish'
+if [ "$1" = "publish" ]; then
+  FILENAME="${PACKAGE_NAME}-${ARCHITECTURE}-${VERSION}.deb"
+  echo "Calling script to publish $FILENAME"
+  ./scripts/publish_asset.sh "$FILENAME"
+fi

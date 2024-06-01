@@ -1,30 +1,88 @@
-name: Build and Release macOS Tarballs
+name: Build and Release
 
 on:
   push:
+    branches: [ "builds" ]
     tags: [ "v*" ]
 
 jobs:
-  build-and-release:
-    runs-on: macos-latest
+  build:
+    runs-on: ${{ matrix.platform }}
+
     strategy:
       matrix:
-        target: [x86_64-apple-darwin, aarch64-apple-darwin]
+        platform: [ubuntu-latest, macos-latest]
+        arch: [x86_64, aarch64]
+        include:
+          - platform: ubuntu-latest
+            arch: x86_64
+          - platform: macos-latest
+            arch: x86_64
+          - platform: macos-latest
+            arch: aarch64
+        exclude:
+          - platform: ubuntu-latest
+            arch: aarch64
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ARCH: ${{ matrix.arch }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup Rust
+      - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
+          profile: minimal
           toolchain: stable
-          override: true
 
-      - name: Install GitHub CLI
-        run: brew install gh
+      - name: Add targets for cross-compilation
+        run: |
+          rustup target add x86_64-unknown-linux-gnu
+          rustup target add aarch64-unknown-linux-gnu
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
 
-      - name: Run Makefile
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: make mac-release
+      - name: Set Target if on macOS
+        if: matrix.platform == 'macos-latest'
+        run: |
+          echo "TARGET=${{ matrix.arch }}-apple-darwin" >> $GITHUB_ENV
+
+      # START: Linux ARM support
+      - name: Set Target if linux arm
+        if : matrix.platform == 'ubuntu-latest' && matrix.arch == 'aarch64'
+        run: |
+          echo "TARGET=${{ matrix.arch }}-unknown-linux-gnu" >> $GITHUB_ENV
+      
+      - name: Install dependencies for cross-compilation
+        if: matrix.platform == 'ubuntu-latest' && matrix.arch == 'aarch64'
+        run: |
+          sudo dpkg --add-architecture arm64
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu libc6-dev-arm64-cross libssl-dev:arm64 pkg-config
+
+      - name: Fix sources list for ARM packages
+        if: matrix.platform == 'ubuntu-latest' && matrix.arch == 'aarch64'
+        run: |
+          echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main universe restricted multiverse" | sudo tee /etc/apt/sources.list.d/arm64.list
+          sudo apt-get update
+
+      - name: Set PKG_CONFIG_PATH and PKG_CONFIG_SYSROOT_DIR for ARM
+        if: matrix.platform == 'ubuntu-latest' && matrix.arch == 'aarch64'
+        run: |
+          echo "PKG_CONFIG_PATH=/usr/aarch64-linux-gnu/lib/pkgconfig" >> $GITHUB_ENV
+          echo "PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu" >> $GITHUB_ENV
+          echo "OPENSSL_DIR=/usr/aarch64-linux-gnu" >> $GITHUB_ENV
+      # END
+
+      - name: Build the project
+        run: make build TARGET=${{ env.TARGET }}
+
+      - name: Publish the tarball release
+        run: make tarball-publish TARGET=${{ env.TARGET }}
+
+      - name: Publish deb package
+        if: matrix.platform == 'ubuntu-latest'
+        run: make deb-publish
