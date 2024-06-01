@@ -2,7 +2,6 @@ name: Build and Release macOS Tarballs
 
 on:
   push:
-    branches: [ "builds" ]
     tags: [ "v*" ]
 
 jobs:
@@ -28,4 +27,4 @@ jobs:
       - name: Run Makefile
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: make github-release
+        run: make mac-release

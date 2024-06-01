@@ -37,8 +37,9 @@ install:
 man:
 	groff -man -Tascii docs/cgip.1 | less
 
-github-release: release
+mac-release: release
 	@echo "Creating or updating GitHub release..."
+	# Get the last tag name
 	@TAG_NAME=$$(git describe --tags --abbrev=0 2>/dev/null || echo "test-release") && \
 	echo "Using tag: $$TAG_NAME" && \
 	gh release view $$TAG_NAME >/dev/null 2>&1 && \
