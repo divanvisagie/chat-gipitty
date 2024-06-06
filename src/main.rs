@@ -10,9 +10,9 @@ mod args;
 mod chat;
 mod chatgpt;
 mod config_manager;
+mod printer;
 mod sub;
 mod utils;
-mod printer;
 
 fn main() {
     let args = Args::parse();
@@ -48,11 +48,6 @@ fn main() {
         }
     }
 
-    if let Some(SubCommands::View(_v_sc)) = &args.subcmd {
-        sub::view::run(&client.messages);
-        return;
-    }
-
 
     if let Some(SubCommands::Session(subcmd)) = &args.subcmd {
         let mut printer = printer::Printer::Console(printer::ConsolePrinter {});
@@ -79,6 +74,11 @@ fn main() {
             content: question.clone(),
         };
         messages_to_save.push(message);
+    }
+
+    if let Some(SubCommands::View(_v_sc)) = &args.subcmd {
+        sub::view::run(&client.messages);
+        return;
     }
 
     save_to_tty_context(&client.config_manager, messages_to_save);
