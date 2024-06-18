@@ -53,9 +53,9 @@ pub struct Args {
     #[arg(short, long)]
     pub markdown: bool,
 
-    /// Don't use cache context
+    /// Don't use messages from the session in this request
     #[arg(short, long)]
-    pub no_context: bool,
+    pub no_session: bool,
     
     #[command(subcommand)]
     pub subcmd: Option<SubCommands>

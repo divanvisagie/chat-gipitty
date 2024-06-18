@@ -14,19 +14,19 @@ mod printer;
 mod sub;
 mod utils;
 
-fn main() {
-    let args = Args::parse();
+fn select_and_execute(args: Args, client: &mut GptClient) {
 
-    let mut client = GptClient::new();
     if let Some(SubCommands::Config(config_sc)) = &args.subcmd {
-        sub::config::run(&mut client, config_sc);
+        sub::config::run(client, config_sc);
         return;
     }
-
-    let tty_context = read_from_tty_context();
-    for msg in tty_context {
-        let role = Role::from_str(msg.role.as_str()).expect("Could not convert role");
-        client.add_message(role, msg.content);
+    
+    if !args.no_session {
+        let tty_context = read_from_tty_context();
+        for msg in tty_context {
+            let role = Role::from_str(msg.role.as_str()).expect("Could not convert role");
+            client.add_message(role, msg.content);
+        }
     }
 
     let mut messages_to_save = Vec::new();
@@ -47,7 +47,6 @@ fn main() {
             });
         }
     }
-
 
     if let Some(SubCommands::Session(subcmd)) = &args.subcmd {
         let mut printer = printer::Printer::Console(printer::ConsolePrinter {});
@@ -81,7 +80,16 @@ fn main() {
         return;
     }
 
-    save_to_tty_context(&client.config_manager, messages_to_save);
+    if !args.no_session {
+        save_to_tty_context(&client.config_manager, messages_to_save);
+    }
 
-    chat::run(&args, &mut client);
+    chat::run(&args, client);
+}
+
+fn main() {
+    let args = Args::parse();
+    let mut client = GptClient::new();
+
+    select_and_execute(args, &mut client)
 }
