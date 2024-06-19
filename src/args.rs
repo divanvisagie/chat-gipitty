@@ -32,6 +32,10 @@ pub struct Args {
     #[arg(short, long)]
     pub file: Option<String>,
 
+    /// Specify a system prompt
+    #[arg(short, long)]
+    pub system_prompt: Option<String>,
+
     /// Specify model to use. Defaults to `gpt-4`.
     #[arg(short = 'M', long)]
     pub model: Option<String>,
@@ -74,6 +78,7 @@ pub enum SubCommands {
     /// export CGIP_SESSION_NAME=$(date -I) # for a session that will be the same for the entire day
     Session(SessionSubCommand),
 }
+
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]

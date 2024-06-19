@@ -109,6 +109,22 @@ fn get_system_prompt() -> String {
 }
 
 impl GptClient {
+    pub fn new_with_system_prompt(prompt: String) -> Self {
+        let config_directory = config_dir()
+            .expect("Failed to find config directory")
+            .join("cgip");
+
+        let config_manager = ConfigManager::new(config_directory);
+
+        GptClient {
+            config_manager,
+            messages: vec![Message {
+                role: Role::System.to_string().to_lowercase(),
+                content: prompt,
+            }],
+        }
+    }
+    
     pub fn new() -> Self {
         let config_directory = config_dir()
             .expect("Failed to find config directory")

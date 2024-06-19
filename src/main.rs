@@ -89,7 +89,10 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
 
 fn main() {
     let args = Args::parse();
-    let mut client = GptClient::new();
+    let mut client = match &args.system_prompt {
+        Some(prompt) => GptClient::new_with_system_prompt(prompt.clone()),
+        None => GptClient::new(),
+    };
 
     select_and_execute(args, &mut client)
 }
