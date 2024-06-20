@@ -67,7 +67,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
     };
     let messages_to_save = vec![message];
 
-    if args.no_session {
+    if !args.no_session {
         save_to_tty_context(&client.config_manager, messages_to_save);
     }
 }
