@@ -1,10 +1,12 @@
-.TH CGIP 1 "2024-06-09" "version 0.2.9" "CGIP MAN PAGE"
+.TH CGIP 1 "2024-06-20" "version 0.2.10" "CGIP MAN PAGE"
 .SH NAME
 cgip \- interact with ChatGPT based on contextual input from files or standard input.
 .SH SYNOPSIS
 .B cgip
-[OPTION]... [QUERY]
+[OPTIONS] [QUERY] | [COMMAND]
 .SH DESCRIPTION
+Terminal client for interacting with Chat GPT that allows you to build and manipulate contexts.
+
 Queries can be piped in through stdin and will be added to the context first. The query passed in as the first argument will then be added to the context second. Files read using \fB\-f\fR will be added last to the context.
 .SH COMMANDS
 .TP
@@ -22,24 +24,6 @@ export CGIP_SESSION_NAME=$(uuid) # for each new terminal session to be unique
 export CGIP_SESSION_NAME=$(date -I) # for a session that will be the same for the entire day
 .P
 .RE
-Options:
-.RS
-.P
-\fB-c\fR, \fB\-\-clear\fR
-Clear the current session context.
-.P
-\fB-v\fR, \fB\-\-view\fR
-View the current session context.
-.P
-\fB-h\fR, \fB\-\-help\fR
-Print help.
-.P
-\fB-V\fR, \fB\-\-version\fR
-Print version.
-.RE
-.TP
-\fBhelp\fR
-Print this message or the help of the given subcommand(s).
 .SH ARGUMENTS
 .TP
 \fB[QUERY]\fR
@@ -48,6 +32,9 @@ Optional. The primary query to send to the model. This is added to the context a
 .TP
 \fB\-f\fR, \fB\-\-file=FILE\fR
 Read query from a file. If a query is present, it is added to the prompt after the query. If this option is present, stdin is ignored.
+.TP
+\fB\-s\fR, \fB\-\-system\-prompt=SYSTEM_PROMPT\fR
+Specify a system prompt.
 .TP
 \fB\-M\fR, \fB\-\-model=MODEL\fR
 Specify the model to use. Defaults to `gpt-4`.
@@ -64,6 +51,9 @@ Output the full context used in the query, including chat context with all assis
 \fB\-m\fR, \fB\-\-markdown\fR
 Show context in a human-readable table.
 .TP
+\fB\-n\fR, \fB\-\-no\-session\fR
+Don't use messages from the session in this request.
+.TP
 \fB\-h\fR, \fB\-\-help\fR
 Print help (see more with '--help').
 .TP
@@ -74,13 +64,13 @@ Print version.
 To pipe input from 'ls' and query about the files:
 .P
 .RS
-ls | \fBcgip\fR "What can you tell me about these files?"\f
+ls | \fBcgip\fR "What can you tell me about these files?"
 .P
 .RE
 To debug a failing build output:
-.RS
 .P
-cargo build \fB2>&1\fR | \fBcgip\fR "What does this error mean?"\f
+.RS
+cargo build 2>&1 | \fBcgip\fR "What does this error mean?"
 .RE
 .SH AUTHOR
 Written by Divan Visagie and Anna L. Smith.
