@@ -1,7 +1,7 @@
-# Chat Gipity
+# Chat Gipitty
 [![crates.io](https://img.shields.io/crates/v/cgip.svg)](https://crates.io/crates/cgip)
 
-Chat Gipity is a command line client for ChatGPT. It allows you to chat with
+Chat Gipitty (Chat Get Information, Print Information TTY) is a command line client for ChatGPT. It allows you to chat with
 your chosen model of ChatGPT in a terminal and even pipe output into it. The
 default model is GPT-4.
 
@@ -9,7 +9,7 @@ default model is GPT-4.
 
 For example, say you wanted to debug your Rust program that doesn't compile and
 want ChatGPT to explain the error in depth, you can pipe the output through Chat
-Gipity to help you debug like this, which would directly use the build error
+Gipitty to help you debug like this, which would directly use the build error
 output as the prompt: 
 
 ```sh
@@ -32,7 +32,7 @@ ask ChatGPT to convert that file to another programming language:
 
 # Installation
 
-chat-gipity is designed to be run on POSIX compliant systems, you have mutliple options for installing released versions depending on your system. All systems should be able to install from source or from cargo, but a homebrew tap is also available as well as a debian package attacked to the github releases.
+chat-gipitty is designed to be run on POSIX compliant systems, you have mutliple options for installing released versions depending on your system. All systems should be able to install from source or from cargo, but a homebrew tap is also available as well as a debian package attacked to the github releases.
 
 ### Install from crates.io with cargo 
 ```sh
