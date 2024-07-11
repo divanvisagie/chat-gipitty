@@ -1,4 +1,4 @@
-# Chat Gipitty
+# Chat GipiTTY
 [![crates.io](https://img.shields.io/crates/v/cgip.svg)](https://crates.io/crates/cgip)
 
 Chat Gipitty (Chat Get Information, Print Information TTY) is a command line client for ChatGPT. It allows you to chat with
