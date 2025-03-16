@@ -173,8 +173,7 @@ impl GptClient {
         }
 
         // Retrieve the API key from the environment variable
-        let api_key =
-            env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
+        let api_key = self.config_manager.config.openai_api_key.clone();
 
         let client = reqwest::blocking::Client::new();
         let url = "https://api.openai.com/v1/chat/completions";

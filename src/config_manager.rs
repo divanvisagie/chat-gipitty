@@ -1,4 +1,4 @@
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{env, fs::File, io::Write, path::PathBuf};
 
 use config::{Config, File as ConfigFile, FileFormat};
 use serde::{Deserialize, Serialize};
@@ -11,7 +11,9 @@ pub struct AppConfig {
     pub show_progress: bool,
     pub show_context: bool,
     pub markdown: bool,
-    pub stored_context_length: usize
+    pub stored_context_length: usize,
+    pub openai_api_key: String,
+    pub anthropic_api_key: String,
 }
 
 impl Default for AppConfig {
@@ -21,7 +23,9 @@ impl Default for AppConfig {
             show_progress: false,
             show_context: false,
             markdown: false,
-            stored_context_length: 20
+            stored_context_length: 20,
+            openai_api_key: env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY is not set"),
+            anthropic_api_key: env::var("ANTHROPIC_API_KEY").expect("ANTHROPIC_API_KEY is not set"),
         }
     }
 }
