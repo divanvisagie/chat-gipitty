@@ -21,8 +21,6 @@ struct AnthropicRequest {
 
 #[derive(Debug, Deserialize)]
 struct AnthropicResponse {
-    pub id: String,
-    pub model: String,
     pub content: Vec<AnthropicContent>,
 }
 
