@@ -19,7 +19,7 @@ pub struct AppConfig {
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
-            model: "gpt-4".to_string(),
+            model: "gpt-4o".to_string(),
             show_progress: false,
             show_context: false,
             markdown: false,
@@ -163,19 +163,17 @@ mod tests {
         let config_dir_path = temp_dir.path().join("cgip");
         let mut config_manager = ConfigManager::new(config_dir_path.clone());
 
-        // Create a partial config file manually
         let config_path = config_dir_path.join("config.toml");
         let contents = "show_progress = true";
         let mut file = File::create(&config_path).expect("Failed to open config file");
         file.write_all(contents.as_bytes())
             .expect("Failed to write partial config to file");
 
-        // Reload config from file
         config_manager.config = ConfigManager::load_config(&config_dir_path);
 
         assert_eq!(
-            config_manager.config.model, "gpt-4",
-            "Model should default to 'gpt-4'"
+            config_manager.config.model, "gpt-4o",
+            "Model should default to 'gpt-4o'"
         );
         assert_eq!(
             config_manager.config.show_progress, true,
@@ -190,8 +188,8 @@ mod tests {
         let config_manager = ConfigManager::new(config_dir_path);
 
         assert_eq!(
-            config_manager.config.model, "gpt-4",
-            "Model should default to 'gpt-4'"
+            config_manager.config.model, "gpt-4o",
+            "Model should default to 'gpt-4o'"
         );
         assert_eq!(
             config_manager.config.show_progress, false,
