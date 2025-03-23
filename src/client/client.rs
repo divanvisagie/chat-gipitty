@@ -1,4 +1,4 @@
-use super::{openai::OpenAiClient, test::TestClient, Message, Role};
+use super::{openai::OpenAiClient, test::TestClient, anthropic::AnthropicClient, Message, Role};
 
 pub trait LanguageModelClient {
     fn complete(&mut self, request: &LanguageModelRequest) -> String;
@@ -46,22 +46,41 @@ impl SwitcherClient {
     pub fn new() -> Self {
         Self {}
     }
+
+    fn map_model_name(model: &str) -> String {
+        match model {
+            // Claude 3 models
+            "claude-37" | "claude-3-7-sonnet" => "claude-3-7-sonnet-20250219",
+            _ => model,
+        }.to_string()
+    }
 }
 
 impl LanguageModelClient for SwitcherClient {
     fn complete(&mut self, request: &LanguageModelRequest) -> String {
-        match request.model.as_str() {
-            "gpt-3.5-turbo" | "gpt-4" | "gpt-4-turbo" | "gpt-4o" => {
+        let model = Self::map_model_name(&request.model);
+        let mut mapped_request = LanguageModelRequest {
+            model: model.clone(),
+            messages: request.messages.clone(),
+        };
+
+        match model.as_str() {
+            model if model.starts_with("gpt-") => {
                 let mut client = OpenAiClient::new();
-                return client.complete(request);
+                return client.complete(&mapped_request);
+            }
+            // Match all Claude model versions
+            model if model.starts_with("claude-") => {
+                let mut client = AnthropicClient::new();
+                return client.complete(&mapped_request);
             }
             "test" => {
                 let mut client = TestClient::new();
-                return client.complete(request);
+                return client.complete(&mapped_request);
             }
             _ => {
                 let mut client = OpenAiClient::new();
-                return client.complete(request);
+                return client.complete(&mapped_request);
             }
         }
     }

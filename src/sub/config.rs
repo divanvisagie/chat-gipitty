@@ -27,6 +27,7 @@ pub fn run(config_subcommand: &ConfigSubCommand) {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
     use std::fs::File;
@@ -39,11 +40,10 @@ mod tests {
     fn test_custom_config() {
         let temp_dir = TempDir::new().unwrap();
         let config_dir_path = temp_dir.path().join("cgip");
-        let mut config_manager = ConfigManager::new(config_dir_path.clone());
 
         // Manually create a custom config
         let custom_config = AppConfig {
-            model: "gpt-3.5-turbo".to_string(),
+            model: "test".to_string(),
             show_progress: true,
             show_context: false,
             markdown: false,

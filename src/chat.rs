@@ -14,7 +14,7 @@ use crate::{
     sub::session::save_to_tty_context,
     utils::markdown_from_messages,
 };
-use crate::{client, LanguageModelClient};
+use crate::LanguageModelClient;
 
 fn should_read_from_session(args: &Args) -> bool {
     !args.no_session
@@ -103,10 +103,6 @@ pub fn run(args: &Args) {
         request.add_message(Role::User, msg.content);
     }
 
-    if let Some(query) = args.query.clone() {
-        request.add_message(client::Role::User, query.clone());
-    }
-
     if show_progress {
         let mut spinner = Spinner::new(Spinners::Dots9, "Thinking...".into());
         response_text = client.complete(&request);
@@ -158,5 +154,66 @@ pub fn run(args: &Args) {
         messages_to_save.push(response_message);
 
         save_to_tty_context(&config_manager, messages_to_save);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::sub::session::delete_tty_context;
+
+    #[test]
+    fn test_run_without_context() {
+        // clear the context by deleting the file
+        delete_tty_context();
+
+        let args = Args {
+            show_progress: false,
+            show_context: false,
+            markdown: false,
+            no_session: true,
+            list_models: false,
+            model: Some("test".to_string()),
+            system_prompt: None,
+            file: None,
+            query: Some("i have a question".to_string()),
+            subcmd: None
+        };
+        
+
+        run(&args);
+
+
+        // read the context and make sure its empty
+        let tty_context = read_from_tty_context();
+        assert_eq!(tty_context.len(), 0);
+    }
+
+    #[test]
+    fn test_run_with_context() {
+        // clear the context by deleting the file
+        delete_tty_context();
+
+        let args = Args {
+            show_progress: false,
+            show_context: false,
+            markdown: false,
+            no_session: false,
+            list_models: false,
+            model: Some("test".to_string()),
+            system_prompt: None,
+            file: None,
+            query: Some("i have a question".to_string()),
+            subcmd: None
+        };
+        
+
+        run(&args);
+
+        // read the context and make sure its not empty
+        let tty_context = read_from_tty_context();
+        assert_eq!(tty_context[0].content, "i have a question");
+        assert_eq!(tty_context[1].content, "This is a test language model response");
+        assert_eq!(tty_context.len(), 2);
     }
 }

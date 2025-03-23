@@ -110,4 +110,10 @@ pub struct ConfigSubCommand {
     /// `cgip config --get model`
     #[arg(short, long)]
     pub get: Option<String>,
+
+    
+    /// List all the configuration values.
+    /// `cgip config --list`
+    #[arg(short, long)]
+    pub list: bool,
 }

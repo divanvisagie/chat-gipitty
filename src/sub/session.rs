@@ -126,14 +126,12 @@ pub fn run(subcmd: &SessionSubCommand, printer: &mut Printer) {
 
 #[cfg(test)]
 mod tests {
-    use crate::{client::{client::LanguageModelRequest, openai::OpenAiClient}, printer::MockPrinter};
+    use crate::{client::client::LanguageModelRequest, printer::MockPrinter};
 
     use super::*;
 
     #[test]
     fn test_run_view() {
-        let mut client = OpenAiClient::new();
-
         let mut request = LanguageModelRequest::new("test".to_string());
         request.add_message(Role::User, "user message".to_string());
         request.add_message(Role::Assistant, "assistant message".to_string());

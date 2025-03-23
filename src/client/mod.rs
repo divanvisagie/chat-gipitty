@@ -1,6 +1,7 @@
 pub mod client;
 pub mod openai;
 pub mod test;
+pub mod anthropic;
 
 use std::str::FromStr;
 use std::{env, fmt};
@@ -68,8 +69,6 @@ fn parse_error_response(json_str: &str) -> Result<ErrorResponse> {
     serde_json::from_str(json_str)
 }
 
-
-
 pub enum Role {
     System,
     User,
@@ -104,9 +103,6 @@ pub fn get_system_prompt() -> String {
     let prompt = include_str!("prompt.txt").to_string();
     prompt.replace("{{os_name}}", &os)
 }
-
-
-
 
 #[cfg(test)]
 mod tests {
