@@ -24,6 +24,7 @@ struct AnthropicResponse {
     pub content: Vec<AnthropicContent>,
 }
 
+
 #[derive(Debug, Deserialize)]
 struct AnthropicContent {
     #[serde(rename = "type")]

@@ -1,4 +1,4 @@
-use super::{openai::OpenAiClient, test::TestClient, anthropic::AnthropicClient, Message, Role};
+use super::{anthropic::AnthropicClient, openai::OpenAiClient, test::TestClient, Message, Role};
 
 pub trait LanguageModelClient {
     fn complete(&mut self, request: &LanguageModelRequest) -> String;
@@ -50,16 +50,17 @@ impl SwitcherClient {
     fn map_model_name(model: &str) -> String {
         match model {
             // Claude 3 models
-            "claude-37" | "claude-3-7-sonnet" => "claude-3-7-sonnet-20250219",
+            "claude-37" | "claude-3-7-sonnet" | "claude-3-7" => "claude-3-7-sonnet-20250219",
             _ => model,
-        }.to_string()
+        }
+        .to_string()
     }
 }
 
 impl LanguageModelClient for SwitcherClient {
     fn complete(&mut self, request: &LanguageModelRequest) -> String {
         let model = Self::map_model_name(&request.model);
-        let mut mapped_request = LanguageModelRequest {
+        let mapped_request = LanguageModelRequest {
             model: model.clone(),
             messages: request.messages.clone(),
         };
