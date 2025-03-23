@@ -179,10 +179,8 @@ mod tests {
             query: Some("i have a question".to_string()),
             subcmd: None
         };
-        
 
         run(&args);
-
 
         // read the context and make sure its empty
         let tty_context = read_from_tty_context();
@@ -206,7 +204,6 @@ mod tests {
             query: Some("i have a question".to_string()),
             subcmd: None
         };
-        
 
         run(&args);
 
