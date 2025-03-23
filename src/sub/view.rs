@@ -1,6 +1,7 @@
-use crate::{chatgpt::Message, utils::markdown_from_messages};
+use crate::{sub::session::read_from_tty_context, utils::markdown_from_messages};
 
-pub fn run(messages: &Vec<Message>) {
+pub fn run() {
+    let messages = read_from_tty_context();
     let visible_messages = messages
         .iter()
         .cloned()

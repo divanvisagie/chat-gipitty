@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use crate::{
     args::SessionSubCommand,
-    chatgpt::{Message, Role},
+    client::{Message, Role},
     printer::Printer,
 };
 
@@ -101,8 +101,9 @@ pub fn read_from_tty_context() -> Vec<Message> {
     tty_context
 }
 
-pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>, printer: &mut Printer) {
+pub fn run(subcmd: &SessionSubCommand, printer: &mut Printer) {
     if subcmd.view {
+        let messages = read_from_tty_context();
         let visible_messages: Vec<Message> = messages
             .iter()
             .cloned()
@@ -125,16 +126,17 @@ pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>, printer: &mut Pr
 
 #[cfg(test)]
 mod tests {
-    use crate::{chatgpt::GptClient, printer::MockPrinter};
+    use crate::{client::{client::LanguageModelRequest, openai::OpenAiClient}, printer::MockPrinter};
 
     use super::*;
 
     #[test]
     fn test_run_view() {
-        let mut client = GptClient::new();
-        client.add_message(Role::System, "system message".to_string());
-        client.add_message(Role::User, "user message".to_string());
-        client.add_message(Role::Assistant, "assistant message".to_string());
+        let mut client = OpenAiClient::new();
+
+        let mut request = LanguageModelRequest::new("test".to_string());
+        request.add_message(Role::User, "user message".to_string());
+        request.add_message(Role::Assistant, "assistant message".to_string());
 
         let subcmd = SessionSubCommand {
             view: true,
@@ -142,7 +144,8 @@ mod tests {
         };
         let mut mp = MockPrinter::new();
         let mut printer = Printer::Mock(&mut mp);
-        run(&subcmd, &client.messages, &mut printer);
+
+        run(&subcmd, &mut printer);
 
         assert_eq!(mp.messages.len(), 2);
         assert_eq!(mp.messages[0].0, "user");

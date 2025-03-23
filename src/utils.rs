@@ -9,7 +9,7 @@ use std::{
 use atty::Stream;
 use serde_yaml::Error;
 
-use crate::chatgpt::Message;
+use crate::client::Message;
 use crate::config_manager::AppConfig;
 
 pub fn markdown_from_messages(messages: Vec<Message>) -> String {
@@ -122,6 +122,8 @@ mod tests {
             show_context: true,
             markdown: true,
             stored_context_length: 20,
+            openai_api_key: "".to_string(),
+            anthropic_api_key: Some("".to_string()),
         };
         let custom_contents = toml::to_string(&custom_config).unwrap();
         File::create(&config_path)
