@@ -50,7 +50,7 @@ impl SwitcherClient {
     fn map_model_name(model: &str) -> String {
         match model {
             // Claude 3 models
-            "claude-37" | "claude-3-7-sonnet" | "claude-3-7" => "claude-3-7-sonnet-20250219",
+            "claude37" | "claude-37" | "claude-3-7-sonnet" | "claude-3-7" => "claude-3-7-sonnet-20250219",
             // Mistral models
             "mistral-tiny" => "mistral-tiny-latest",
             "mistral-small" => "mistral-small-latest",
