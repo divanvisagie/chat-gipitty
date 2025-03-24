@@ -14,6 +14,7 @@ pub struct AppConfig {
     pub stored_context_length: usize,
     pub openai_api_key: String,
     pub anthropic_api_key: Option<String>,
+    pub mistral_api_key: Option<String>,
 }
 
 impl Default for AppConfig {
@@ -25,7 +26,8 @@ impl Default for AppConfig {
             markdown: false,
             stored_context_length: 20,
             openai_api_key: env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY is not set"),
-            anthropic_api_key: env::var("ANTHROPIC_API_KEY").ok()
+            anthropic_api_key: env::var("ANTHROPIC_API_KEY").ok(),
+            mistral_api_key: env::var("MISTRAL_API_KEY").ok(),
         }
     }
 }

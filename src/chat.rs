@@ -8,13 +8,13 @@ use crate::client::get_system_prompt;
 use crate::config_manager::ConfigManager;
 use crate::sub::session::read_from_tty_context;
 use crate::utils::{get_file_contents_from_path, get_stdin, is_valid_yaml};
+use crate::LanguageModelClient;
 use crate::{
     args::Args,
     client::{Message, Role},
     sub::session::save_to_tty_context,
     utils::markdown_from_messages,
 };
-use crate::LanguageModelClient;
 
 fn should_read_from_session(args: &Args) -> bool {
     !args.no_session
@@ -69,7 +69,14 @@ fn build_request_message_context(args: &Args) -> Vec<Message> {
 
 pub fn run(args: &Args) {
     if args.list_models {
-        let models = vec!["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"];
+        let models = vec![
+            "gpt-3.5-turbo",
+            "gpt-4",
+            "gpt-4-turbo",
+            "gpt-4o",
+            "claude-3.7-sonnet",
+            "mistral-large-latest",
+        ];
         for model in models {
             println!("{}", model);
         }
@@ -97,7 +104,7 @@ pub fn run(args: &Args) {
         let sp = get_system_prompt();
         request.add_message(Role::System, sp);
     }
-    
+
     let messages = build_request_message_context(args);
     for msg in messages {
         request.add_message(Role::User, msg.content);
@@ -177,7 +184,7 @@ mod tests {
             system_prompt: None,
             file: None,
             query: Some("i have a question".to_string()),
-            subcmd: None
+            subcmd: None,
         };
 
         run(&args);
@@ -202,7 +209,7 @@ mod tests {
             system_prompt: None,
             file: None,
             query: Some("i have a question".to_string()),
-            subcmd: None
+            subcmd: None,
         };
 
         run(&args);
@@ -210,7 +217,10 @@ mod tests {
         // read the context and make sure its not empty
         let tty_context = read_from_tty_context();
         assert_eq!(tty_context[0].content, "i have a question");
-        assert_eq!(tty_context[1].content, "This is a test language model response");
+        assert_eq!(
+            tty_context[1].content,
+            "This is a test language model response"
+        );
         assert_eq!(tty_context.len(), 2);
     }
 }

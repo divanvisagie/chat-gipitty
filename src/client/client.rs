@@ -1,4 +1,4 @@
-use super::{anthropic::AnthropicClient, openai::OpenAiClient, test::TestClient, Message, Role};
+use super::{anthropic::AnthropicClient, openai::OpenAiClient, test::TestClient, mistral::MistralClient, Message, Role};
 
 pub trait LanguageModelClient {
     fn complete(&mut self, request: &LanguageModelRequest) -> String;
@@ -51,6 +51,10 @@ impl SwitcherClient {
         match model {
             // Claude 3 models
             "claude-37" | "claude-3-7-sonnet" | "claude-3-7" => "claude-3-7-sonnet-20250219",
+            // Mistral models
+            "mistral-tiny" => "mistral-tiny-latest",
+            "mistral-small" => "mistral-small-latest",
+            "mistral-medium" => "mistral-medium-latest",
             _ => model,
         }
         .to_string()
@@ -73,6 +77,11 @@ impl LanguageModelClient for SwitcherClient {
             // Match all Claude model versions
             model if model.starts_with("claude-") => {
                 let mut client = AnthropicClient::new();
+                return client.complete(&mapped_request);
+            }
+            // Match all Mistral model versions
+            model if model.starts_with("mistral-") => {
+                let mut client = MistralClient::new();
                 return client.complete(&mapped_request);
             }
             "test" => {

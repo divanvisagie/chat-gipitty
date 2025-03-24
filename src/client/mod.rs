@@ -1,7 +1,8 @@
+pub mod anthropic;
 pub mod client;
 pub mod openai;
 pub mod test;
-pub mod anthropic;
+pub mod mistral;
 
 use std::str::FromStr;
 use std::{env, fmt};
