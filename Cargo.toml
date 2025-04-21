@@ -1,6 +1,6 @@
 [package]
 name = "cgip"
-version = "0.2.11"
+version = "0.2.12"
 edition = "2021"
 repository = "https://github.com/divanvisagie/chat-gipity"
 authors = ["Divan Visagie <me@divanv.com>"]
@@ -9,17 +9,17 @@ description = "Terminal client for interacting with Chat GPT that allows you to 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.97"
+anyhow = "1.0.98"
 atty = "0.2.14"
-clap = { version = "4.5.31", features = ["derive"] }
-reqwest = { version = "0.12.12", features = ["blocking"] }
-serde = { version = "1.0.218", features = ["derive"] }
+clap = { version = "4.5.37", features = ["derive"] }
+reqwest = { version = "0.12.15", features = ["blocking"] }
+serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 spinners = "4.1.1"
 serde_yaml = "0.9.34+deprecated"
 dirs = "6.0.0"
-config = "0.15.9"
+config = "0.15.11"
 toml = "0.8.20"
-tempfile = "3.17.1"
-uuid = { version = "1.15.1", features = ["v4"] }
+tempfile = "3.19.1"
+uuid = { version = "1.16.0", features = ["v4"] }
 tiktoken-rs = "0.6.0"
