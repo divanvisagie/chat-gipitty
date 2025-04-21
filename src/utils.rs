@@ -122,6 +122,7 @@ mod tests {
             show_context: true,
             markdown: true,
             stored_context_length: 20,
+            jarjar: false,
         };
         let custom_contents = toml::to_string(&custom_config).unwrap();
         File::create(&config_path)

@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn test_run_view() {
-        let mut client = GptClient::new();
+        let mut client = GptClient::new(false);
         client.add_message(Role::System, "system message".to_string());
         client.add_message(Role::User, "user message".to_string());
         client.add_message(Role::Assistant, "assistant message".to_string());

@@ -60,6 +60,10 @@ pub struct Args {
     /// Don't use messages from the session in this request
     #[arg(short, long)]
     pub no_session: bool,
+
+    /// Speak like Jar Jar Binks
+    #[arg(short, long)]
+    pub jarjar: bool,
     
     #[command(subcommand)]
     pub subcmd: Option<SubCommands>

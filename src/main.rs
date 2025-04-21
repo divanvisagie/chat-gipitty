@@ -91,7 +91,7 @@ fn main() {
     let args = Args::parse();
     let mut client = match &args.system_prompt {
         Some(prompt) => GptClient::new_with_system_prompt(prompt.clone()),
-        None => GptClient::new(),
+        None => GptClient::new(args.jarjar),
     };
 
     select_and_execute(args, &mut client)

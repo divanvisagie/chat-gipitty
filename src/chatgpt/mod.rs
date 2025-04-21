@@ -102,10 +102,16 @@ impl fmt::Display for Role {
     }
 }
 
-fn get_system_prompt() -> String {
+fn get_system_prompt(jarjar: bool) -> String {
     let os = env::consts::OS.to_string();
     let prompt = include_str!("prompt.txt").to_string();
-    prompt.replace("{{os_name}}", &os)
+    let prompt = prompt.replace("{{os_name}}", &os);
+    
+    if jarjar { //append something to the prompt
+        prompt + " Speak like JarJar Binks"
+    } else {
+        prompt
+    }
 }
 
 impl GptClient {
@@ -125,13 +131,13 @@ impl GptClient {
         }
     }
     
-    pub fn new() -> Self {
+    pub fn new(jarjar: bool) -> Self {
         let config_directory = config_dir()
             .expect("Failed to find config directory")
             .join("cgip");
 
         let config_manager = ConfigManager::new(config_directory);
-        let system_prompt = get_system_prompt();
+        let system_prompt = get_system_prompt(jarjar);
 
         GptClient {
             config_manager,
@@ -244,7 +250,7 @@ mod tests {
 
     #[test]
     fn test_get_system_prompt() {
-        let prompt = get_system_prompt();
+        let prompt = get_system_prompt(false);
         assert!(!prompt.is_empty());
     }
 }
