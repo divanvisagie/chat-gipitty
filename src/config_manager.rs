@@ -17,7 +17,7 @@ pub struct AppConfig {
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
-            model: "gpt-4".to_string(),
+            model: "gpt-4o".to_string(),
             show_progress: false,
             show_context: false,
             markdown: false,
@@ -124,7 +124,7 @@ mod tests {
 
         // Manually create a custom config
         let custom_config = AppConfig {
-            model: "gpt-3.5-turbo".to_string(),
+            model: "gpt-4o".to_string(),
             show_progress: true,
             show_context: false,
             markdown: false,
