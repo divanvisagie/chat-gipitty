@@ -142,8 +142,8 @@ mod tests {
         config_manager.config = ConfigManager::load_config(&config_dir_path);
 
         assert_eq!(
-            config_manager.config.model, "gpt-3.5-turbo",
-            "Model should be 'gpt-3.5-turbo'"
+            config_manager.config.model, "gpt-4o",
+            "Model should be 'gpt-4o'"
         );
         assert_eq!(
             config_manager.config.show_progress, true,
@@ -168,8 +168,8 @@ mod tests {
         config_manager.config = ConfigManager::load_config(&config_dir_path);
 
         assert_eq!(
-            config_manager.config.model, "gpt-4",
-            "Model should default to 'gpt-4'"
+            config_manager.config.model, "gpt-4o",
+            "Model should default to 'gpt-4o'"
         );
         assert_eq!(
             config_manager.config.show_progress, true,
@@ -184,8 +184,8 @@ mod tests {
         let config_manager = ConfigManager::new(config_dir_path);
 
         assert_eq!(
-            config_manager.config.model, "gpt-4",
-            "Model should default to 'gpt-4'"
+            config_manager.config.model, "gpt-4o",
+            "Model should default to 'gpt-4o'"
         );
         assert_eq!(
             config_manager.config.show_progress, false,

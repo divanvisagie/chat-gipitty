@@ -105,7 +105,7 @@ mod tests {
             .read_to_string(&mut contents)
             .unwrap();
         assert!(
-            contents.contains("gpt-4"),
+            contents.contains("gpt-4o"),
             "Default settings should include the model name"
         );
 

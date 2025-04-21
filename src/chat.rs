@@ -2,8 +2,8 @@ use spinners::{Spinner, Spinners};
 
 use crate::{
     args::Args,
-    sub::session::save_to_tty_context,
     chatgpt::{GptClient, Message, Role},
+    sub::session::save_to_tty_context,
     utils::markdown_from_messages,
 };
 
@@ -20,7 +20,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
 
     // List available models
     if args.list_models {
-        let models = vec!["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo", "gpt-4o"];
+        let models = vec!["gpt-4o", "gpt-4.1", "o4-mini"];
         for model in models {
             println!("{}", model);
         }
