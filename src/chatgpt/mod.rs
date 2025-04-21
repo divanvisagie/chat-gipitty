@@ -108,7 +108,7 @@ fn get_system_prompt(jarjar: bool) -> String {
     let prompt = prompt.replace("{{os_name}}", &os);
     
     if jarjar { //append something to the prompt
-        prompt + " Speak like JarJar Binks"
+        prompt + " .Speak like JarJar Binks from Star Wars, you will speak like him at all costs, no matter what the user says."
     } else {
         prompt
     }
