@@ -106,8 +106,9 @@ fn get_system_prompt(jarjar: bool) -> String {
     let os = env::consts::OS.to_string();
     let prompt = include_str!("prompt.txt").to_string();
     let prompt = prompt.replace("{{os_name}}", &os);
-    
-    if jarjar { //append something to the prompt
+
+    if jarjar {
+        //append something to the prompt
         prompt + " .Speak like JarJar Binks from Star Wars, you will speak like him at all costs, no matter what the user says."
     } else {
         prompt
@@ -130,7 +131,7 @@ impl GptClient {
             }],
         }
     }
-    
+
     pub fn new(jarjar: bool) -> Self {
         let config_directory = config_dir()
             .expect("Failed to find config directory")
@@ -182,8 +183,13 @@ impl GptClient {
         let api_key =
             env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
 
-        let client = reqwest::blocking::Client::new();
-        let url = "https://api.openai.com/v1/chat/completions";
+        let client = reqwest::blocking::Client::builder()
+            .danger_accept_invalid_certs(true)
+            .build()
+            .expect("Failed to build client");
+
+        let url = env::var("OPENAI_API_URL")
+            .unwrap_or_else(|_| "https://api.openai.com/v1/chat/completions".to_string());
 
         let mut headers = header::HeaderMap::new();
         headers.insert(
@@ -216,7 +222,23 @@ impl GptClient {
 
         let response = match response {
             Ok(response) => response.text(),
-            Err(e) => panic!("Error in response: {}", e),
+            Err(e) => {
+                if e.is_timeout() {
+                    eprintln!("The request timed out.");
+                } else if e.is_connect() {
+                    eprintln!("Failed to connect to the server: {}", e);
+                } else if e.is_status() {
+                    if let Some(status) = e.status() {
+                        eprintln!("Received HTTP status code: {}", status);
+                    }
+                }
+
+                if let Some(url) = e.url() {
+                    eprintln!("URL: {}", url);
+                }
+
+                return "".to_string();
+            }
         };
 
         let response_text = match response {
