@@ -1,4 +1,4 @@
-.TH CGIP 1 "2024-06-20" "version 0.2.12" "CGIP MAN PAGE"
+.TH CGIP 1 "2024-06-20" "version 0.3" "CGIP MAN PAGE"
 .SH NAME
 cgip \- interact with ChatGPT based on contextual input from files or standard input.
 .SH SYNOPSIS
@@ -8,6 +8,16 @@ cgip \- interact with ChatGPT based on contextual input from files or standard i
 Terminal client for interacting with Chat GPT that allows you to build and manipulate contexts.
 
 Queries can be piped in through stdin and will be added to the context first. The query passed in as the first argument will then be added to the context second. Files read using \fB\-f\fR will be added last to the context.
+
+You can specify a custom API endpoint (for example, to use a local LLM server or an alternative provider) by setting the \fBOPENAI_API_URL\fR environment variable.  
+If not set, the default is \fIhttps://api.openai.com/v1/chat/completions\fR.
+
+Example:
+.P
+.RS
+export OPENAI_API_URL=http://localhost:11434/v1
+.RE
+
 .SH COMMANDS
 .TP
 \fBview\fR
@@ -71,6 +81,12 @@ To debug a failing build output:
 .P
 .RS
 cargo build 2>&1 | \fBcgip\fR "What does this error mean?"
+.RE
+To use a custom API endpoint (e.g., with Ollama or a local LLM):
+.P
+.RS
+export OPENAI_API_URL=http://localhost:11434/v1
+cgip "Summarize this text"
 .RE
 .SH AUTHOR
 Written by Divan Visagie and Anna L. Smith.

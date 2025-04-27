@@ -62,6 +62,15 @@ Next, set up your OpenAI key by exporting it as `OPENAI_API_KEY`:
 export OPENAI_API_KEY=your_key_here 
 ```
 
+## (Optional) Use a Custom API Endpoint
+
+You can specify a custom API endpoint (for example, to use a local LLM server or an alternative provider) by setting the `OPENAI_API_URL` environment variable.  
+If not set, the default is `https://api.openai.com/v1/chat/completions`.
+
+```sh
+export OPENAI_API_URL=http://localhost:11434/v1
+```
+
 You can now pipe data to `cgip`. Remember to use `2>&1` to convert `stderr` to
 `stdout` if you are debugging, as it can only read `stdin`.
 
