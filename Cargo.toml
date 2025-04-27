@@ -23,3 +23,4 @@ toml = "0.8.20"
 tempfile = "3.19.1"
 uuid = { version = "1.16.0", features = ["v4"] }
 tiktoken-rs = "0.6.0"
+rmcp = { version = "0.1", features = ["server"] }
