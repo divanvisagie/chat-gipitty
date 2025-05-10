@@ -1,10 +1,10 @@
 use std::env;
 use tracing::info;
 
+#[allow(dead_code)]
 pub struct ModelInfo {
     /// The maximum number of input tokens for the model
     pub input_tokens: usize,
-    #[allow(dead_code)]
     pub output_tokens: usize,
     /// Name of the model
     pub name: String,
