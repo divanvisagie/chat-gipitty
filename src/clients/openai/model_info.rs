@@ -16,6 +16,7 @@ pub struct ModelInfo {
 const OPENAI_BASE_URL: &str = "OPENAI_BASE_URL";
 const OLLAMA_BASE_URL: &str = "OLLAMA_BASE_URL";
 const MISTRAL_BASE_URL: &str = "MISTRAL_BASE_URL";
+const GEMINI_BASE_URL: &str = "GEMINI_BASE_URL";
 
 fn ensure_chat_completions_path(mut base_url: String) -> String {
     let path = "/v1/chat/completions";
@@ -35,12 +36,7 @@ fn openai_base_url() -> String {
 }
 
 fn ollama_base_url() -> String {
-    let env_val = env::var(OLLAMA_BASE_URL);
-    match &env_val {
-        Ok(val) => info!("OLLAMA_API_URL env var found: {}", val),
-        Err(_) => info!("OLLAMA_API_URL env var not set, using default localhost endpoint"),
-    }
-    let url = env_val.unwrap_or_else(|_| "http://localhost:11434".to_string());
+    let url = env::var(OLLAMA_BASE_URL).unwrap_or_else(|_| "http://localhost:11434".to_string());
     ensure_chat_completions_path(url)
 }
 
@@ -51,7 +47,17 @@ fn mistral_base_url() -> String {
 }
 
 fn gemini_base_url() -> String {
-    "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions".to_string()
+    let url = env::var(GEMINI_BASE_URL).unwrap_or_else(|_| "https://generativelanguage.googleapis.com/v1beta/openai".to_string());
+    // For Gemini, append /chat/completions (no v1)
+    let path = "/chat/completions";
+    let mut base_url = url;
+    if !base_url.ends_with(path) {
+        if base_url.ends_with('/') {
+            base_url.pop();
+        }
+        base_url.push_str(path);
+    }
+    base_url
 }
 
 impl ModelInfo {
