@@ -32,8 +32,8 @@ impl fmt::Display for Message {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChatResponse {
-    pub id: String,
-    pub object: String,
+    pub id: Option<String>,
+    pub object: Option<String>,
     pub created: u64,
     pub model: String,
     usage: Usage,
@@ -260,7 +260,7 @@ impl GptClient {
                         error_response.error.message
                     )
                 } else {
-                    panic!("Error while parsing response object: {}", e);
+                    panic!("Error while parsing error response object: {}\n{}", e, response_text);
                 }
             }
         };
