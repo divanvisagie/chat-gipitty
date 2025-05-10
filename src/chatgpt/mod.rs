@@ -8,6 +8,10 @@ use serde_json::Result;
 
 use crate::config_manager::ConfigManager;
 
+fn get_completions_url(base_url: &str) -> String {
+    format!("{}/v1/chat/completions", base_url)
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct ChatRequest {
     pub model: String,
@@ -189,7 +193,8 @@ impl GptClient {
             .expect("Failed to build client");
 
         let url = env::var("OPENAI_API_URL")
-            .unwrap_or_else(|_| "https://api.openai.com/v1/chat/completions".to_string());
+            .unwrap_or_else(|_| "https://api.openai.com".to_string());
+        let url = get_completions_url(&url);
 
         let mut headers = header::HeaderMap::new();
         headers.insert(
