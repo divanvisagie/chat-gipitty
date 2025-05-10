@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::chatgpt::Role;
+use crate::clients::openai::Role;
 
 enum Colors {
     Blue,

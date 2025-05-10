@@ -1,4 +1,4 @@
-use crate::{chatgpt::Message, utils::markdown_from_messages};
+use crate::{clients::openai::Message, utils::markdown_from_messages};
 
 pub fn run(messages: &Vec<Message>) {
     let visible_messages = messages
