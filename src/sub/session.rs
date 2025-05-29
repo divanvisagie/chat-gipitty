@@ -113,7 +113,7 @@ pub fn run(subcmd: &SessionSubCommand, messages: &Vec<Message>, printer: &mut Pr
             let role = Role::from_str(msg.role.as_str()).expect("could not convert role");
             let role_str = role.to_string();
             let content = msg.content;
-            printer.print_message(role_str.as_str(), content.as_str());
+            printer.print_message(role_str.as_str(), &content.to_string());
         }
         return;
     }
