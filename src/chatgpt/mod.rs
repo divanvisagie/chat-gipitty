@@ -191,7 +191,11 @@ impl GptClient {
             let trimmed_content = last_message.content.trim();
             if last_message.role == "user" && trimmed_content.starts_with("/search") {
                 // Remove "/search" prefix from the message and trim whitespace
-                last_message.content = trimmed_content.strip_prefix("/search").unwrap().trim().to_string();
+                last_message.content = trimmed_content
+                    .strip_prefix("/search")
+                    .unwrap()
+                    .trim()
+                    .to_string();
                 use_search = true;
             }
         }
@@ -205,8 +209,8 @@ impl GptClient {
             .build()
             .expect("Failed to build client");
 
-        let url = env::var("OPENAI_API_URL")
-            .unwrap_or_else(|_| "https://api.openai.com".to_string());
+        let url =
+            env::var("OPENAI_BASE_URL").unwrap_or_else(|_| "https://api.openai.com".to_string());
         let url = get_completions_url(&url);
 
         let mut headers = header::HeaderMap::new();
@@ -286,7 +290,10 @@ impl GptClient {
                         error_response.error.message
                     )
                 } else {
-                    panic!("Error while parsing error response object: {}\n{}", e, response_text);
+                    panic!(
+                        "Error while parsing error response object: {}\n{}",
+                        e, response_text
+                    );
                 }
             }
         };
@@ -311,56 +318,80 @@ mod tests {
     fn test_search_prefix_detection() {
         let mut client = GptClient::new(false);
         client.add_message(Role::User, "/search what is the weather today?".to_string());
-        
+
         // Simulate the search detection logic
         let mut use_search = false;
         if let Some(last_message) = client.messages.last_mut() {
             let trimmed_content = last_message.content.trim();
             if last_message.role == "user" && trimmed_content.starts_with("/search") {
-                last_message.content = trimmed_content.strip_prefix("/search").unwrap().trim().to_string();
+                last_message.content = trimmed_content
+                    .strip_prefix("/search")
+                    .unwrap()
+                    .trim()
+                    .to_string();
                 use_search = true;
             }
         }
-        
+
         assert!(use_search);
-        assert_eq!(client.messages.last().unwrap().content, "what is the weather today?");
+        assert_eq!(
+            client.messages.last().unwrap().content,
+            "what is the weather today?"
+        );
     }
 
     #[test]
     fn test_no_search_prefix() {
         let mut client = GptClient::new(false);
         client.add_message(Role::User, "what is the weather today?".to_string());
-        
+
         // Simulate the search detection logic
         let mut use_search = false;
         if let Some(last_message) = client.messages.last_mut() {
             let trimmed_content = last_message.content.trim();
             if last_message.role == "user" && trimmed_content.starts_with("/search") {
-                last_message.content = trimmed_content.strip_prefix("/search").unwrap().trim().to_string();
+                last_message.content = trimmed_content
+                    .strip_prefix("/search")
+                    .unwrap()
+                    .trim()
+                    .to_string();
                 use_search = true;
             }
         }
-        
+
         assert!(!use_search);
-        assert_eq!(client.messages.last().unwrap().content, "what is the weather today?");
+        assert_eq!(
+            client.messages.last().unwrap().content,
+            "what is the weather today?"
+        );
     }
 
     #[test]
     fn test_search_prefix_with_whitespace() {
         let mut client = GptClient::new(false);
-        client.add_message(Role::User, "   /search   what is the weather today?   ".to_string());
-        
+        client.add_message(
+            Role::User,
+            "   /search   what is the weather today?   ".to_string(),
+        );
+
         // Simulate the search detection logic
         let mut use_search = false;
         if let Some(last_message) = client.messages.last_mut() {
             let trimmed_content = last_message.content.trim();
             if last_message.role == "user" && trimmed_content.starts_with("/search") {
-                last_message.content = trimmed_content.strip_prefix("/search").unwrap().trim().to_string();
+                last_message.content = trimmed_content
+                    .strip_prefix("/search")
+                    .unwrap()
+                    .trim()
+                    .to_string();
                 use_search = true;
             }
         }
-        
+
         assert!(use_search);
-        assert_eq!(client.messages.last().unwrap().content, "what is the weather today?");
+        assert_eq!(
+            client.messages.last().unwrap().content,
+            "what is the weather today?"
+        );
     }
 }

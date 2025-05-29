@@ -64,11 +64,11 @@ export OPENAI_API_KEY=your_key_here
 
 ## (Optional) Use a Custom API Endpoint
 
-You can specify a custom API endpoint (for example, to use a local LLM server or an alternative provider) by setting the `OPENAI_API_URL` environment variable.
-If not set, the default is `https://api.openai.com/v1/chat/completions`.
+You can specify a custom API endpoint (for example, to use a local LLM server or an alternative provider) by setting the `OPENAI_BASE_URL` environment variable.
+If not set, the default is `https://api.openai.com`.
 
 ```sh
-export OPENAI_API_URL=http://localhost:11434/v1
+export OPENAI_BASE_URL=http://localhost:11434/v1
 ```
 
 You can now pipe data to `cgip`. Remember to use `2>&1` to convert `stderr` to
