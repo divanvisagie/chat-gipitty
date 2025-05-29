@@ -9,7 +9,20 @@ use serde_json::Result;
 use crate::config_manager::ConfigManager;
 
 fn get_completions_url(base_url: &str) -> String {
-    format!("{}/v1/chat/completions", base_url)
+    let base = base_url.trim_end_matches('/');
+    
+    // If the URL already contains "/chat/completions", use it as-is
+    if base.contains("/chat/completions") {
+        return base.to_string();
+    }
+    
+    // If the URL ends with "/v1" or contains a version pattern, just add "/chat/completions"
+    if base.ends_with("/v1") || base.contains("/v1beta") || base.contains("/v2") {
+        format!("{}/chat/completions", base)
+    } else {
+        // Default OpenAI pattern: add "/v1/chat/completions"
+        format!("{}/v1/chat/completions", base)
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -486,5 +499,47 @@ mod tests {
 
         assert!(use_search);
         assert_eq!(model, "anthropic-gpt-style"); // Should keep the original model since it doesn't START with "gpt"
+    }
+
+    #[test]
+    fn test_get_completions_url_without_v1() {
+        let url = get_completions_url("https://api.openai.com");
+        assert_eq!(url, "https://api.openai.com/v1/chat/completions");
+    }
+
+    #[test]
+    fn test_get_completions_url_with_v1() {
+        let url = get_completions_url("http://localhost:11434/v1");
+        assert_eq!(url, "http://localhost:11434/v1/chat/completions");
+    }
+
+    #[test]
+    fn test_get_completions_url_with_trailing_slash() {
+        let url = get_completions_url("https://api.openai.com/");
+        assert_eq!(url, "https://api.openai.com/v1/chat/completions");
+    }
+
+    #[test]
+    fn test_get_completions_url_with_v1_and_trailing_slash() {
+        let url = get_completions_url("http://localhost:11434/v1/");
+        assert_eq!(url, "http://localhost:11434/v1/chat/completions");
+    }
+
+    #[test]
+    fn test_get_completions_url_gemini_style() {
+        let url = get_completions_url("https://generativelanguage.googleapis.com/v1beta");
+        assert_eq!(url, "https://generativelanguage.googleapis.com/v1beta/chat/completions");
+    }
+
+    #[test]
+    fn test_get_completions_url_with_existing_endpoint() {
+        let url = get_completions_url("https://api.custom.com/v1/chat/completions");
+        assert_eq!(url, "https://api.custom.com/v1/chat/completions");
+    }
+
+    #[test]
+    fn test_get_completions_url_with_v2() {
+        let url = get_completions_url("https://api.example.com/v2");
+        assert_eq!(url, "https://api.example.com/v2/chat/completions");
     }
 }

@@ -1,9 +1,16 @@
 # Chat GipiTTY
 [![crates.io](https://img.shields.io/crates/v/cgip.svg)](https://crates.io/crates/cgip)
 
-Chat Gipitty (Chat Get Information, Print Information TTY) is a command line client for ChatGPT. It allows you to chat with
-your chosen model of ChatGPT in a terminal and even pipe output into it. The
-default model is GPT-4.
+Chat Gipitty (Chat Get Information, Print Information TTY) is a command line client designed for OpenAI-compatible APIs. It allows you to chat with
+language models in a terminal and even pipe output into it. While optimized for OpenAI's ChatGPT (with GPT-4 as the default model), 
+it works seamlessly with any OpenAI Chat Completions API-compatible provider, including:
+
+- **OpenAI** (ChatGPT, GPT-4, GPT-3.5, etc.)
+- **Local models** via [Ollama](https://ollama.com)
+- **Google Gemini** (via OpenAI-compatible endpoints)
+- **Mistral AI** (via OpenAI-compatible endpoints)
+- **Anthropic Claude** (via OpenAI-compatible endpoints)
+- **Any other provider** implementing the OpenAI Chat Completions API standard
 
 ![logo](./docs/logo-256.png)
 
@@ -88,12 +95,33 @@ export OPENAI_API_KEY=your_key_here
 
 ## (Optional) Use a Custom API Endpoint
 
-You can specify a custom API endpoint (for example, to use a local LLM server or an alternative provider) by setting the `OPENAI_BASE_URL` environment variable.
-If not set, the default is `https://api.openai.com`.
+Chat Gipitty is designed to work with any OpenAI Chat Completions API-compatible provider. You can specify a custom API endpoint by setting the `OPENAI_BASE_URL` environment variable. If not set, the default is `https://api.openai.com`.
+
+### Examples for Different Providers
 
 ```sh
+# For local Ollama instance
 export OPENAI_BASE_URL=http://localhost:11434/v1
+
+# For Google Gemini (via OpenAI-compatible proxy)
+export OPENAI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+
+# For Mistral AI (via OpenAI-compatible endpoint)
+export OPENAI_BASE_URL=https://api.mistral.ai/v1
+
+# For other OpenAI-compatible services
+export OPENAI_BASE_URL=https://your-provider.com/v1
+
+# If your provider uses a different endpoint pattern, you can specify the full URL
+export OPENAI_BASE_URL=https://custom-api.com/v2/chat/completions
 ```
+
+**URL Construction**: Chat Gipitty intelligently constructs the API endpoint:
+- If your base URL already contains `/chat/completions`, it uses it as-is
+- If your base URL ends with `/v1` (or similar version pattern), it appends `/chat/completions`
+- Otherwise, it appends `/v1/chat/completions` (standard OpenAI pattern)
+
+As long as your provider implements the OpenAI Chat Completions API standard, Chat Gipitty will work with it seamlessly.
 
 You can now pipe data to `cgip`. Remember to use `2>&1` to convert `stderr` to
 `stdout` if you are debugging, as it can only read `stdin`.
