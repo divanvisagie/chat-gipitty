@@ -88,6 +88,48 @@ The image subcommand automatically ensures you're using a vision-capable model a
 
 For detailed documentation including examples, configuration options, and troubleshooting, see [docs/IMAGE_SUBCOMMAND.md](docs/IMAGE_SUBCOMMAND.md).
 
+# Text-to-Speech Feature
+
+Chat Gipitty supports text-to-speech conversion using OpenAI's TTS models. You can convert text to high-quality audio with various voice options and customization settings using the `tts` subcommand.
+
+## Basic TTS Usage
+
+```sh
+# Convert text to speech with default settings
+cgip tts "Hello, this is a test of text-to-speech functionality"
+
+# Use a different voice and output file
+cgip tts --voice nova --output welcome.mp3 "Welcome to our application!"
+
+# Read text from stdin
+echo "This text comes from stdin" | cgip tts --voice echo --output stdin_speech.mp3
+
+# Combine stdin and argument text
+hostname | cgip tts "and that's all she wrote" --output combined.mp3
+
+# Use high-definition model with custom speed
+cgip tts --model tts-1-hd --speed 0.8 --voice shimmer "This is spoken slowly and clearly"
+```
+
+## Available Options
+
+- **Models**: `tts-1` (standard), `tts-1-hd` (high definition)
+- **Voices**: `alloy`, `echo`, `fable`, `onyx`, `nova`, `shimmer`
+- **Formats**: MP3, OPUS, AAC, FLAC
+- **Speed**: 0.25 to 4.0 (1.0 is normal speed)
+- **Instructions**: Custom tone and emotion directions
+
+## Supported Audio Formats
+
+- MP3 (.mp3) - Most compatible, good compression
+- OPUS (.opus) - Excellent compression, modern codec  
+- AAC (.aac) - Good quality and compression, widely supported
+- FLAC (.flac) - Lossless compression, larger file size
+
+The TTS subcommand reads text from command arguments, stdin, or both. When both are provided, it combines the stdin text with the argument text (stdin first, then argument), making it easy to pipe content from other commands and add additional text.
+
+For detailed documentation including voice characteristics, examples, and advanced usage, see [docs/TTS_SUBCOMMAND.md](docs/TTS_SUBCOMMAND.md).
+
 # Installation
 
 chat-gipitty is designed to be run on POSIX compliant systems, you have mutliple options for installing released versions depending on your system. All systems should be able to install from source or from cargo, but a homebrew tap is also available as well as a debian package attacked to the github releases.
