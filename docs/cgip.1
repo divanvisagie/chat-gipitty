@@ -18,6 +18,9 @@ Example:
 export OPENAI_BASE_URL=http://localhost:11434/v1
 .RE
 
+.SS Web Search
+cgip supports web search functionality through the \fB/search\fR command prefix. When you start your message with \fB/search\fR, the application will enable web search capabilities to provide up-to-date information from the internet. For GPT models, it automatically switches to \fBgpt-4o-search-preview\fR for optimal search results.
+
 .SH COMMANDS
 .TP
 \fBview\fR
@@ -34,6 +37,9 @@ export CGIP_SESSION_NAME=$(uuid) # for each new terminal session to be unique
 export CGIP_SESSION_NAME=$(date -I) # for a session that will be the same for the entire day
 .P
 .RE
+.TP
+\fBimage\fR
+Analyze images using vision-capable models. Requires the \fB--file\fR option to specify the image path. Supports JPEG, PNG, GIF, and WebP formats. Automatically uses vision-capable models like gpt-4o.
 .SH ARGUMENTS
 .TP
 \fB[QUERY]\fR
@@ -64,6 +70,9 @@ Show context in a human-readable table.
 \fB\-n\fR, \fB\-\-no\-session\fR
 Don't use messages from the session in this request.
 .TP
+\fB\-j\fR, \fB\-\-jarjar\fR
+Speak like Jar Jar Binks.
+.TP
 \fB\-h\fR, \fB\-\-help\fR
 Print help (see more with '--help').
 .TP
@@ -87,6 +96,21 @@ To use a custom API endpoint (e.g., with Ollama or a local LLM):
 .RS
 export OPENAI_BASE_URL=http://localhost:11434/v1
 cgip "Summarize this text"
+.RE
+To analyze an image:
+.P
+.RS
+\fBcgip image\fR --file photo.jpg "What do you see in this image?"
+.RE
+To extract text from a screenshot:
+.P
+.RS
+\fBcgip image\fR --file screenshot.png "Extract all text from this image"
+.RE
+To search for current information:
+.P
+.RS
+\fBcgip\fR "/search What are the latest developments in AI?"
 .RE
 .SH AUTHOR
 Written by Divan Visagie and Anna L. Smith.
