@@ -25,7 +25,7 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         let tty_context = read_from_tty_context();
         for msg in tty_context {
             let role = Role::from_str(msg.role.as_str()).expect("Could not convert role");
-            client.add_message(role, msg.content);
+            client.add_message(role, msg.content.to_string());
         }
     }
 
@@ -36,14 +36,15 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
             let messages: Vec<Message> = serde_yaml::from_str(&stdin_text).unwrap();
             for msg in messages {
                 let role = Role::from_str(msg.role.as_str()).expect("could not convert role");
-                client.add_message(role, msg.clone().content);
+                let content_text = msg.content.to_string();
+                client.add_message(role, content_text);
                 messages_to_save.push(msg);
             }
         } else {
             client.add_message(chatgpt::Role::User, stdin_text.clone());
             messages_to_save.push(Message {
                 role: Role::User.to_string().to_lowercase(),
-                content: stdin_text,
+                content: crate::chatgpt::MessageContent::Text(stdin_text),
             });
         }
     }
@@ -54,12 +55,17 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         return;
     }
 
+    if let Some(SubCommands::Image(image_sc)) = &args.subcmd {
+        sub::image::run(image_sc, client);
+        return;
+    }
+
     if let Some(query) = args.query.clone() {
         client.add_message(chatgpt::Role::User, query.clone());
         // save message to context
         let message = Message {
             role: Role::User.to_string().to_lowercase(),
-            content: query.clone(),
+            content: crate::chatgpt::MessageContent::Text(query.clone()),
         };
         messages_to_save.push(message);
     }
@@ -70,7 +76,7 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         // save message to context
         let message = Message {
             role: Role::User.to_string().to_lowercase(),
-            content: question.clone(),
+            content: crate::chatgpt::MessageContent::Text(question.clone()),
         };
         messages_to_save.push(message);
     }

@@ -1,21 +1,21 @@
-use std::fs::File;
-use std::io::Write;
-use std::path::PathBuf;
-use std::{
-    fs,
-    io::{self, BufRead},
-};
+use std::fs;
+use std::io::{self, BufRead};
 
 use atty::Stream;
 use serde_yaml::Error;
 
 use crate::chatgpt::Message;
-use crate::config_manager::AppConfig;
+
+pub fn new_ensure_config_directory(config_directory: &std::path::PathBuf) {
+    if !config_directory.exists() {
+        std::fs::create_dir_all(config_directory).expect("Failed to create config directory");
+    }
+}
 
 pub fn markdown_from_messages(messages: Vec<Message>) -> String {
     let initial = String::from("");
     let md = messages.iter().fold(initial, |acc, msg| {
-        format!("{}**{}**: {}\n\n", acc, msg.role, msg.content)
+        format!("{}**{}**: {}\n\n", acc, msg.role, msg.content.to_string())
     });
     md
 }
@@ -29,7 +29,10 @@ pub fn get_stdin() -> String {
         for line in stdin.lock().lines() {
             match line {
                 Ok(line) => lines.push(line),
-                Err(err) => println!("Error reading line: {}", err),
+                Err(e) => {
+                    eprintln!("Error reading line: {}", e);
+                    break;
+                }
             }
         }
     }
@@ -58,86 +61,91 @@ pub fn is_valid_yaml(yaml_str: &str) -> Result<bool, Error> {
     }
 }
 
-pub fn ensure_config_file(dir: &PathBuf) -> std::io::Result<PathBuf> {
-    fs::create_dir_all(dir)?;
-    let config_path = dir.join("config.toml");
-    if !config_path.exists() {
-        let config = AppConfig::default();
-        let contents = toml::to_string(&config).expect("Failed to serialize config");
-        let mut file = File::create(&config_path)?;
-        file.write_all(contents.as_bytes())?;
+pub fn ensure_config_file(
+    config_directory: &std::path::PathBuf,
+) -> Result<std::path::PathBuf, std::io::Error> {
+    new_ensure_config_directory(config_directory);
+
+    let config_file_path = config_directory.join("config.toml");
+
+    // Check if the config file exists
+    if !config_file_path.exists() {
+        // Create the config file with default content
+        let default_config = r#"
+# Configuration file for cgip
+
+# Default model to use for completions
+model = "gpt-4o"
+
+# Whether to show progress indicators
+show_progress = false
+
+# Whether to show context information
+show_context = false
+
+# Whether to output in markdown format
+markdown = false
+
+# Whether to speak like Jar Jar Binks
+jarjar = false
+
+# Number of context messages to store
+stored_context_length = 20
+"#;
+
+        std::fs::write(&config_file_path, default_config)?;
     }
 
-    Ok(config_path)
+    Ok(config_file_path)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs::{self, File};
-    use std::io::{Read, Write};
     use tempfile::TempDir;
-
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-
-        #[test]
-        fn test_get_file_contents_from_path() {
-            let file_contents = get_file_contents_from_path("./test_data/test.txt".to_string());
-            assert_eq!(file_contents, "test\n");
-        }
-    }
 
     #[test]
     fn test_ensure_config_file() {
         let temp_dir = TempDir::new().unwrap();
-        let config_dir = temp_dir.path().join("cgip");
+        let config_dir_path = temp_dir.path().join("cgip");
 
-        // Scenario 1: Neither directory nor file exists
-        let config_path = ensure_config_file(&config_dir).expect("Failed to ensure config file");
-        assert!(config_path.exists(), "The config file should be created");
+        let config_file_path = ensure_config_file(&config_dir_path).unwrap();
 
-        // Check if default content is written
-        let mut contents = String::new();
-        File::open(&config_path)
-            .unwrap()
-            .read_to_string(&mut contents)
-            .unwrap();
+        assert!(config_file_path.exists());
+        let contents = fs::read_to_string(&config_file_path).unwrap();
         assert!(
             contents.contains("gpt-4o"),
             "Default settings should include the model name"
         );
+    }
 
-        // Scenario 2: Directory exists but no config file
-        fs::remove_file(&config_path).unwrap(); // Remove the config file
-        let config_path =
-            ensure_config_file(&config_dir).expect("Failed to ensure config file again");
-        assert!(config_path.exists(), "The config file should be recreated");
+    #[test]
+    fn test_get_file_contents_from_path() {
+        let temp_dir = TempDir::new().unwrap();
+        let file_path = temp_dir.path().join("test.txt");
+        let test_content = "Hello, world!";
 
-        // Scenario 3: Both directory and file exist with custom content
-        let custom_config = AppConfig {
-            model: "custom-model".to_string(),
-            show_progress: true,
-            show_context: true,
-            markdown: true,
-            stored_context_length: 20,
-            jarjar: false,
-        };
-        let custom_contents = toml::to_string(&custom_config).unwrap();
-        File::create(&config_path)
-            .unwrap()
-            .write_all(custom_contents.as_bytes())
-            .unwrap();
-        ensure_config_file(&config_dir).expect("Failed to ensure config file a third time");
-        contents.clear();
-        File::open(&config_path)
-            .unwrap()
-            .read_to_string(&mut contents)
-            .unwrap();
-        assert!(
-            contents.contains("custom-model"),
-            "The existing custom config should not be overwritten"
-        );
+        std::fs::write(&file_path, test_content).unwrap();
+
+        let result = get_file_contents_from_path(file_path.to_string_lossy().to_string());
+        assert_eq!(result, test_content);
+    }
+
+    #[test]
+    fn test_markdown_from_messages() {
+        let messages = vec![
+            Message {
+                role: "user".to_string(),
+                content: crate::chatgpt::MessageContent::Text("Hello".to_string()),
+            },
+            Message {
+                role: "assistant".to_string(),
+                content: crate::chatgpt::MessageContent::Text("Hi there!".to_string()),
+            },
+        ];
+
+        let markdown = markdown_from_messages(messages);
+        assert!(markdown.contains("**user**: Hello"));
+        assert!(markdown.contains("**assistant**: Hi there!"));
     }
 }

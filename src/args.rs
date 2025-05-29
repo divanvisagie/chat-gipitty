@@ -81,6 +81,8 @@ pub enum SubCommands {
     /// or
     /// export CGIP_SESSION_NAME=$(date -I) # for a session that will be the same for the entire day
     Session(SessionSubCommand),
+    /// Analyze an image using vision models. Use --file to specify the image path.
+    Image(ImageSubCommand),
 }
 
 
@@ -114,4 +116,20 @@ pub struct ConfigSubCommand {
     /// `cgip config --get model`
     #[arg(short, long)]
     pub get: Option<String>,
+}
+
+#[derive(Parser, Debug)]
+#[command(author, version, about = "Analyze images using vision models", long_about = None)]
+pub struct ImageSubCommand {
+    /// Path to the image file to analyze
+    #[arg(short, long, required = true)]
+    pub file: String,
+
+    /// Additional prompt text to include with the image analysis
+    #[arg(index = 1)]
+    pub prompt: Option<String>,
+
+    /// Maximum number of tokens in the response
+    #[arg(short, long, default_value = "300")]
+    pub max_tokens: u32,
 }
