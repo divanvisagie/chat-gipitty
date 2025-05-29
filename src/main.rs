@@ -15,9 +15,17 @@ mod sub;
 mod utils;
 
 fn select_and_execute(args: Args, client: &mut GptClient) {
-
     if let Some(SubCommands::Config(config_sc)) = &args.subcmd {
         sub::config::run(client, config_sc);
+        return;
+    }
+
+    // Handle TTS subcommand before consuming stdin
+    if let Some(SubCommands::Tts(tts_sc)) = &args.subcmd {
+        if let Err(e) = sub::tts::run(tts_sc) {
+            eprintln!("TTS Error: {}", e);
+            std::process::exit(1);
+        }
         return;
     }
     
@@ -57,14 +65,6 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
 
     if let Some(SubCommands::Image(image_sc)) = &args.subcmd {
         sub::image::run(image_sc, client);
-        return;
-    }
-
-    if let Some(SubCommands::Tts(tts_sc)) = &args.subcmd {
-        if let Err(e) = sub::tts::run(tts_sc) {
-            eprintln!("TTS Error: {}", e);
-            std::process::exit(1);
-        }
         return;
     }
 

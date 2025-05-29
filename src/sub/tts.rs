@@ -1,22 +1,22 @@
-use std::fs::File;
-use std::io::Write;
 use reqwest::blocking::Client;
 use serde_json::json;
+use std::fs::File;
+use std::io::Write;
 
 use crate::args::TtsSubCommand;
 use crate::utils::get_stdin;
 
 pub fn run(args: &TtsSubCommand) -> Result<(), Box<dyn std::error::Error>> {
     // Get text input from args or stdin
-    let text = if let Some(ref text) = args.text {
-        text.clone()
-    } else {
-        let stdin_text = get_stdin();
-        if stdin_text.is_empty() {
+    let stdin_text = get_stdin();
+    let text = match (stdin_text.is_empty(), &args.text) {
+        (true, None) => {
             eprintln!("Error: No text provided. Please provide text as an argument or via stdin.");
             std::process::exit(1);
         }
-        stdin_text
+        (true, Some(arg_text)) => arg_text.clone(),
+        (false, None) => stdin_text,
+        (false, Some(arg_text)) => format!("{} {}", stdin_text, arg_text),
     };
 
     // Validate speed parameter
@@ -52,11 +52,11 @@ pub fn run(args: &TtsSubCommand) -> Result<(), Box<dyn std::error::Error>> {
 
     // Create HTTP client
     let client = Client::new();
-    
+
     // Get base URL and construct endpoint
-    let base_url = std::env::var("OPENAI_BASE_URL")
-        .unwrap_or_else(|_| "https://api.openai.com".to_string());
-    
+    let base_url =
+        std::env::var("OPENAI_BASE_URL").unwrap_or_else(|_| "https://api.openai.com".to_string());
+
     let url = if base_url.contains("/audio/speech") {
         base_url
     } else if base_url.ends_with("/v1") {
