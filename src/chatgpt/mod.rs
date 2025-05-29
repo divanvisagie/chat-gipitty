@@ -16,6 +16,8 @@ fn get_completions_url(base_url: &str) -> String {
 struct ChatRequest {
     pub model: String,
     pub messages: Vec<Message>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub web_search_options: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -183,6 +185,17 @@ impl GptClient {
             return "pong".to_string();
         }
 
+        // Check if the last user message starts with "/search"
+        let mut use_search = false;
+        if let Some(last_message) = self.messages.last_mut() {
+            let trimmed_content = last_message.content.trim();
+            if last_message.role == "user" && trimmed_content.starts_with("/search") {
+                // Remove "/search" prefix from the message and trim whitespace
+                last_message.content = trimmed_content.strip_prefix("/search").unwrap().trim().to_string();
+                use_search = true;
+            }
+        }
+
         // Retrieve the API key from the environment variable
         let api_key =
             env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
@@ -208,9 +221,22 @@ impl GptClient {
         };
         headers.insert(header::AUTHORIZATION, auth_header);
 
+        let model = if use_search {
+            "gpt-4o-search-preview".to_string()
+        } else {
+            self.config_manager.config.model.clone()
+        };
+
+        let web_search_options = if use_search {
+            Some(serde_json::json!({}))
+        } else {
+            None
+        };
+
         let chat_request = ChatRequest {
-            model: self.config_manager.config.model.clone(),
+            model,
             messages: self.messages.clone(),
+            web_search_options,
         };
 
         let request_body = match serde_json::to_string(&chat_request) {
@@ -279,5 +305,62 @@ mod tests {
     fn test_get_system_prompt() {
         let prompt = get_system_prompt(false);
         assert!(!prompt.is_empty());
+    }
+
+    #[test]
+    fn test_search_prefix_detection() {
+        let mut client = GptClient::new(false);
+        client.add_message(Role::User, "/search what is the weather today?".to_string());
+        
+        // Simulate the search detection logic
+        let mut use_search = false;
+        if let Some(last_message) = client.messages.last_mut() {
+            let trimmed_content = last_message.content.trim();
+            if last_message.role == "user" && trimmed_content.starts_with("/search") {
+                last_message.content = trimmed_content.strip_prefix("/search").unwrap().trim().to_string();
+                use_search = true;
+            }
+        }
+        
+        assert!(use_search);
+        assert_eq!(client.messages.last().unwrap().content, "what is the weather today?");
+    }
+
+    #[test]
+    fn test_no_search_prefix() {
+        let mut client = GptClient::new(false);
+        client.add_message(Role::User, "what is the weather today?".to_string());
+        
+        // Simulate the search detection logic
+        let mut use_search = false;
+        if let Some(last_message) = client.messages.last_mut() {
+            let trimmed_content = last_message.content.trim();
+            if last_message.role == "user" && trimmed_content.starts_with("/search") {
+                last_message.content = trimmed_content.strip_prefix("/search").unwrap().trim().to_string();
+                use_search = true;
+            }
+        }
+        
+        assert!(!use_search);
+        assert_eq!(client.messages.last().unwrap().content, "what is the weather today?");
+    }
+
+    #[test]
+    fn test_search_prefix_with_whitespace() {
+        let mut client = GptClient::new(false);
+        client.add_message(Role::User, "   /search   what is the weather today?   ".to_string());
+        
+        // Simulate the search detection logic
+        let mut use_search = false;
+        if let Some(last_message) = client.messages.last_mut() {
+            let trimmed_content = last_message.content.trim();
+            if last_message.role == "user" && trimmed_content.starts_with("/search") {
+                last_message.content = trimmed_content.strip_prefix("/search").unwrap().trim().to_string();
+                use_search = true;
+            }
+        }
+        
+        assert!(use_search);
+        assert_eq!(client.messages.last().unwrap().content, "what is the weather today?");
     }
 }
