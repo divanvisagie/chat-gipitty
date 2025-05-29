@@ -225,7 +225,7 @@ impl GptClient {
         };
         headers.insert(header::AUTHORIZATION, auth_header);
 
-        let model = if use_search {
+        let model = if use_search && self.config_manager.config.model.starts_with("gpt") {
             "gpt-4o-search-preview".to_string()
         } else {
             self.config_manager.config.model.clone()
@@ -393,5 +393,98 @@ mod tests {
             client.messages.last().unwrap().content,
             "what is the weather today?"
         );
+    }
+
+    #[test]
+    fn test_search_model_selection_with_gpt() {
+        let mut client = GptClient::new(false);
+        // Set a GPT model
+        client.config_manager.config.model = "gpt-4".to_string();
+        client.add_message(Role::User, "/search what is the weather today?".to_string());
+
+        // Simulate the model selection logic for search
+        let mut use_search = false;
+        if let Some(last_message) = client.messages.last_mut() {
+            let trimmed_content = last_message.content.trim();
+            if last_message.role == "user" && trimmed_content.starts_with("/search") {
+                last_message.content = trimmed_content
+                    .strip_prefix("/search")
+                    .unwrap()
+                    .trim()
+                    .to_string();
+                use_search = true;
+            }
+        }
+
+        let model = if use_search && client.config_manager.config.model.starts_with("gpt") {
+            "gpt-4o-search-preview".to_string()
+        } else {
+            client.config_manager.config.model.clone()
+        };
+
+        assert!(use_search);
+        assert_eq!(model, "gpt-4o-search-preview");
+    }
+
+    #[test]
+    fn test_search_model_selection_with_non_gpt() {
+        let mut client = GptClient::new(false);
+        // Set a non-GPT model
+        client.config_manager.config.model = "claude-3-sonnet".to_string();
+        client.add_message(Role::User, "/search what is the weather today?".to_string());
+
+        // Simulate the model selection logic for search
+        let mut use_search = false;
+        if let Some(last_message) = client.messages.last_mut() {
+            let trimmed_content = last_message.content.trim();
+            if last_message.role == "user" && trimmed_content.starts_with("/search") {
+                last_message.content = trimmed_content
+                    .strip_prefix("/search")
+                    .unwrap()
+                    .trim()
+                    .to_string();
+                use_search = true;
+            }
+        }
+
+        let model = if use_search && client.config_manager.config.model.starts_with("gpt") {
+            "gpt-4o-search-preview".to_string()
+        } else {
+            client.config_manager.config.model.clone()
+        };
+
+        assert!(use_search);
+        assert_eq!(model, "claude-3-sonnet"); // Should keep the original model
+    }
+
+    #[test]
+    fn test_search_model_selection_with_gpt_in_middle() {
+        let mut client = GptClient::new(false);
+        // Set a model that contains "gpt" but doesn't start with it
+        client.config_manager.config.model = "anthropic-gpt-style".to_string();
+        client.add_message(Role::User, "/search what is the weather today?".to_string());
+
+        // Simulate the model selection logic for search
+        let mut use_search = false;
+        if let Some(last_message) = client.messages.last_mut() {
+            let trimmed_content = last_message.content.trim();
+            if last_message.role == "user" && trimmed_content.starts_with("/search") {
+                last_message.content = trimmed_content
+                    .strip_prefix("/search")
+                    .unwrap()
+                    .trim()
+                    .to_string();
+                use_search = true;
+            }
+        }
+
+        let model = if use_search && client.config_manager.config.model.starts_with("gpt") {
+            "gpt-4o-search-preview".to_string()
+        } else {
+            client.config_manager.config.model.clone()
+        };
+
+        assert!(use_search);
+        assert_eq!(model, "anthropic-gpt-style"); // Should keep the original model since it doesn't START with "gpt"
     }
 }

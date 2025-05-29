@@ -26,8 +26,32 @@ The error you're encountering is a **lifetime error** in Rust, specifically an i
 Another usage is reading from a file. In this example, we read from a file and
 ask ChatGPT to convert that file to another programming language:
 ```sh cgip
-"convert this to python" -f src/main.rs
+cgip "convert this to python" -f src/main.rs
 ```
+
+# Web Search Feature
+
+Chat Gipitty supports web search functionality through the `/search` command prefix. When you start your message with `/search`, the application will enable web search capabilities to provide you with up-to-date information from the internet.
+
+## How Web Search Works
+
+- **For GPT models** (models starting with "gpt"): The application automatically switches to the `gpt-4o-search-preview` model and enables web search options for optimal search results.
+- **For non-GPT models** (like Claude, Llama, or other custom models): The application keeps your configured model and adds web search options to the request.
+
+## Usage Examples
+
+```sh
+# Search for current events
+cgip "/search What are the latest developments in AI?"
+
+# Search for technical information
+echo "/search What is the current stable version of Rust?" | cgip
+
+# Search combined with file input
+cgip "/search How can I optimize this code for performance?" -f my_script.py
+```
+
+The `/search` prefix will be automatically removed from your message before it's sent to the model, so you don't need to worry about it affecting the actual prompt.
 
 
 # Installation
