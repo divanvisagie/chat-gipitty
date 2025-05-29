@@ -60,6 +60,33 @@ cgip "/search How can I optimize this code for performance?" -f my_script.py
 
 The `/search` prefix will be automatically removed from your message before it's sent to the model, so you don't need to worry about it affecting the actual prompt.
 
+# Image Analysis Feature
+
+Chat Gipitty supports image analysis using OpenAI's vision-capable models (like GPT-4o). You can analyze images, extract text, describe visual content, and more using the `image` subcommand.
+
+## Basic Image Usage
+
+```sh
+# Analyze an image with a custom prompt
+cgip image --file photo.jpg "What do you see in this image?"
+
+# Extract text from an image
+cgip image --file screenshot.png "Extract all text from this image"
+
+# Analyze a document or receipt
+cgip image --file receipt.jpg "What items are on this receipt and what's the total?"
+```
+
+## Supported Image Formats
+
+- JPEG (.jpg, .jpeg)
+- PNG (.png) 
+- GIF (.gif)
+- WebP (.webp)
+
+The image subcommand automatically ensures you're using a vision-capable model and will switch to `gpt-4o` if your current model doesn't support vision.
+
+For detailed documentation including examples, configuration options, and troubleshooting, see [docs/IMAGE_SUBCOMMAND.md](docs/IMAGE_SUBCOMMAND.md).
 
 # Installation
 
