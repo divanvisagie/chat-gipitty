@@ -5,8 +5,6 @@ Chat Gipitty (Chat Get Information, Print Information TTY) is a command line cli
 your chosen model of ChatGPT in a terminal and even pipe output into it. The
 default model is GPT-4.
 
-<p align="center"><img src="./docs/logo.png" width="256" alt="Reservoir Logo"/></p>
-
 ![logo](./docs/logo-256.png)
 
 For example, say you wanted to debug your Rust program that doesn't compile and
