@@ -83,6 +83,8 @@ pub enum SubCommands {
     Session(SessionSubCommand),
     /// Analyze an image using vision models. Use --file to specify the image path.
     Image(ImageSubCommand),
+    /// Convert text to speech using OpenAI's TTS models.
+    Tts(TtsSubCommand),
 }
 
 
@@ -132,4 +134,36 @@ pub struct ImageSubCommand {
     /// Maximum number of tokens in the response
     #[arg(short, long, default_value = "300")]
     pub max_tokens: u32,
+}
+
+#[derive(Parser, Debug)]
+#[command(author, version, about = "Convert text to speech using OpenAI's TTS models", long_about = None)]
+pub struct TtsSubCommand {
+    /// Text to convert to speech. If not provided, reads from stdin
+    #[arg(index = 1)]
+    pub text: Option<String>,
+
+    /// TTS model to use
+    #[arg(short, long, default_value = "tts-1")]
+    pub model: String,
+
+    /// Voice to use for speech synthesis
+    #[arg(short, long, default_value = "alloy")]
+    pub voice: String,
+
+    /// Output file path for the audio
+    #[arg(short, long, default_value = "speech.mp3")]
+    pub output: String,
+
+    /// Instructions for the voice (how to speak)
+    #[arg(short, long)]
+    pub instructions: Option<String>,
+
+    /// Audio format (mp3, opus, aac, flac)
+    #[arg(short, long, default_value = "mp3")]
+    pub format: String,
+
+    /// Speed of speech (0.25 to 4.0)
+    #[arg(short, long, default_value = "1.0")]
+    pub speed: f32,
 }

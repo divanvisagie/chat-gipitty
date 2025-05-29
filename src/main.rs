@@ -60,6 +60,14 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         return;
     }
 
+    if let Some(SubCommands::Tts(tts_sc)) = &args.subcmd {
+        if let Err(e) = sub::tts::run(tts_sc) {
+            eprintln!("TTS Error: {}", e);
+            std::process::exit(1);
+        }
+        return;
+    }
+
     if let Some(query) = args.query.clone() {
         client.add_message(chatgpt::Role::User, query.clone());
         // save message to context
