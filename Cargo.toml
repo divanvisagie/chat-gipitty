@@ -11,15 +11,15 @@ description = "Terminal client for interacting with Chat GPT that allows you to 
 [dependencies]
 anyhow = "1.0.98"
 atty = "0.2.14"
-clap = { version = "4.5.37", features = ["derive"] }
-reqwest = { version = "0.12.15", features = ["blocking"] }
+clap = { version = "4.5.39", features = ["derive"] }
+reqwest = { version = "0.12.18", features = ["blocking"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 spinners = "4.1.1"
 serde_yaml = "0.9.34+deprecated"
 dirs = "6.0.0"
 config = "0.15.11"
-toml = "0.8.20"
-tempfile = "3.19.1"
-uuid = { version = "1.16.0", features = ["v4"] }
+toml = "0.8.22"
+tempfile = "3.20.0"
+uuid = { version = "1.17.0", features = ["v4"] }
 tiktoken-rs = "0.6.0"
