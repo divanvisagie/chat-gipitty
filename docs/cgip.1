@@ -11,6 +11,7 @@ Queries can be piped in through stdin and will be added to the context first. Th
 
 You can specify a custom API endpoint (for example, to use a local LLM server or an alternative provider) by setting the \fBOPENAI_BASE_URL\fR environment variable.  
 If not set, the default is \fIhttps://api.openai.com/v1\fR.
+cgip targets the official OpenAI API; other endpoints may lack full functionality.
 
 Example:
 .P
@@ -103,6 +104,7 @@ To use a custom API endpoint (e.g., with Ollama or a local LLM):
 export OPENAI_BASE_URL=http://localhost:11434/v1
 cgip "Summarize this text"
 .RE
+Note: cgip targets the official OpenAI API, and alternative endpoints might not support all features.
 To analyze an image:
 .P
 .RS
