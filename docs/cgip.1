@@ -43,6 +43,9 @@ Analyze images using vision-capable models. Requires the \fB--file\fR option to 
 .TP
 \fBtts\fR
 Convert text to speech using OpenAI's TTS models. Text can be provided as an argument, read from stdin, or both (stdin and argument text are combined). Supports various voices (alloy, echo, fable, onyx, nova, shimmer) and audio formats (mp3, opus, aac, flac). Speed can be adjusted from 0.25 to 4.0.
+.TP
+\fBembedding\fR
+Generate embeddings for text using OpenAI's embeddings endpoint. Provide text as an argument or via stdin. Use \fB--output\fR to write the vector to a file.
 .SH ARGUMENTS
 .TP
 \fB[QUERY]\fR
@@ -134,6 +137,16 @@ To combine stdin and argument text:
 .P
 .RS
 hostname | \fBcgip tts\fR "and that's all she wrote" --output combined.mp3
+.RE
+To generate embeddings for text:
+.P
+.RS
+\fBcgip embedding\fR "Hello world"
+.RE
+Save an embedding to a file:
+.P
+.RS
+echo "example" | \fBcgip embedding\fR --output vec.txt
 .RE
 .SH AUTHOR
 Written by Divan Visagie and Anna L. Smith.
