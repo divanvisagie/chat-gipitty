@@ -2,9 +2,9 @@ use clap::{command, Parser};
 
 #[derive(Parser, Debug)]
 #[command(
-    author, 
-    version, 
-    about, 
+    author,
+    version,
+    about,
     long_about = r###"
 cgip is a command-line tool that leverages OpenAI's models to address and 
 respond to user queries. It compiles context for these queries by prioritizing 
@@ -22,9 +22,9 @@ Usage examples:
 "###
 )]
 pub struct Args {
-    /// Optional. The primary query to sent to the model. 
+    /// Optional. The primary query to sent to the model.
     /// This is added to the context after stdin and file input.
-    #[arg(index=1)]
+    #[arg(index = 1)]
     pub query: Option<String>,
 
     /// Read query from a file. If query is present this is added to the prompt after query.
@@ -39,20 +39,20 @@ pub struct Args {
     /// Specify model to use. Defaults to `gpt-4`.
     #[arg(short = 'M', long)]
     pub model: Option<String>,
-    
-    /// List all the available models. 
+
+    /// List all the available models.
     #[arg(short, long)]
-    pub list_models:bool,
+    pub list_models: bool,
 
     /// Show progress indicator (might mess up stdout).
     #[arg(short = 'p', long)]
     pub show_progress: bool,
-    
+
     /// Output the full context used in the query, including chat context with
     /// all assistant and user messages.
-    #[arg(short = 'c',long)]
+    #[arg(short = 'c', long)]
     pub show_context: bool,
-    
+
     /// Show context in human readable table
     #[arg(short, long)]
     pub markdown: bool,
@@ -64,9 +64,9 @@ pub struct Args {
     /// Speak like Jar Jar Binks
     #[arg(short, long)]
     pub jarjar: bool,
-    
+
     #[command(subcommand)]
-    pub subcmd: Option<SubCommands>
+    pub subcmd: Option<SubCommands>,
 }
 
 #[derive(Parser, Debug)]
@@ -85,8 +85,9 @@ pub enum SubCommands {
     Image(ImageSubCommand),
     /// Convert text to speech using OpenAI's TTS models.
     Tts(TtsSubCommand),
+    /// Generate embeddings for text using OpenAI's API.
+    Embedding(EmbeddingSubCommand),
 }
-
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -97,7 +98,7 @@ pub struct SessionSubCommand {
 
     /// View the current session context
     #[arg(short, long)]
-    pub view: bool
+    pub view: bool,
 }
 
 #[derive(Parser, Debug)]
@@ -114,7 +115,7 @@ pub struct ConfigSubCommand {
     #[arg(short, long)]
     pub set: Option<String>,
 
-    /// Get your current configuration value. 
+    /// Get your current configuration value.
     /// `cgip config --get model`
     #[arg(short, long)]
     pub get: Option<String>,
@@ -166,4 +167,20 @@ pub struct TtsSubCommand {
     /// Speed of speech (0.25 to 4.0)
     #[arg(short, long, default_value = "1.0")]
     pub speed: f32,
+}
+
+#[derive(Parser, Debug)]
+#[command(author, version, about = "Generate embeddings for text", long_about = None)]
+pub struct EmbeddingSubCommand {
+    /// Text to generate embeddings for. If not provided, reads from stdin
+    #[arg(index = 1)]
+    pub text: Option<String>,
+
+    /// Embedding model to use
+    #[arg(short, long, default_value = "text-embedding-3-small")]
+    pub model: String,
+
+    /// Output file path. If not set, prints to stdout
+    #[arg(short, long)]
+    pub output: Option<String>,
 }

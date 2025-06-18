@@ -28,7 +28,15 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         }
         return;
     }
-    
+
+    if let Some(SubCommands::Embedding(embed_sc)) = &args.subcmd {
+        if let Err(e) = sub::embedding::run(embed_sc) {
+            eprintln!("Embedding Error: {}", e);
+            std::process::exit(1);
+        }
+        return;
+    }
+
     if !args.no_session {
         let tty_context = read_from_tty_context();
         for msg in tty_context {

@@ -130,6 +130,22 @@ The TTS subcommand reads text from command arguments, stdin, or both. When both 
 
 For detailed documentation including voice characteristics, examples, and advanced usage, see [docs/TTS_SUBCOMMAND.md](docs/TTS_SUBCOMMAND.md).
 
+# Embedding Generation
+
+You can generate embedding vectors for text using the `embedding` subcommand.
+Text may be provided as an argument or via stdin. The resulting vector is printed
+to stdout or saved to a file with `--output`.
+
+```sh
+# Basic usage
+cgip embedding "Hello world"
+
+# Read text from stdin and save to file
+echo "some text" | cgip embedding --output vec.txt
+```
+
+See [docs/EMBEDDING_SUBCOMMAND.md](docs/EMBEDDING_SUBCOMMAND.md) for more details.
+
 # Installation
 
 chat-gipitty is designed to be run on POSIX compliant systems, you have mutliple options for installing released versions depending on your system. All systems should be able to install from source or from cargo, but a homebrew tap is also available as well as a debian package attacked to the github releases.
