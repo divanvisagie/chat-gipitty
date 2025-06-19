@@ -153,7 +153,8 @@ See [docs/EMBEDDING_SUBCOMMAND.md](docs/EMBEDDING_SUBCOMMAND.md) for more detail
 The `agent` subcommand lets the model control a tiny shell agent. You provide a
 directory and an instruction, and the model issues `execute` tool calls to run
 commands in that directory. Command output is fed back into the model until it
-returns a final answer.
+returns a final answer. Once the session ends, the CLI prints a short summary of
+all commands that were executed.
 
 ```sh
 cgip agent . "list the directory contents"

@@ -22,7 +22,7 @@ When invoked, the agent sends your instruction and any provided file contents to
 {"type": "function", "function": {"name": "execute", "description": "Run a shell command", "parameters": {"type": "object", "properties": {"command": {"type": "string"}}, "required": ["command"]}}}
 ```
 
-The model can call this tool to run commands. Command output is printed to your terminal and also fed back to the model until it responds with a final answer.
+The model can call this tool to run commands. Command output is printed to your terminal and also fed back to the model until it responds with a final answer. When the agent finishes, it prints a short summary of the commands that were executed.
 
 ## Example
 
