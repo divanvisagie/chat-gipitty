@@ -166,25 +166,16 @@ documentation.
 
 # Installation
 
-chat-gipitty is designed to be run on POSIX compliant systems, you have mutliple options for installing released versions depending on your system. All systems should be able to install from source or from cargo, but a homebrew tap is also available as well as a debian package attacked to the github releases.
+chat-gipitty is designed to be run on POSIX compliant systems. **The recommended way to install Chat Gipitty is via Cargo.** This ensures you always get the latest version directly from crates.io, with minimal dependencies and maximum compatibility.
 
-### Install from crates.io with cargo
+### Recommended: Install from crates.io with cargo
 ```sh
 cargo install cgip
 ```
 
-### Install via homebrew
-If you don't have the tap, add it with:
-```sh
-brew tap divanvisagie/homebrew-tap
-```
+Other installation methods are available for convenience, but may not always provide the latest version:
 
-Install cgip with brew:
-```sh
-brew install cgip
-```
-
-### Manual Installation
+#### Manual Installation
 Download this repository and then install the `cgip` command using:
 ```sh
 sudo make install
