@@ -27,6 +27,11 @@ pub fn run(args: &AgentSubCommand, client: &mut GptClient) {
         std::process::exit(1);
     }
 
+    let system_message = "You can run shell commands using the `execute` tool.\
+ Use it whenever running a command will help you complete the user's instruction.\
+ Once you have the information you need, return a final answer.";
+    client.add_message(Role::System, system_message.to_string());
+
     if let Some(files) = &args.input {
         for file in files {
             let content = get_file_contents_from_path(file.to_string());
