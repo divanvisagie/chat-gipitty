@@ -37,6 +37,11 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         return;
     }
 
+    if let Some(SubCommands::Agent(agent_sc)) = &args.subcmd {
+        sub::agent::run(agent_sc, client);
+        return;
+    }
+
     if !args.no_session {
         let tty_context = read_from_tty_context();
         for msg in tty_context {

@@ -2,6 +2,7 @@ use std::env;
 use dirs::config_dir;
 use reqwest::header;
 use serde_yaml;
+use serde_json;
 
 use crate::config_manager::ConfigManager;
 use crate::chatgpt::message::{Message, MessageContent, ContentPart, ImageUrl};
@@ -248,5 +249,76 @@ impl GptClient {
     //complete method, generates response text in cli.rs within run
     pub fn complete(&mut self) -> String {
         self.complete_with_max_tokens(None)
+    }
+
+    pub fn complete_with_tools(&mut self, tools: serde_json::Value) -> serde_json::Value {
+        let last_content_text = match &self.messages.last().unwrap().content {
+            MessageContent::Text(text) => text.clone(),
+            MessageContent::Multi(parts) => parts
+                .iter()
+                .filter_map(|part| match part {
+                    ContentPart::Text { text } => Some(text.as_str()),
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+                .join(" "),
+        };
+
+        if last_content_text.to_lowercase().trim() == "ping" {
+            self.add_message(Role::Assistant, "pong".to_string());
+            return serde_json::json!({"choices": [{"message": {"content": "pong"}, "finish_reason": "stop"}]});
+        }
+
+        let api_key = env::var("OPENAI_API_KEY").expect("Missing OPENAI_API_KEY environment variable");
+
+        let client = reqwest::blocking::Client::builder()
+            .danger_accept_invalid_certs(true)
+            .build()
+            .expect("Failed to build client");
+
+        let url = env::var("OPENAI_BASE_URL").unwrap_or_else(|_| "https://api.openai.com".to_string());
+        let url = super::get_completions_url(&url);
+
+        let mut headers = header::HeaderMap::new();
+        headers.insert(header::CONTENT_TYPE, header::HeaderValue::from_static("application/json"));
+        let auth_header = header::HeaderValue::from_str(&format!("Bearer {}", api_key)).expect("auth header");
+        headers.insert(header::AUTHORIZATION, auth_header);
+
+        let model = self.config_manager.config.model.clone();
+
+        let chat_request = serde_json::json!({
+            "model": model,
+            "messages": self.messages,
+            "tools": tools,
+            "tool_choice": "auto"
+        });
+
+        let response = client
+            .post(url)
+            .headers(headers)
+            .json(&chat_request)
+            .timeout(std::time::Duration::from_secs(60))
+            .send();
+
+        let response = match response {
+            Ok(resp) => resp.text(),
+            Err(e) => {
+                if e.is_timeout() {
+                    eprintln!("The request timed out.");
+                }
+                return serde_json::json!({});
+            }
+        };
+
+        let response_text = response.expect("response text");
+        let value: serde_json::Value = serde_json::from_str(&response_text).expect("parse json");
+
+        if let Some(text) = value["choices"][0]["message"]["content"].as_str() {
+            if !text.is_empty() {
+                self.add_message(Role::Assistant, text.to_string());
+            }
+        }
+
+        value
     }
 }
