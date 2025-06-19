@@ -27,9 +27,16 @@ pub fn run(args: &AgentSubCommand, client: &mut GptClient) {
         std::process::exit(1);
     }
 
-    let system_message = "You can run shell commands using the `execute` tool.\
- Use it whenever running a command will help you complete the user's instruction.\
- Once you have the information you need, return a final answer.";
+    let system_message = "You are a shell agent with access to the `execute` tool for running commands.\
+ ALWAYS use the execute tool when you need real-time information, current data, or to perform actual tasks.\
+ Examples of when to use execute:\
+ - Weather data: use `curl wttr.in/location` or similar\
+ - Current time/date: use `date`\
+ - System information: use appropriate system commands\
+ - File operations: use `ls`, `cat`, `find`, etc.\
+ - Network data: use `curl`, `wget`, etc.\
+ Do not rely on your training data for current information - fetch it live using commands.\
+ Once you have gathered the necessary information through commands, provide a comprehensive final answer.";
     client.add_message(Role::System, system_message.to_string());
 
     if let Some(files) = &args.input {
@@ -46,7 +53,7 @@ pub fn run(args: &AgentSubCommand, client: &mut GptClient) {
             "type": "function",
             "function": {
                 "name": "execute",
-                "description": "Run a shell command and return stdout and stderr",
+                "description": "Run a shell command and return stdout and stderr. Use this for: getting weather (curl wttr.in/location), current time (date), file operations (ls, cat, find), network requests (curl, wget), system info (uname, df, ps), or any task requiring live data. Always prefer executing commands over using training data for current information.",
                 "parameters": {
                     "type": "object",
                     "properties": {
