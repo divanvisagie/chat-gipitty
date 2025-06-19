@@ -37,6 +37,11 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         return;
     }
 
+    if let Some(SubCommands::Agent(agent_sc)) = &args.subcmd {
+        sub::agent::run(agent_sc, client);
+        return;
+    }
+
     if !args.no_session {
         let tty_context = read_from_tty_context();
         for msg in tty_context {
@@ -60,6 +65,8 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
             client.add_message(chatgpt::Role::User, stdin_text.clone());
             messages_to_save.push(Message {
                 role: Role::User.to_string().to_lowercase(),
+                name: None,
+                tool_call_id: None,
                 content: crate::chatgpt::MessageContent::Text(stdin_text),
             });
         }
@@ -81,6 +88,8 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         // save message to context
         let message = Message {
             role: Role::User.to_string().to_lowercase(),
+            name: None,
+            tool_call_id: None,
             content: crate::chatgpt::MessageContent::Text(query.clone()),
         };
         messages_to_save.push(message);
@@ -92,6 +101,8 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         // save message to context
         let message = Message {
             role: Role::User.to_string().to_lowercase(),
+            name: None,
+            tool_call_id: None,
             content: crate::chatgpt::MessageContent::Text(question.clone()),
         };
         messages_to_save.push(message);

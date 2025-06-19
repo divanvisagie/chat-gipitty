@@ -87,6 +87,8 @@ pub enum SubCommands {
     Tts(TtsSubCommand),
     /// Generate embeddings for text using OpenAI's API.
     Embedding(EmbeddingSubCommand),
+    /// Execute agentic instructions using tool calls.
+    Agent(AgentSubCommand),
 }
 
 #[derive(Parser, Debug)]
@@ -183,4 +185,20 @@ pub struct EmbeddingSubCommand {
     /// Output file path. If not set, prints to stdout
     #[arg(short, long)]
     pub output: Option<String>,
+}
+
+#[derive(Parser, Debug)]
+#[command(author, version, about = "Run an agentic command executor", long_about = None)]
+pub struct AgentSubCommand {
+    /// Directory the agent is allowed to operate in
+    #[arg(index = 1)]
+    pub directory: String,
+
+    /// Instruction for the agent
+    #[arg(index = 2)]
+    pub instruction: String,
+
+    /// Comma separated list of files for extra context
+    #[arg(long, value_delimiter = ',')]
+    pub input: Option<Vec<String>>,
 }
