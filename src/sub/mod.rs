@@ -5,3 +5,4 @@ pub mod session;
 pub mod tts;
 pub mod view;
 pub mod agent;
+pub mod update;

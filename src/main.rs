@@ -20,6 +20,14 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         return;
     }
 
+    if let Some(SubCommands::Update(_)) = &args.subcmd {
+        if let Err(e) = sub::update::run() {
+            eprintln!("Update Error: {}", e);
+            std::process::exit(1);
+        }
+        return;
+    }
+
     // Handle TTS subcommand before consuming stdin
     if let Some(SubCommands::Tts(tts_sc)) = &args.subcmd {
         if let Err(e) = sub::tts::run(tts_sc) {

@@ -24,3 +24,4 @@ tempfile = "3.20.0"
 uuid = { version = "1.17.0", features = ["v4"] }
 tiktoken-rs = "0.6.0"
 base64 = "0.22.1"
+self_update = "0.42.0"
