@@ -273,3 +273,6 @@ On ubuntu, some additional packages are required to build the deb package.
 ```sh
 sudo apt-get install build-essential dh-make debhelper devscripts
 ```
+
+## Release Process
+See [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md) for details on preparing a new release.
