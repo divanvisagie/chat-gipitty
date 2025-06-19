@@ -1,5 +1,5 @@
-use std::process::Command;
 use std::env;
+use std::process::Command;
 
 use crate::args::AgentSubCommand;
 use crate::chatgpt::{GptClient, Message, MessageContent, Role};
@@ -11,7 +11,11 @@ fn run_shell_command(cmd: &str) -> String {
             let mut text = String::new();
             text.push_str(&String::from_utf8_lossy(&output.stdout));
             text.push_str(&String::from_utf8_lossy(&output.stderr));
-            if text.is_empty() {"[no output]\n".to_string()} else {text}
+            if text.is_empty() {
+                "[no output]\n".to_string()
+            } else {
+                text
+            }
         }
         Err(e) => format!("Command failed: {}", e),
     }
@@ -49,6 +53,8 @@ pub fn run(args: &AgentSubCommand, client: &mut GptClient) {
         }
     ]);
 
+    let mut executed: Vec<(String, String)> = Vec::new();
+
     loop {
         let resp = client.complete_with_tools(tools.clone());
         let choice = &resp["choices"][0];
@@ -57,9 +63,11 @@ pub fn run(args: &AgentSubCommand, client: &mut GptClient) {
             if let Some(calls) = choice["message"]["tool_calls"].as_array() {
                 for call in calls {
                     if let Some(args_str) = call["function"]["arguments"].as_str() {
-                        let parsed: serde_json::Value = serde_json::from_str(args_str).unwrap_or_default();
+                        let parsed: serde_json::Value =
+                            serde_json::from_str(args_str).unwrap_or_default();
                         let command = parsed["command"].as_str().unwrap_or("");
                         let output = run_shell_command(command);
+                        executed.push((command.to_string(), output.clone()));
                         if !output.trim().is_empty() {
                             println!("{}", output.trim());
                         }
@@ -76,6 +84,13 @@ pub fn run(args: &AgentSubCommand, client: &mut GptClient) {
         } else {
             if let Some(text) = choice["message"]["content"].as_str() {
                 println!("{}", text);
+            }
+            if !executed.is_empty() {
+                println!("\nCommand summary:");
+                for (cmd, out) in &executed {
+                    let first_line = out.lines().next().unwrap_or("");
+                    println!("$ {} -> {}", cmd, first_line);
+                }
             }
             break;
         }
