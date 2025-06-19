@@ -13,6 +13,7 @@ cgip agent /path/to/project "build the project"
 - `DIRECTORY`: Directory the agent is allowed to operate in.
 - `INSTRUCTION`: Natural language instruction describing the goal.
 - `--input <FILES>`: Comma separated list of files whose contents should be added to the context.
+- `--max-actions <N>`: Maximum number of commands the agent will execute before stopping (default: 10).
 
 ## How It Works
 

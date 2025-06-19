@@ -42,6 +42,7 @@ impl GptClient {
                 role: Role::System.to_string().to_lowercase(),
                 name: None,
                 tool_call_id: None,
+                tool_calls: None,
                 content: MessageContent::Text(prompt),
             }],
         }
@@ -61,6 +62,7 @@ impl GptClient {
                 role: Role::System.to_string().to_lowercase(),
                 name: None,
                 tool_call_id: None,
+                tool_calls: None,
                 content: MessageContent::Text(system_prompt.clone()),
             }],
         }
@@ -71,6 +73,7 @@ impl GptClient {
             role: role.to_string(),
             name: None,
             tool_call_id: None,
+            tool_calls: None,
             content: MessageContent::Text(text.trim().to_string()),
         });
         self
@@ -91,6 +94,7 @@ impl GptClient {
             role: role.to_string(),
             name: None,
             tool_call_id: None,
+            tool_calls: None,
             content: MessageContent::Multi(content_parts),
         });
         self
@@ -327,11 +331,18 @@ impl GptClient {
         let response_text = response.expect("response text");
         let value: serde_json::Value = serde_json::from_str(&response_text).expect("parse json");
 
-        if let Some(text) = value["choices"][0]["message"]["content"].as_str() {
-            if !text.is_empty() {
-                self.add_message(Role::Assistant, text.to_string());
-            }
-        }
+        let message = &value["choices"][0]["message"];
+        let role = message["role"].as_str().unwrap_or("assistant").to_string();
+        let content = message["content"].as_str().unwrap_or("").to_string();
+        let tool_calls = message.get("tool_calls").cloned();
+
+        self.messages.push(Message {
+            role,
+            name: None,
+            tool_call_id: None,
+            tool_calls,
+            content: MessageContent::Text(content),
+        });
 
         value
     }
