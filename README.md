@@ -183,6 +183,14 @@ Download this repository and then install the `cgip` command using:
 sudo make install
 ```
 
+#### Install from GitHub Releases
+You can fetch the latest pre-built binary using the install script:
+```sh
+curl -fsSL https://raw.githubusercontent.com/divanvisagie/chat-gipity/main/scripts/install.sh | sudo sh
+```
+Use `--update` to replace an existing installation.
+
+
 ## Set up API Key
 Next, set up your OpenAI key by exporting it as `OPENAI_API_KEY`:
 ```sh
