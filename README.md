@@ -168,6 +168,8 @@ documentation.
 
 chat-gipitty is designed to be run on POSIX compliant systems. **The recommended way to install Chat Gipitty is via Cargo.** This ensures you always get the latest version directly from crates.io, with minimal dependencies and maximum compatibility.
 
+If you do not already have Cargo (the Rust package manager) installed, please visit [rustup.rs](https://rustup.rs/) for instructions on installing Rust and Cargo.
+
 ### Recommended: Install from crates.io with cargo
 ```sh
 cargo install cgip
