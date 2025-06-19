@@ -32,3 +32,6 @@ cgip agent . "list the current directory"
 ```
 
 This will let the model issue an `execute` call with `ls` and return the result.
+When the model needs additional information to answer your instruction, it will
+automatically run commands using `execute` and use the output to craft the final
+response.
