@@ -54,11 +54,20 @@ pub fn run(args: &AgentSubCommand, client: &mut GptClient) {
     ]);
 
     let mut executed: Vec<(String, String)> = Vec::new();
+    let mut actions = 0usize;
+
+    let max_actions = args.max_actions;
 
     loop {
         let resp = client.complete_with_tools(tools.clone());
         let choice = &resp["choices"][0];
         let finish_reason = choice["finish_reason"].as_str().unwrap_or("");
+        if let Some(text) = choice["message"]["content"].as_str() {
+            if !text.trim().is_empty() {
+                println!("{}", text.trim());
+            }
+        }
+
         if finish_reason == "tool_calls" {
             if let Some(calls) = choice["message"]["tool_calls"].as_array() {
                 for call in calls {
@@ -76,15 +85,28 @@ pub fn run(args: &AgentSubCommand, client: &mut GptClient) {
                             role: "tool".to_string(),
                             name: None,
                             tool_call_id: Some(call_id.to_string()),
+                            tool_calls: None,
                             content: MessageContent::Text(output),
                         });
+                        actions += 1;
+                        if actions >= max_actions {
+                            println!("Reached maximum actions ({})", max_actions);
+                            break;
+                        }
                     }
                 }
             }
-        } else {
-            if let Some(text) = choice["message"]["content"].as_str() {
-                println!("{}", text);
+            if actions >= max_actions {
+                if !executed.is_empty() {
+                    println!("\nCommand summary:");
+                    for (cmd, out) in &executed {
+                        let first_line = out.lines().next().unwrap_or("");
+                        println!("$ {} -> {}", cmd, first_line);
+                    }
+                }
+                break;
             }
+        } else {
             if !executed.is_empty() {
                 println!("\nCommand summary:");
                 for (cmd, out) in &executed {

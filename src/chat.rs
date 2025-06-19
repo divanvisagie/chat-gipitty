@@ -65,6 +65,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
         role: Role::Assistant.to_string().to_lowercase(),
         name: None,
         tool_call_id: None,
+        tool_calls: None,
         content: crate::chatgpt::MessageContent::Text(response_text),
     };
     let messages_to_save = vec![message];

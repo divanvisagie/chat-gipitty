@@ -138,12 +138,14 @@ mod tests {
                 role: "user".to_string(),
                 name: None,
                 tool_call_id: None,
+                tool_calls: None,
                 content: crate::chatgpt::MessageContent::Text("Hello".to_string()),
             },
             Message {
                 role: "assistant".to_string(),
                 name: None,
                 tool_call_id: None,
+                tool_calls: None,
                 content: crate::chatgpt::MessageContent::Text("Hi there!".to_string()),
             },
         ];

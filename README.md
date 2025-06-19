@@ -154,7 +154,8 @@ The `agent` subcommand lets the model control a tiny shell agent. You provide a
 directory and an instruction, and the model issues `execute` tool calls to run
 commands in that directory. Command output is fed back into the model until it
 returns a final answer. Once the session ends, the CLI prints a short summary of
-all commands that were executed.
+all commands that were executed. Use `--max-actions` to limit how many commands
+the agent may run (default is 10).
 
 ```sh
 cgip agent . "list the directory contents"

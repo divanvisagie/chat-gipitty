@@ -201,4 +201,8 @@ pub struct AgentSubCommand {
     /// Comma separated list of files for extra context
     #[arg(long, value_delimiter = ',')]
     pub input: Option<Vec<String>>,
+
+    /// Maximum number of commands the agent will execute
+    #[arg(long, default_value_t = 10)]
+    pub max_actions: usize,
 }

@@ -67,6 +67,7 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
                 role: Role::User.to_string().to_lowercase(),
                 name: None,
                 tool_call_id: None,
+                tool_calls: None,
                 content: crate::chatgpt::MessageContent::Text(stdin_text),
             });
         }
@@ -90,6 +91,7 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
             role: Role::User.to_string().to_lowercase(),
             name: None,
             tool_call_id: None,
+            tool_calls: None,
             content: crate::chatgpt::MessageContent::Text(query.clone()),
         };
         messages_to_save.push(message);
@@ -103,6 +105,7 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
             role: Role::User.to_string().to_lowercase(),
             name: None,
             tool_call_id: None,
+            tool_calls: None,
             content: crate::chatgpt::MessageContent::Text(question.clone()),
         };
         messages_to_save.push(message);
