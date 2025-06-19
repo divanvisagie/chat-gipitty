@@ -148,6 +148,20 @@ echo "some text" | cgip embedding --output vec.txt
 
 See [docs/EMBEDDING_SUBCOMMAND.md](docs/EMBEDDING_SUBCOMMAND.md) for more details.
 
+# Agentic Command Execution
+
+The `agent` subcommand lets the model control a tiny shell agent. You provide a
+directory and an instruction, and the model issues `execute` tool calls to run
+commands in that directory. Command output is fed back into the model until it
+returns a final answer.
+
+```sh
+cgip agent . "list the directory contents"
+```
+
+See [docs/AGENT_SUBCOMMAND.md](docs/AGENT_SUBCOMMAND.md) for the full
+documentation.
+
 # Installation
 
 chat-gipitty is designed to be run on POSIX compliant systems, you have mutliple options for installing released versions depending on your system. All systems should be able to install from source or from cargo, but a homebrew tap is also available as well as a debian package attacked to the github releases.

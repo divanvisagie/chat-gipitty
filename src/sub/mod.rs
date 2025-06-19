@@ -4,3 +4,4 @@ pub mod image;
 pub mod session;
 pub mod tts;
 pub mod view;
+pub mod agent;

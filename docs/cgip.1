@@ -47,6 +47,9 @@ Convert text to speech using OpenAI's TTS models. Text can be provided as an arg
 .TP
 \fBembedding\fR
 Generate embeddings for text using OpenAI's embeddings endpoint. Provide text as an argument or via stdin. Use \fB--output\fR to write the vector to a file.
+.TP
+\fBagent\fR
+Run an agentic session where the model issues \fBexecute\fR tool calls to run shell commands in the specified directory. Use \fB--input\fR to provide additional context files.
 .SH ARGUMENTS
 .TP
 \fB[QUERY]\fR
@@ -149,6 +152,11 @@ Save an embedding to a file:
 .P
 .RS
 echo "example" | \fBcgip embedding\fR --output vec.txt
+.RE
+To run the agent subcommand:
+.P
+.RS
+\fBcgip agent\fR . "list files"
 .RE
 .SH AUTHOR
 Written by Divan Visagie and Anna L. Smith.
