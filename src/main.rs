@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use args::{Args, SubCommands};
-use chatgpt::{GptClient, Message, Role};
+use chatgpt::{GptClient, Message, MessageContent, Role};
 use clap::Parser;
 use sub::session::{read_from_tty_context, save_to_tty_context};
 use utils::{get_file_contents_from_path, get_stdin, is_valid_yaml};
@@ -117,6 +117,16 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
             content: crate::chatgpt::MessageContent::Text(question.clone()),
         };
         messages_to_save.push(message);
+    }
+
+    if args.serach {
+        if let Some(last_msg) = client.messages.last_mut() {
+            if last_msg.role == "user" {
+                if let MessageContent::Text(ref mut content) = last_msg.content {
+                    *content = format!("/search {}", content.trim());
+                }
+            }
+        }
     }
 
     if let Some(SubCommands::View(_v_sc)) = &args.subcmd {
