@@ -20,9 +20,9 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         return;
     }
 
-    if let Some(SubCommands::Update(_)) = &args.subcmd {
-        if let Err(e) = sub::update::run() {
-            eprintln!("Update Error: {}", e);
+    if let Some(SubCommands::Upgrade(_)) = &args.subcmd {
+        if let Err(e) = sub::upgrade::run() {
+            eprintln!("Upgrade Error: {}", e);
             std::process::exit(1);
         }
         return;

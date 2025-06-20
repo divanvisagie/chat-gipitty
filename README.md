@@ -175,10 +175,10 @@ If you do not already have Cargo (the Rust package manager) installed, please vi
 cargo install cgip
 ```
 
-### Updating
-To update to the latest release, run:
+### Upgrading
+To upgrade to the latest release, run:
 ```sh
-cgip update
+cgip upgrade
 ```
 
 Other installation methods are available for convenience, but may not always provide the latest version:
