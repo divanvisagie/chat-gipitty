@@ -1,10 +1,6 @@
 #!/bin/sh
 set -e
 
-UPDATE=0
-if [ "$1" = "--update" ]; then
-  UPDATE=1
-fi
 
 PREFIX="/usr/local"
 BINARY_PATH="$PREFIX/bin/cgip"
@@ -21,11 +17,6 @@ if ! mkdir -p "$PREFIX/bin" "$MAN_DIR" 2>/dev/null; then
   mkdir -p "$PREFIX/bin" "$MAN_DIR"
 fi
 
-if [ -f "$BINARY_PATH" ] && [ "$UPDATE" -eq 0 ]; then
-  echo "cgip already installed at $BINARY_PATH"
-  echo "Use --update to replace the existing installation." >&2
-  exit 0
-fi
 
 PLATFORM=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)

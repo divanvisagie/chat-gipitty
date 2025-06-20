@@ -188,7 +188,7 @@ You can fetch the latest pre-built binary using the install script:
 ```sh
 curl -fsSL https://raw.githubusercontent.com/divanvisagie/chat-gipity/main/scripts/install.sh | sh
 ```
-The script installs to `/usr/local` when writable and falls back to `~/.local` if not. Use `--update` to replace an existing installation.
+The script installs to `/usr/local` when writable and falls back to `~/.local` if not.
 
 
 ## Set up API Key
