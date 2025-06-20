@@ -1,29 +1,41 @@
-
-
+pub mod client;
 pub mod message;
-pub mod role;
 pub mod request;
 pub mod response;
-pub mod client;
+pub mod role;
 
+pub use client::GptClient;
 pub use message::{Message, MessageContent};
 pub use role::Role;
-pub use client::GptClient;
 
 fn get_completions_url(base_url: &str) -> String {
     let base = base_url.trim_end_matches('/');
-    
+
     // If the URL already contains "/chat/completions", use it as-is
     if base.contains("/chat/completions") {
         return base.to_string();
     }
-    
+
     // If the URL ends with "/v1" or contains a version pattern, just add "/chat/completions"
     if base.ends_with("/v1") || base.contains("/v1beta") || base.contains("/v2") {
         format!("{}/chat/completions", base)
     } else {
         // Default OpenAI pattern: add "/v1/chat/completions"
         format!("{}/v1/chat/completions", base)
+    }
+}
+
+fn get_models_url(base_url: &str) -> String {
+    let base = base_url.trim_end_matches('/');
+
+    if base.contains("/models") {
+        return base.to_string();
+    }
+
+    if base.ends_with("/v1") || base.contains("/v1beta") || base.contains("/v2") {
+        format!("{}/models", base)
+    } else {
+        format!("{}/v1/models", base)
     }
 }
 
@@ -79,7 +91,10 @@ mod tests {
     #[test]
     fn test_search_prefix_with_whitespace() {
         let mut client = GptClient::new(false);
-        client.add_message(Role::User, "  /search what is the weather today?  ".to_string());
+        client.add_message(
+            Role::User,
+            "  /search what is the weather today?  ".to_string(),
+        );
 
         // Simulate the search detection logic
         let mut use_search = false;
@@ -92,14 +107,17 @@ mod tests {
             }
         }
 
-        assert!(use_search, "Search prefix should be detected even with whitespace");
+        assert!(
+            use_search,
+            "Search prefix should be detected even with whitespace"
+        );
     }
 
     #[test]
     fn test_search_model_selection_with_gpt() {
         let client = GptClient::new(false);
         let model = &client.config_manager.config.model;
-        
+
         let use_search = true;
         let selected_model = if use_search && model.starts_with("gpt") {
             "gpt-4o-search-preview".to_string()
@@ -117,9 +135,10 @@ mod tests {
         // This test assumes the model is not gpt-based
         let mut client = GptClient::new(false);
         client.config_manager.config.model = "claude-3".to_string();
-        
+
         let use_search = true;
-        let selected_model = if use_search && client.config_manager.config.model.starts_with("gpt") {
+        let selected_model = if use_search && client.config_manager.config.model.starts_with("gpt")
+        {
             "gpt-4o-search-preview".to_string()
         } else {
             client.config_manager.config.model.clone()
@@ -132,9 +151,10 @@ mod tests {
     fn test_search_model_selection_with_gpt_in_middle() {
         let mut client = GptClient::new(false);
         client.config_manager.config.model = "anthropic-gpt-4".to_string();
-        
+
         let use_search = true;
-        let selected_model = if use_search && client.config_manager.config.model.starts_with("gpt") {
+        let selected_model = if use_search && client.config_manager.config.model.starts_with("gpt")
+        {
             "gpt-4o-search-preview".to_string()
         } else {
             client.config_manager.config.model.clone()
@@ -169,7 +189,9 @@ mod tests {
 
     #[test]
     fn test_get_completions_url_gemini_style() {
-        let url = get_completions_url("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent");
+        let url = get_completions_url(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+        );
         assert_eq!(url, "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent/chat/completions");
     }
 
@@ -183,5 +205,29 @@ mod tests {
     fn test_get_completions_url_with_v2() {
         let url = get_completions_url("https://api.example.com/v2");
         assert_eq!(url, "https://api.example.com/v2/chat/completions");
+    }
+
+    #[test]
+    fn test_get_models_url_without_v1() {
+        let url = get_models_url("https://api.openai.com");
+        assert_eq!(url, "https://api.openai.com/v1/models");
+    }
+
+    #[test]
+    fn test_get_models_url_with_v1() {
+        let url = get_models_url("https://api.openai.com/v1");
+        assert_eq!(url, "https://api.openai.com/v1/models");
+    }
+
+    #[test]
+    fn test_get_models_url_with_trailing_slash() {
+        let url = get_models_url("https://api.openai.com/");
+        assert_eq!(url, "https://api.openai.com/v1/models");
+    }
+
+    #[test]
+    fn test_get_models_url_with_v2() {
+        let url = get_models_url("https://api.example.com/v2");
+        assert_eq!(url, "https://api.example.com/v2/models");
     }
 }

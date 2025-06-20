@@ -1,14 +1,14 @@
-use std::env;
 use dirs::config_dir;
 use reqwest::header;
-use serde_yaml;
 use serde_json;
+use serde_yaml;
+use std::env;
 
-use crate::config_manager::ConfigManager;
-use crate::chatgpt::message::{Message, MessageContent, ContentPart, ImageUrl};
-use crate::chatgpt::role::Role;
+use crate::chatgpt::message::{ContentPart, ImageUrl, Message, MessageContent};
 use crate::chatgpt::request::ChatRequest;
-use crate::chatgpt::response::{parse_response, parse_error_response};
+use crate::chatgpt::response::{parse_error_response, parse_response};
+use crate::chatgpt::role::Role;
+use crate::config_manager::ConfigManager;
 
 pub struct GptClient {
     pub config_manager: ConfigManager,
@@ -79,15 +79,20 @@ impl GptClient {
         self
     }
 
-    pub fn add_image_message(&mut self, role: Role, text: Option<String>, image_url: String) -> &mut Self {
+    pub fn add_image_message(
+        &mut self,
+        role: Role,
+        text: Option<String>,
+        image_url: String,
+    ) -> &mut Self {
         let mut content_parts = Vec::new();
-        
+
         if let Some(text) = text {
             content_parts.push(ContentPart::Text { text });
         }
-        
-        content_parts.push(ContentPart::ImageUrl { 
-            image_url: ImageUrl { url: image_url } 
+
+        content_parts.push(ContentPart::ImageUrl {
+            image_url: ImageUrl { url: image_url },
         });
 
         self.messages.push(Message {
@@ -104,17 +109,16 @@ impl GptClient {
         // if the text of the last message is ping just return pong
         let last_content_text = match &self.messages.last().unwrap().content {
             MessageContent::Text(text) => text.clone(),
-            MessageContent::Multi(parts) => {
-                parts.iter()
-                    .filter_map(|part| match part {
-                        ContentPart::Text { text } => Some(text.as_str()),
-                        _ => None,
-                    })
-                    .collect::<Vec<_>>()
-                    .join(" ")
-            }
+            MessageContent::Multi(parts) => parts
+                .iter()
+                .filter_map(|part| match part {
+                    ContentPart::Text { text } => Some(text.as_str()),
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+                .join(" "),
         };
-        
+
         if last_content_text.to_lowercase().trim() == "ping" {
             self.add_message(Role::Assistant, "pong".to_string());
             return "pong".to_string();
@@ -294,12 +298,17 @@ impl GptClient {
             .build()
             .expect("Failed to build client");
 
-        let url = env::var("OPENAI_BASE_URL").unwrap_or_else(|_| "https://api.openai.com".to_string());
+        let url =
+            env::var("OPENAI_BASE_URL").unwrap_or_else(|_| "https://api.openai.com".to_string());
         let url = super::get_completions_url(&url);
 
         let mut headers = header::HeaderMap::new();
-        headers.insert(header::CONTENT_TYPE, header::HeaderValue::from_static("application/json"));
-        let auth_header = header::HeaderValue::from_str(&format!("Bearer {}", api_key)).expect("auth header");
+        headers.insert(
+            header::CONTENT_TYPE,
+            header::HeaderValue::from_static("application/json"),
+        );
+        let auth_header =
+            header::HeaderValue::from_str(&format!("Bearer {}", api_key)).expect("auth header");
         headers.insert(header::AUTHORIZATION, auth_header);
 
         let model = self.config_manager.config.model.clone();
@@ -345,5 +354,47 @@ impl GptClient {
         });
 
         value
+    }
+
+    pub fn list_models(&self) -> Vec<String> {
+        let api_key = match env::var("OPENAI_API_KEY") {
+            Ok(key) => key,
+            Err(_) => return Vec::new(),
+        };
+
+        let client = reqwest::blocking::Client::builder()
+            .danger_accept_invalid_certs(true)
+            .build()
+            .expect("Failed to build client");
+
+        let url =
+            env::var("OPENAI_BASE_URL").unwrap_or_else(|_| "https://api.openai.com".to_string());
+        let url = super::get_models_url(&url);
+
+        let mut headers = header::HeaderMap::new();
+        let auth_header =
+            header::HeaderValue::from_str(&format!("Bearer {}", api_key)).expect("auth header");
+        headers.insert(header::AUTHORIZATION, auth_header);
+
+        let response = client.get(url).headers(headers).send();
+
+        let response_text = match response {
+            Ok(resp) => resp.text(),
+            Err(_) => return Vec::new(),
+        };
+
+        let response_text = match response_text {
+            Ok(t) => t,
+            Err(_) => return Vec::new(),
+        };
+
+        let value: serde_json::Value = serde_json::from_str(&response_text).unwrap_or_default();
+        if let Some(arr) = value.get("data").and_then(|d| d.as_array()) {
+            arr.iter()
+                .filter_map(|m| m.get("id").and_then(|i| i.as_str()).map(|s| s.to_string()))
+                .collect()
+        } else {
+            Vec::new()
+        }
     }
 }

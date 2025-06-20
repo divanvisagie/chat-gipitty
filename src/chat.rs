@@ -20,7 +20,7 @@ pub fn run(args: &Args, client: &mut GptClient) {
 
     // List available models
     if args.list_models {
-        let models = vec!["gpt-4o", "gpt-4.1", "o4-mini", "o3-mini", "o1"];
+        let models = client.list_models();
         for model in models {
             println!("{}", model);
         }
