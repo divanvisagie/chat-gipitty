@@ -1,0 +1,6 @@
+[book]
+authors = ["Divan Visagie"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Chat GipiTTY"
