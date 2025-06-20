@@ -6,9 +6,20 @@ if [ "$1" = "--update" ]; then
   UPDATE=1
 fi
 
-BINARY_PATH="/usr/local/bin/cgip"
-MAN_DIR="/usr/local/share/man/man1"
+PREFIX="/usr/local"
+BINARY_PATH="$PREFIX/bin/cgip"
+MAN_DIR="$PREFIX/share/man/man1"
 MAN_PATH="$MAN_DIR/cgip.1"
+
+# Fallback to user directory if /usr/local is not writable
+if ! mkdir -p "$PREFIX/bin" "$MAN_DIR" 2>/dev/null; then
+  PREFIX="$HOME/.local"
+  BINARY_PATH="$PREFIX/bin/cgip"
+  MAN_DIR="$PREFIX/share/man/man1"
+  MAN_PATH="$MAN_DIR/cgip.1"
+  echo "Installing to $PREFIX (no write access to /usr/local)"
+  mkdir -p "$PREFIX/bin" "$MAN_DIR"
+fi
 
 if [ -f "$BINARY_PATH" ] && [ "$UPDATE" -eq 0 ]; then
   echo "cgip already installed at $BINARY_PATH"
