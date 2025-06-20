@@ -89,8 +89,8 @@ pub enum SubCommands {
     Embedding(EmbeddingSubCommand),
     /// Execute agentic instructions using tool calls.
     Agent(AgentSubCommand),
-    /// Update cgip to the latest release.
-    Update(UpdateSubCommand),
+    /// Upgrade cgip to the latest release.
+    Upgrade(UpgradeSubCommand),
 }
 
 #[derive(Parser, Debug)]
@@ -210,5 +210,5 @@ pub struct AgentSubCommand {
 }
 
 #[derive(Parser, Debug)]
-#[command(author, version, about = "Update cgip to the latest release", long_about = None)]
-pub struct UpdateSubCommand {}
+#[command(author, version, about = "Upgrade cgip to the latest release", long_about = None)]
+pub struct UpgradeSubCommand {}
