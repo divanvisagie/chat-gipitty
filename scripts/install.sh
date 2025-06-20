@@ -37,7 +37,7 @@ case "$ARCH" in
     ARCH="aarch64"
     ;;
   *)
-    echo "Unsupported architecture: $ARCH" >&2
+    echo "Unsupported architecture: $ARCH. Supported architectures are: x86_64, aarch64." >&2
     exit 1
     ;;
 esac
