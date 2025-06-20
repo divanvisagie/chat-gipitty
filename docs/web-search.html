@@ -1,0 +1,373 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Web Search - Chat GipiTTY</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/custom.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Chat GipiTTY</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="web-search"><a class="header" href="#web-search">Web Search</a></h1>
+<p>Chat Gipitty supports web search functionality through the <code>/search</code> command prefix. When you start your message with <code>/search</code>, the application will enable web search capabilities to provide you with up-to-date information from the internet.</p>
+<h2 id="how-web-search-works"><a class="header" href="#how-web-search-works">How Web Search Works</a></h2>
+<p>The web search feature adapts based on your configured model:</p>
+<ul>
+<li><strong>For GPT models</strong> (models starting with "gpt"): The application automatically switches to the <code>gpt-4o-search-preview</code> model and enables web search options for optimal search results.</li>
+<li><strong>For non-GPT models</strong> (like Claude, Llama, or other custom models): The application keeps your configured model and adds web search options to the request.</li>
+</ul>
+<h2 id="basic-usage"><a class="header" href="#basic-usage">Basic Usage</a></h2>
+<p>To use web search, simply prefix your query with <code>/search</code>:</p>
+<pre><code class="language-bash">cgip "/search What are the latest developments in AI?"
+</code></pre>
+<p>The <code>/search</code> prefix will be automatically removed from your message before it's sent to the model, so you don't need to worry about it affecting the actual prompt.</p>
+<h2 id="usage-examples"><a class="header" href="#usage-examples">Usage Examples</a></h2>
+<h3 id="current-events"><a class="header" href="#current-events">Current Events</a></h3>
+<pre><code class="language-bash"># Search for recent news
+cgip "/search What are the latest developments in renewable energy?"
+
+# Get current market information
+cgip "/search What is the current price of Bitcoin?"
+
+# Find recent technology updates
+cgip "/search What are the new features in the latest Python release?"
+</code></pre>
+<h3 id="technical-information"><a class="header" href="#technical-information">Technical Information</a></h3>
+<pre><code class="language-bash"># Search for current best practices
+cgip "/search What are the current best practices for React performance optimization?"
+
+# Find up-to-date documentation
+cgip "/search How to configure Docker containers for production in 2024?"
+
+# Get current software versions
+cgip "/search What is the current stable version of Rust?"
+</code></pre>
+<h3 id="research-and-analysis"><a class="header" href="#research-and-analysis">Research and Analysis</a></h3>
+<pre><code class="language-bash"># Market research
+cgip "/search What are the current trends in mobile app development?"
+
+# Academic research
+cgip "/search What are the latest findings on climate change mitigation?"
+
+# Competitive analysis
+cgip "/search What are the main competitors to OpenAI in the AI space?"
+</code></pre>
+<h2 id="combining-web-search-with-other-features"><a class="header" href="#combining-web-search-with-other-features">Combining Web Search with Other Features</a></h2>
+<h3 id="web-search-with-file-input"><a class="header" href="#web-search-with-file-input">Web Search with File Input</a></h3>
+<p>You can combine web search with file analysis:</p>
+<pre><code class="language-bash"># Search for context about your code
+cgip "/search How can I optimize this code for performance?" -f my_script.py
+
+# Get current information about technologies in your project
+cgip "/search What are the latest security best practices for this framework?" -f package.json
+</code></pre>
+<h3 id="web-search-with-piped-input"><a class="header" href="#web-search-with-piped-input">Web Search with Piped Input</a></h3>
+<p>Web search works with piped input as well:</p>
+<pre><code class="language-bash"># Search for solutions to error messages
+command_that_fails 2&gt;&amp;1 | cgip "/search How to fix this error?"
+
+# Get current information about command output
+ps aux | cgip "/search What do these system processes indicate about performance?"
+</code></pre>
+<h3 id="web-search-in-sessions"><a class="header" href="#web-search-in-sessions">Web Search in Sessions</a></h3>
+<p>Web search results become part of your session context:</p>
+<pre><code class="language-bash"># First query with search
+cgip "/search What are the current JavaScript frameworks for 2024?"
+
+# Follow-up question using search results
+cgip "Which of these would be best for a small team project?"
+</code></pre>
+<h2 id="model-behavior"><a class="header" href="#model-behavior">Model Behavior</a></h2>
+<h3 id="gpt-models"><a class="header" href="#gpt-models">GPT Models</a></h3>
+<p>When using GPT models with web search:</p>
+<ul>
+<li>Automatically switches to <code>gpt-4o-search-preview</code></li>
+<li>Provides real-time web search results</li>
+<li>Cites sources when possible</li>
+<li>Combines web information with the model's knowledge</li>
+</ul>
+<h3 id="non-gpt-models"><a class="header" href="#non-gpt-models">Non-GPT Models</a></h3>
+<p>When using other models (Claude, Llama, etc.):</p>
+<ul>
+<li>Keeps your configured model</li>
+<li>Adds web search capabilities to the request</li>
+<li>May have varying levels of web search integration depending on the provider</li>
+</ul>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="1-be-specific"><a class="header" href="#1-be-specific">1. Be Specific</a></h3>
+<p>More specific search queries yield better results:</p>
+<pre><code class="language-bash"># Good: Specific query
+cgip "/search React 18 performance optimization techniques 2024"
+
+# Less effective: Vague query
+cgip "/search React performance"
+</code></pre>
+<h3 id="2-use-current-context"><a class="header" href="#2-use-current-context">2. Use Current Context</a></h3>
+<p>Include temporal context when relevant:</p>
+<pre><code class="language-bash"># Good: Includes timeframe
+cgip "/search Current cybersecurity threats in 2024"
+
+# Good: Includes version
+cgip "/search Python 3.12 new features and changes"
+</code></pre>
+<h3 id="3-combine-with-local-context"><a class="header" href="#3-combine-with-local-context">3. Combine with Local Context</a></h3>
+<p>Use web search to enhance local analysis:</p>
+<pre><code class="language-bash"># Analyze local file with current best practices
+cgip "/search Current Node.js security best practices" -f package.json
+</code></pre>
+<h3 id="4-follow-up-questions"><a class="header" href="#4-follow-up-questions">4. Follow-up Questions</a></h3>
+<p>Use session context to build on search results:</p>
+<pre><code class="language-bash"># Initial search
+cgip "/search Latest trends in machine learning deployment"
+
+# Follow-up without search (uses previous context)
+cgip "Which of these trends would be most relevant for a startup?"
+</code></pre>
+<h2 id="limitations-and-considerations"><a class="header" href="#limitations-and-considerations">Limitations and Considerations</a></h2>
+<h3 id="rate-limits"><a class="header" href="#rate-limits">Rate Limits</a></h3>
+<ul>
+<li>Web search may be subject to additional rate limits</li>
+<li>Consider the cost implications of web search requests</li>
+</ul>
+<h3 id="accuracy"><a class="header" href="#accuracy">Accuracy</a></h3>
+<ul>
+<li>Always verify important information from multiple sources</li>
+<li>Web search results reflect current information but may not always be accurate</li>
+</ul>
+<h3 id="privacy"><a class="header" href="#privacy">Privacy</a></h3>
+<ul>
+<li>Web search queries may be logged by the API provider</li>
+<li>Be mindful of sensitive information in search queries</li>
+</ul>
+<h3 id="model-compatibility"><a class="header" href="#model-compatibility">Model Compatibility</a></h3>
+<ul>
+<li>Web search effectiveness varies by model and provider</li>
+<li>Some custom endpoints may not support web search features</li>
+</ul>
+<h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
+<h3 id="search-not-working"><a class="header" href="#search-not-working">Search Not Working</a></h3>
+<p>If web search doesn't seem to be working:</p>
+<ol>
+<li>
+<p>Check your model configuration:</p>
+<pre><code class="language-bash">cgip config --get model
+</code></pre>
+</li>
+<li>
+<p>Verify your API endpoint supports web search:</p>
+<pre><code class="language-bash">cgip config --get base_url
+</code></pre>
+</li>
+<li>
+<p>Try with a GPT model explicitly:</p>
+<pre><code class="language-bash">cgip -M gpt-4o "/search test query"
+</code></pre>
+</li>
+</ol>
+<h3 id="limited-results"><a class="header" href="#limited-results">Limited Results</a></h3>
+<p>If you're getting limited search results:</p>
+<ul>
+<li>Try rephrasing your query</li>
+<li>Be more specific about what you're looking for</li>
+<li>Check if your API provider has web search enabled</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="session-management.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="subcommands.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="session-management.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="subcommands.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

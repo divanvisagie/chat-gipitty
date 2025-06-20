@@ -1,0 +1,361 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>View Command - Chat GipiTTY</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/custom.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Chat GipiTTY</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="view-command"><a class="header" href="#view-command">View Command</a></h1>
+<p>The <code>view</code> command allows you to inspect the context that would be sent to the AI model without actually making an API call. This is invaluable for debugging, understanding how your inputs are processed, and optimizing your queries.</p>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>The <code>view</code> command renders the complete context that Chat GipiTTY would send to the AI, including:</p>
+<ul>
+<li>Input from stdin</li>
+<li>Command line arguments</li>
+<li>File contents (when using <code>-f</code>)</li>
+<li>Session history (if enabled)</li>
+<li>System prompts</li>
+</ul>
+<h2 id="basic-usage"><a class="header" href="#basic-usage">Basic Usage</a></h2>
+<pre><code class="language-sh">cgip view
+</code></pre>
+<h2 id="command-help"><a class="header" href="#command-help">Command Help</a></h2>
+<pre><code>Render the context without running a query against the model
+
+Usage: cgip view
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+</code></pre>
+<h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
+<h3 id="basic-context-inspection"><a class="header" href="#basic-context-inspection">Basic Context Inspection</a></h3>
+<p>View what gets sent when combining different inputs:</p>
+<pre><code class="language-sh">echo "Here is some data" | cgip view "What can you tell me about this?"
+</code></pre>
+<h3 id="file-content-preview"><a class="header" href="#file-content-preview">File Content Preview</a></h3>
+<p>See how file content is included in context:</p>
+<pre><code class="language-sh">cgip view "Analyze this code" -f src/main.rs
+</code></pre>
+<h3 id="complex-context"><a class="header" href="#complex-context">Complex Context</a></h3>
+<p>Inspect complex multi-source contexts:</p>
+<pre><code class="language-sh">grep "ERROR" app.log | cgip view "Analyze these errors" -f config.yaml
+</code></pre>
+<h3 id="session-context"><a class="header" href="#session-context">Session Context</a></h3>
+<p>View current session context (when sessions are enabled):</p>
+<pre><code class="language-sh">export CGIP_SESSION_NAME=$(date -I)
+cgip "Hello, I'm working on a project"
+cgip view "What were we discussing?"
+</code></pre>
+<h2 id="use-cases"><a class="header" href="#use-cases">Use Cases</a></h2>
+<h3 id="debugging-input-processing"><a class="header" href="#debugging-input-processing">Debugging Input Processing</a></h3>
+<p>When your AI responses aren't what you expect, use <code>view</code> to understand what context is actually being sent:</p>
+<pre><code class="language-sh"># Check if your pipe is working correctly
+ps aux | head -10 | cgip view "analyze these processes"
+</code></pre>
+<h3 id="optimizing-context-size"><a class="header" href="#optimizing-context-size">Optimizing Context Size</a></h3>
+<p>Large contexts can be expensive and slow. Use <code>view</code> to see how much context you're sending:</p>
+<pre><code class="language-sh"># Check context size before sending
+cat large-file.txt | cgip view "summarize this"
+</code></pre>
+<h3 id="understanding-file-processing"><a class="header" href="#understanding-file-processing">Understanding File Processing</a></h3>
+<p>See exactly how files are being read and included:</p>
+<pre><code class="language-sh">cgip view "explain this configuration" -f docker-compose.yml
+</code></pre>
+<h3 id="session-context-review"><a class="header" href="#session-context-review">Session Context Review</a></h3>
+<p>Before important queries, review what conversation history will be included:</p>
+<pre><code class="language-sh">cgip view "based on our previous discussion, what should I do next?"
+</code></pre>
+<h2 id="output-formatting"><a class="header" href="#output-formatting">Output Formatting</a></h2>
+<p>The <code>view</code> command outputs the context in a structured format showing:</p>
+<ol>
+<li><strong>System Messages</strong>: Any system prompts or instructions</li>
+<li><strong>User Messages</strong>: Your input, including stdin, arguments, and files</li>
+<li><strong>Assistant Messages</strong>: Previous AI responses (if session is active)</li>
+<li><strong>Context Metadata</strong>: Information about the context structure</li>
+</ol>
+<h3 id="example-output"><a class="header" href="#example-output">Example Output</a></h3>
+<pre><code>=== CONTEXT VIEW ===
+
+System Message:
+You are a helpful AI assistant.
+
+User Message:
+[stdin]: Here is some error output
+[argument]: What caused this error?
+[file: config.yaml]: 
+database:
+  host: localhost
+  port: 5432
+
+Assistant Message (from session):
+Based on the previous error, it seems like a connection issue...
+
+=== END CONTEXT ===
+</code></pre>
+<h2 id="working-with-other-options"><a class="header" href="#working-with-other-options">Working with Other Options</a></h2>
+<p>The <code>view</code> command respects the same options as regular queries:</p>
+<h3 id="custom-system-prompt"><a class="header" href="#custom-system-prompt">Custom System Prompt</a></h3>
+<pre><code class="language-sh">cgip view --system-prompt "You are a senior developer" "review this code" -f app.py
+</code></pre>
+<h3 id="different-models"><a class="header" href="#different-models">Different Models</a></h3>
+<pre><code class="language-sh">cgip view --model gpt-4o "complex analysis task"
+</code></pre>
+<h3 id="show-context-options"><a class="header" href="#show-context-options">Show Context Options</a></h3>
+<p>Combine with context display options:</p>
+<pre><code class="language-sh">cgip view --show-context --markdown "test query"
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="before-expensive-queries"><a class="header" href="#before-expensive-queries">Before Expensive Queries</a></h3>
+<p>Always use <code>view</code> before sending large or complex contexts:</p>
+<pre><code class="language-sh"># Preview first
+find . -name "*.py" -exec cat {} \; | cgip view "analyze all Python files"
+
+# If context looks good, run the actual query
+find . -name "*.py" -exec cat {} \; | cgip "analyze all Python files"
+</code></pre>
+<h3 id="debugging-unexpected-results"><a class="header" href="#debugging-unexpected-results">Debugging Unexpected Results</a></h3>
+<p>When AI responses don't match expectations:</p>
+<pre><code class="language-sh"># See what context was actually sent
+cat data.csv | cgip view "analyze this data"
+</code></pre>
+<h3 id="context-size-management"><a class="header" href="#context-size-management">Context Size Management</a></h3>
+<p>Monitor context size for cost and performance:</p>
+<pre><code class="language-sh"># Check context before sending
+tail -n 1000 huge-log.txt | cgip view "find critical errors"
+</code></pre>
+<h3 id="session-state-verification"><a class="header" href="#session-state-verification">Session State Verification</a></h3>
+<p>Verify session state before important queries:</p>
+<pre><code class="language-sh">cgip view "continue our previous analysis"
+</code></pre>
+<h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
+<h3 id="empty-context"><a class="header" href="#empty-context">Empty Context</a></h3>
+<p>If <code>view</code> shows no context:</p>
+<ul>
+<li>Check that your input methods (stdin, files) are working</li>
+<li>Verify file paths are correct</li>
+<li>Make sure you're not in a new session when expecting history</li>
+</ul>
+<h3 id="unexpected-context"><a class="header" href="#unexpected-context">Unexpected Context</a></h3>
+<p>If context includes unexpected content:</p>
+<ul>
+<li>Check for active sessions that might include previous conversation</li>
+<li>Verify file contents are what you expect</li>
+<li>Look for hidden characters in piped input</li>
+</ul>
+<h3 id="missing-context"><a class="header" href="#missing-context">Missing Context</a></h3>
+<p>If expected context is missing:</p>
+<ul>
+<li>Ensure stdin is properly piped (use <code>2&gt;&amp;1</code> for stderr)</li>
+<li>Verify file permissions and paths</li>
+<li>Check that session is properly configured</li>
+</ul>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
+<ul>
+<li>Learn about <a href="./session-command.html">session management</a> to control conversation history</li>
+<li>Explore <a href="./config-command.html">configuration options</a> to customize default behavior</li>
+<li>Try <a href="./basic-usage.html">basic usage patterns</a> with the confidence of knowing your context</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="subcommands.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="config-command.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="subcommands.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="config-command.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

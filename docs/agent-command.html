@@ -1,0 +1,482 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Agent Command - Chat GipiTTY</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/custom.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Chat GipiTTY</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="agent-command"><a class="header" href="#agent-command">Agent Command</a></h1>
+<p>The <code>agent</code> subcommand provides an agentic workflow that lets the model run shell commands on your behalf. It offers a powerful way to delegate complex tasks that require multiple command executions and iterative problem-solving.</p>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>The agent subcommand gives the AI model access to a special <code>execute</code> tool that allows it to run shell commands in a specified directory. The model can use command output as feedback to make decisions about what to do next, creating an autonomous workflow for task completion.</p>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<pre><code class="language-bash">cgip agent [OPTIONS] &lt;DIRECTORY&gt; &lt;INSTRUCTION&gt;
+</code></pre>
+<h3 id="arguments"><a class="header" href="#arguments">Arguments</a></h3>
+<ul>
+<li><code>&lt;DIRECTORY&gt;</code> - Directory the agent is allowed to operate in (required)</li>
+<li><code>&lt;INSTRUCTION&gt;</code> - Natural language instruction describing the goal (required)</li>
+</ul>
+<h3 id="options"><a class="header" href="#options">Options</a></h3>
+<ul>
+<li><code>--input &lt;FILES&gt;</code> - Comma separated list of files whose contents should be added to the context</li>
+<li><code>--max-actions &lt;N&gt;</code> - Maximum number of commands the agent will execute before stopping (default: 10)</li>
+</ul>
+<h2 id="how-it-works"><a class="header" href="#how-it-works">How It Works</a></h2>
+<p>When invoked, the agent:</p>
+<ol>
+<li><strong>Receives your instruction</strong> and any provided file contents</li>
+<li><strong>Gets access to an <code>execute</code> tool</strong> that can run shell commands</li>
+<li><strong>Runs commands iteratively</strong>, using output to inform next steps</li>
+<li><strong>Continues until</strong> the task is complete or max actions reached</li>
+<li><strong>Provides a summary</strong> of all commands executed</li>
+</ol>
+<p>The model has access to this tool definition:</p>
+<pre><code class="language-json">{
+  "type": "function",
+  "function": {
+    "name": "execute",
+    "description": "Run a shell command",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "command": {"type": "string"}
+      },
+      "required": ["command"]
+    }
+  }
+}
+</code></pre>
+<h2 id="basic-examples"><a class="header" href="#basic-examples">Basic Examples</a></h2>
+<h3 id="simple-directory-listing"><a class="header" href="#simple-directory-listing">Simple Directory Listing</a></h3>
+<pre><code class="language-bash">cgip agent . "list the current directory"
+</code></pre>
+<p>The agent will execute <code>ls</code> and return the results.</p>
+<h3 id="project-analysis"><a class="header" href="#project-analysis">Project Analysis</a></h3>
+<pre><code class="language-bash">cgip agent /path/to/project "analyze the project structure and identify the main components"
+</code></pre>
+<p>The agent might:</p>
+<ol>
+<li>Run <code>find . -name "*.py" | head -10</code> to find Python files</li>
+<li>Run <code>cat requirements.txt</code> to check dependencies</li>
+<li>Run <code>ls -la</code> to see the overall structure</li>
+<li>Provide a comprehensive analysis based on findings</li>
+</ol>
+<h3 id="build-and-test"><a class="header" href="#build-and-test">Build and Test</a></h3>
+<pre><code class="language-bash">cgip agent . "build the project and run tests, report any issues"
+</code></pre>
+<p>The agent could:</p>
+<ol>
+<li>Detect the project type (e.g., <code>cargo build</code> for Rust)</li>
+<li>Run the build command</li>
+<li>Execute tests if build succeeds</li>
+<li>Analyze any errors and suggest fixes</li>
+</ol>
+<h2 id="advanced-examples"><a class="header" href="#advanced-examples">Advanced Examples</a></h2>
+<h3 id="code-quality-analysis"><a class="header" href="#code-quality-analysis">Code Quality Analysis</a></h3>
+<pre><code class="language-bash">cgip agent src/ "analyze code quality and suggest improvements" --input "package.json,README.md"
+</code></pre>
+<p>With file input providing context, the agent might:</p>
+<ol>
+<li>Run linting tools appropriate for the language</li>
+<li>Check for security vulnerabilities</li>
+<li>Analyze code complexity</li>
+<li>Review documentation coverage</li>
+</ol>
+<h3 id="environment-setup"><a class="header" href="#environment-setup">Environment Setup</a></h3>
+<pre><code class="language-bash">cgip agent . "set up development environment for this project" --max-actions 15
+</code></pre>
+<p>The agent could:</p>
+<ol>
+<li>Detect project requirements</li>
+<li>Install dependencies</li>
+<li>Set up configuration files</li>
+<li>Run initial setup commands</li>
+<li>Verify everything works</li>
+</ol>
+<h3 id="debugging-assistance"><a class="header" href="#debugging-assistance">Debugging Assistance</a></h3>
+<pre><code class="language-bash">cgip agent . "investigate why tests are failing and fix the issues"
+</code></pre>
+<p>The agent might:</p>
+<ol>
+<li>Run the test suite to see failures</li>
+<li>Examine failing test output</li>
+<li>Look at relevant source files</li>
+<li>Make necessary fixes</li>
+<li>Re-run tests to verify fixes</li>
+</ol>
+<h2 id="options-in-detail"><a class="header" href="#options-in-detail">Options in Detail</a></h2>
+<h3 id="--input-files"><a class="header" href="#--input-files"><code>--input &lt;FILES&gt;</code></a></h3>
+<p>Provide additional context by including file contents:</p>
+<pre><code class="language-bash"># Single file
+cgip agent . "optimize this code" --input "src/main.py"
+
+# Multiple files
+cgip agent . "review these components" --input "src/user.py,src/auth.py,tests/test_auth.py"
+
+# Configuration files for context
+cgip agent . "deploy this application" --input "docker-compose.yml,package.json"
+</code></pre>
+<h3 id="--max-actions-n"><a class="header" href="#--max-actions-n"><code>--max-actions &lt;N&gt;</code></a></h3>
+<p>Control how many commands the agent can execute:</p>
+<pre><code class="language-bash"># Quick tasks
+cgip agent . "check project status" --max-actions 3
+
+# Complex tasks
+cgip agent . "refactor the codebase" --max-actions 20
+
+# Default is 10 actions
+cgip agent . "analyze and improve performance"
+</code></pre>
+<h2 id="safety-features"><a class="header" href="#safety-features">Safety Features</a></h2>
+<h3 id="directory-restriction"><a class="header" href="#directory-restriction">Directory Restriction</a></h3>
+<p>The agent can only operate within the specified directory:</p>
+<pre><code class="language-bash"># Agent limited to current directory
+cgip agent . "clean up temporary files"
+
+# Agent limited to specific subdirectory
+cgip agent src/ "refactor the source code"
+</code></pre>
+<p>This prevents the agent from:</p>
+<ul>
+<li>Accessing files outside the specified directory</li>
+<li>Making system-wide changes</li>
+<li>Affecting other projects</li>
+</ul>
+<h3 id="action-limits"><a class="header" href="#action-limits">Action Limits</a></h3>
+<p>The <code>--max-actions</code> limit prevents runaway execution:</p>
+<ul>
+<li>Stops infinite loops</li>
+<li>Limits resource usage</li>
+<li>Ensures predictable completion time</li>
+</ul>
+<h3 id="command-visibility"><a class="header" href="#command-visibility">Command Visibility</a></h3>
+<p>All executed commands are:</p>
+<ul>
+<li>Shown in real-time as they run</li>
+<li>Included in the final summary</li>
+<li>Available for review and audit</li>
+</ul>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="1-start-with-clear-instructions"><a class="header" href="#1-start-with-clear-instructions">1. Start with Clear Instructions</a></h3>
+<pre><code class="language-bash"># Good: Specific and actionable
+cgip agent . "find all Python files with TODO comments and create a task list"
+
+# Less effective: Vague goal
+cgip agent . "improve the project"
+</code></pre>
+<h3 id="2-use-appropriate-directory-scope"><a class="header" href="#2-use-appropriate-directory-scope">2. Use Appropriate Directory Scope</a></h3>
+<pre><code class="language-bash"># Focused scope for specific tasks
+cgip agent src/ "refactor utility functions"
+
+# Broader scope for project-wide tasks
+cgip agent . "set up CI/CD pipeline"
+</code></pre>
+<h3 id="3-provide-relevant-context"><a class="header" href="#3-provide-relevant-context">3. Provide Relevant Context</a></h3>
+<pre><code class="language-bash"># Include relevant files for context
+cgip agent . "update dependencies" --input "package.json,requirements.txt"
+</code></pre>
+<h3 id="4-set-appropriate-action-limits"><a class="header" href="#4-set-appropriate-action-limits">4. Set Appropriate Action Limits</a></h3>
+<pre><code class="language-bash"># Simple tasks: low limit
+cgip agent . "check syntax errors" --max-actions 5
+
+# Complex tasks: higher limit
+cgip agent . "migrate database schema" --max-actions 15
+</code></pre>
+<h2 id="common-use-cases"><a class="header" href="#common-use-cases">Common Use Cases</a></h2>
+<h3 id="development-tasks"><a class="header" href="#development-tasks">Development Tasks</a></h3>
+<pre><code class="language-bash"># Code generation
+cgip agent . "create unit tests for all functions in src/utils.py"
+
+# Refactoring
+cgip agent src/ "extract common code into shared utilities"
+
+# Documentation
+cgip agent . "generate API documentation from code comments"
+</code></pre>
+<h3 id="project-management"><a class="header" href="#project-management">Project Management</a></h3>
+<pre><code class="language-bash"># Dependency management
+cgip agent . "audit and update all dependencies to latest versions"
+
+# Project setup
+cgip agent . "initialize project with standard configuration files"
+
+# Cleanup
+cgip agent . "remove unused files and clean up directory structure"
+</code></pre>
+<h3 id="analysis-and-reporting"><a class="header" href="#analysis-and-reporting">Analysis and Reporting</a></h3>
+<pre><code class="language-bash"># Code analysis
+cgip agent . "analyze code complexity and generate report"
+
+# Security audit
+cgip agent . "scan for potential security vulnerabilities"
+
+# Performance analysis
+cgip agent . "profile the application and identify bottlenecks"
+</code></pre>
+<h2 id="output-and-summary"><a class="header" href="#output-and-summary">Output and Summary</a></h2>
+<p>After completion, the agent provides:</p>
+<h3 id="real-time-output"><a class="header" href="#real-time-output">Real-time Output</a></h3>
+<p>Commands and their output are shown as they execute:</p>
+<pre><code>Executing: ls -la
+total 24
+drwxr-xr-x  5 user user 4096 Jan 15 10:30 .
+drwxr-xr-x  3 user user 4096 Jan 15 10:25 ..
+-rw-r--r--  1 user user  123 Jan 15 10:30 main.py
+...
+
+Executing: python -m pytest
+===== test session starts =====
+...
+</code></pre>
+<h3 id="final-summary"><a class="header" href="#final-summary">Final Summary</a></h3>
+<p>A summary of all executed commands:</p>
+<pre><code>Agent completed successfully. Commands executed:
+1. ls -la
+2. python -m pytest
+3. cat test_results.txt
+
+Task completed: All tests are passing and the project structure looks good.
+</code></pre>
+<h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
+<h3 id="permission-issues"><a class="header" href="#permission-issues">Permission Issues</a></h3>
+<p>If the agent can't execute commands:</p>
+<pre><code class="language-bash"># Check directory permissions
+ls -la /path/to/directory
+
+# Ensure you have execute permissions
+chmod +x /path/to/directory
+</code></pre>
+<h3 id="command-not-found"><a class="header" href="#command-not-found">Command Not Found</a></h3>
+<p>If commands fail:</p>
+<pre><code class="language-bash"># Check if required tools are installed
+which python
+which npm
+which cargo
+
+# Install missing dependencies
+</code></pre>
+<h3 id="action-limit-reached"><a class="header" href="#action-limit-reached">Action Limit Reached</a></h3>
+<p>If the agent stops due to action limits:</p>
+<pre><code class="language-bash"># Increase the limit for complex tasks
+cgip agent . "complex task" --max-actions 20
+
+# Or break down into smaller tasks
+cgip agent . "first part of complex task" --max-actions 10
+</code></pre>
+<h2 id="integration-examples"><a class="header" href="#integration-examples">Integration Examples</a></h2>
+<h3 id="with-cicd"><a class="header" href="#with-cicd">With CI/CD</a></h3>
+<pre><code class="language-bash"># In a CI script
+cgip agent . "run all tests and generate coverage report" --max-actions 5
+</code></pre>
+<h3 id="with-development-workflow"><a class="header" href="#with-development-workflow">With Development Workflow</a></h3>
+<pre><code class="language-bash"># Pre-commit hook
+cgip agent . "check code quality and fix simple issues" --max-actions 8
+</code></pre>
+<h3 id="with-documentation"><a class="header" href="#with-documentation">With Documentation</a></h3>
+<pre><code class="language-bash"># Documentation generation
+cgip agent . "update README with current project status" --input "package.json,src/main.py"
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="embedding-command.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="upgrade-command.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="embedding-command.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="upgrade-command.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

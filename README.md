@@ -14,7 +14,7 @@ providers that expose OpenAI-compatible endpoints, including:
 
 Custom `OPENAI_BASE_URL` values can point to these or other OpenAI-compatible endpoints, but such providers might not implement the complete API and compatibility cannot be guaranteed.
 
-![logo](./docs/logo-256.png)
+![logo](./assets/logo-256.png)
 
 For example, say you wanted to debug your Rust program that doesn't compile and
 want ChatGPT to explain the error in depth, you can pipe the output through Chat

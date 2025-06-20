@@ -1,4 +1,4 @@
-.PHONY: build release clean github-release install man tag-release tag-release-dry version help
+.PHONY: build release clean github-release install man tag-release tag-release-dry version help book
 
 # Target binary name
 BINARY_NAME=cgip
@@ -29,6 +29,16 @@ install:
 
 man:
 	groff -man -Tascii docs/cgip.1 | less
+
+book:
+	@echo "Building mdBook documentation..."
+	@if command -v mdbook >/dev/null 2>&1; then \
+		cd book && mdbook build --dest-dir ../docs; \
+		echo "Documentation built and output to docs/"; \
+	else \
+		echo "Error: mdbook not found. Install with: cargo install mdbook"; \
+		exit 1; \
+	fi
 
 deb:
 	@sh ./scripts/build_deb.sh
@@ -124,6 +134,7 @@ help:
 	@echo "  clean           - Clean up build artifacts"
 	@echo "  install         - Build and install cgip to /usr/local/bin/"
 	@echo "  man             - View the manual page"
+	@echo "  book            - Build mdBook documentation to docs/ directory"
 	@echo "  deb             - Build debian package"
 	@echo "  deb-publish     - Build and publish debian package"
 	@echo "  tarball         - Create release tarball"

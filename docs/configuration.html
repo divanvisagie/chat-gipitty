@@ -1,0 +1,565 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Configuration - Chat GipiTTY</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/custom.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Chat GipiTTY</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="configuration"><a class="header" href="#configuration">Configuration</a></h1>
+<p>Chat Gipitty can be configured through multiple methods to customize its behavior for your needs. This page covers all the configuration options available and how to set them.</p>
+<h2 id="configuration-methods"><a class="header" href="#configuration-methods">Configuration Methods</a></h2>
+<p>Chat Gipitty supports configuration through:</p>
+<ol>
+<li><strong>Configuration file</strong> (<code>config.toml</code>)</li>
+<li><strong>Environment variables</strong></li>
+<li><strong>Command-line options</strong></li>
+</ol>
+<p>Configuration is applied in order of precedence:</p>
+<ol>
+<li>Command-line options (highest priority)</li>
+<li>Environment variables</li>
+<li>Configuration file (lowest priority)</li>
+</ol>
+<h2 id="configuration-file"><a class="header" href="#configuration-file">Configuration File</a></h2>
+<h3 id="location"><a class="header" href="#location">Location</a></h3>
+<p>The configuration file is located in your system's configuration directory:</p>
+<ul>
+<li><strong>Linux</strong>: <code>~/.config/cgip/config.toml</code></li>
+<li><strong>macOS</strong>: <code>~/Library/Application Support/cgip/config.toml</code></li>
+<li><strong>Windows</strong>: <code>%APPDATA%\cgip\config.toml</code></li>
+</ul>
+<h3 id="file-format"><a class="header" href="#file-format">File Format</a></h3>
+<p>The configuration file uses TOML format:</p>
+<pre><code class="language-toml"># Chat Gipitty Configuration File
+
+# Default model to use
+model = "gpt-4"
+
+# Custom API base URL (optional)
+base_url = "https://api.openai.com"
+
+# Default system prompt (optional)
+system_prompt = "You are a helpful assistant."
+
+# Show progress indicator by default
+show_progress = false
+
+# Default to markdown output
+markdown = false
+
+# Session configuration
+session_name = ""
+
+# File input settings
+default_file_extensions = [".txt", ".md", ".rs", ".py", ".js"]
+</code></pre>
+<h3 id="available-options"><a class="header" href="#available-options">Available Options</a></h3>
+<h4 id="core-settings"><a class="header" href="#core-settings">Core Settings</a></h4>
+<p><strong><code>model</code></strong> (string)</p>
+<ul>
+<li>Default model to use for queries</li>
+<li>Default: <code>"gpt-4"</code></li>
+<li>Example: <code>"gpt-3.5-turbo"</code>, <code>"gpt-4-turbo"</code></li>
+</ul>
+<p><strong><code>base_url</code></strong> (string)</p>
+<ul>
+<li>Custom API base URL for alternative providers</li>
+<li>Default: <code>"https://api.openai.com"</code></li>
+<li>Example: <code>"http://localhost:11434/v1"</code> for Ollama</li>
+</ul>
+<p><strong><code>system_prompt</code></strong> (string)</p>
+<ul>
+<li>Default system prompt for all queries</li>
+<li>Default: None</li>
+<li>Example: <code>"You are a coding assistant"</code></li>
+</ul>
+<h4 id="display-settings"><a class="header" href="#display-settings">Display Settings</a></h4>
+<p><strong><code>show_progress</code></strong> (boolean)</p>
+<ul>
+<li>Show progress indicator by default</li>
+<li>Default: <code>false</code></li>
+<li>Equivalent to <code>-p, --show-progress</code></li>
+</ul>
+<p><strong><code>markdown</code></strong> (boolean)</p>
+<ul>
+<li>Format output in markdown by default</li>
+<li>Default: <code>false</code></li>
+<li>Equivalent to <code>-m, --markdown</code></li>
+</ul>
+<p><strong><code>show_context</code></strong> (boolean)</p>
+<ul>
+<li>Show context by default</li>
+<li>Default: <code>false</code></li>
+<li>Equivalent to <code>-c, --show-context</code></li>
+</ul>
+<h4 id="session-settings"><a class="header" href="#session-settings">Session Settings</a></h4>
+<p><strong><code>session_name</code></strong> (string)</p>
+<ul>
+<li>Default session name</li>
+<li>Default: Empty (no sessions)</li>
+<li>Can be overridden by <code>CGIP_SESSION_NAME</code> environment variable</li>
+</ul>
+<p><strong><code>no_session</code></strong> (boolean)</p>
+<ul>
+<li>Disable sessions by default</li>
+<li>Default: <code>false</code></li>
+<li>Equivalent to <code>-n, --no-session</code></li>
+</ul>
+<h2 id="using-the-config-command"><a class="header" href="#using-the-config-command">Using the Config Command</a></h2>
+<p>The <code>config</code> subcommand allows you to view and modify configuration values:</p>
+<h3 id="view-configuration"><a class="header" href="#view-configuration">View Configuration</a></h3>
+<pre><code class="language-bash"># View all configuration
+cgip config
+
+# View specific setting
+cgip config --get model
+cgip config --get base_url
+</code></pre>
+<h3 id="set-configuration"><a class="header" href="#set-configuration">Set Configuration</a></h3>
+<pre><code class="language-bash"># Set model
+cgip config --set model=gpt-4-turbo
+
+# Set custom API endpoint
+cgip config --set base_url=http://localhost:11434/v1
+
+# Set system prompt
+cgip config --set system_prompt="You are a helpful coding assistant"
+
+# Enable progress indicator by default
+cgip config --set show_progress=true
+</code></pre>
+<h3 id="examples"><a class="header" href="#examples">Examples</a></h3>
+<pre><code class="language-bash"># Configure for OpenAI GPT-4
+cgip config --set model=gpt-4
+cgip config --set base_url=https://api.openai.com
+
+# Configure for local Ollama
+cgip config --set model=llama2
+cgip config --set base_url=http://localhost:11434/v1
+
+# Configure for daily sessions
+cgip config --set session_name=$(date -I)
+
+# Set a default system prompt
+cgip config --set system_prompt="You are an expert programmer. Provide concise, accurate answers."
+</code></pre>
+<h2 id="environment-variables"><a class="header" href="#environment-variables">Environment Variables</a></h2>
+<p>Environment variables override configuration file settings:</p>
+<h3 id="required-variables"><a class="header" href="#required-variables">Required Variables</a></h3>
+<p><strong><code>OPENAI_API_KEY</code></strong></p>
+<ul>
+<li>Your API key for the configured provider</li>
+<li>Required for most functionality</li>
+</ul>
+<h3 id="optional-variables"><a class="header" href="#optional-variables">Optional Variables</a></h3>
+<p><strong><code>OPENAI_BASE_URL</code></strong></p>
+<ul>
+<li>Custom API endpoint</li>
+<li>Overrides <code>base_url</code> in config file</li>
+</ul>
+<p><strong><code>CGIP_SESSION_NAME</code></strong></p>
+<ul>
+<li>Session name for session management</li>
+<li>Overrides <code>session_name</code> in config file</li>
+</ul>
+<h3 id="examples-1"><a class="header" href="#examples-1">Examples</a></h3>
+<pre><code class="language-bash"># Basic OpenAI setup
+export OPENAI_API_KEY="sk-your-key-here"
+
+# Custom provider setup
+export OPENAI_API_KEY="your-provider-key"
+export OPENAI_BASE_URL="https://api.provider.com/v1"
+
+# Session management
+export CGIP_SESSION_NAME=$(date -I)
+</code></pre>
+<h2 id="command-line-options"><a class="header" href="#command-line-options">Command-Line Options</a></h2>
+<p>Command-line options have the highest precedence and override both environment variables and configuration file settings.</p>
+<h3 id="model-selection"><a class="header" href="#model-selection">Model Selection</a></h3>
+<pre><code class="language-bash"># Override configured model
+cgip -M gpt-3.5-turbo "query"
+
+# List available models
+cgip -l
+</code></pre>
+<h3 id="output-control"><a class="header" href="#output-control">Output Control</a></h3>
+<pre><code class="language-bash"># Show progress (overrides config)
+cgip -p "long running query"
+
+# Show context (overrides config)
+cgip -c "query with context"
+
+# Markdown output (overrides config)
+cgip -m "formatted query"
+</code></pre>
+<h3 id="session-control"><a class="header" href="#session-control">Session Control</a></h3>
+<pre><code class="language-bash"># Disable session for this query
+cgip -n "isolated query"
+</code></pre>
+<h2 id="configuration-examples"><a class="header" href="#configuration-examples">Configuration Examples</a></h2>
+<h3 id="developer-setup"><a class="header" href="#developer-setup">Developer Setup</a></h3>
+<p>Configuration for software development:</p>
+<pre><code class="language-toml"># config.toml
+model = "gpt-4"
+system_prompt = "You are an expert software developer. Provide concise, practical solutions."
+show_progress = true
+show_context = false
+</code></pre>
+<pre><code class="language-bash"># Environment
+export OPENAI_API_KEY="your-key"
+export CGIP_SESSION_NAME="dev-$(date +%Y%m%d)"
+</code></pre>
+<h3 id="data-analysis-setup"><a class="header" href="#data-analysis-setup">Data Analysis Setup</a></h3>
+<p>Configuration for data analysis tasks:</p>
+<pre><code class="language-toml"># config.toml
+model = "gpt-4-turbo"
+system_prompt = "You are a data analyst. Focus on insights and actionable recommendations."
+markdown = true
+show_progress = true
+</code></pre>
+<h3 id="local-ai-setup"><a class="header" href="#local-ai-setup">Local AI Setup</a></h3>
+<p>Configuration for local AI models via Ollama:</p>
+<pre><code class="language-toml"># config.toml
+model = "llama2"
+base_url = "http://localhost:11434/v1"
+show_progress = true
+</code></pre>
+<pre><code class="language-bash"># Environment (Ollama doesn't need real API key)
+export OPENAI_API_KEY="ollama"
+</code></pre>
+<h3 id="multi-provider-setup"><a class="header" href="#multi-provider-setup">Multi-Provider Setup</a></h3>
+<p>Using shell functions for different providers:</p>
+<pre><code class="language-bash"># In ~/.bashrc or ~/.zshrc
+
+# OpenAI function
+openai() {
+    OPENAI_API_KEY="$OPENAI_KEY" \
+    OPENAI_BASE_URL="https://api.openai.com" \
+    cgip -M gpt-4 "$@"
+}
+
+# Local function
+local() {
+    OPENAI_API_KEY="ollama" \
+    OPENAI_BASE_URL="http://localhost:11434/v1" \
+    cgip -M llama2 "$@"
+}
+
+# Claude function (via proxy)
+claude() {
+    OPENAI_API_KEY="$CLAUDE_KEY" \
+    OPENAI_BASE_URL="https://claude-proxy.com/v1" \
+    cgip -M claude-3 "$@"
+}
+</code></pre>
+<h2 id="configuration-validation"><a class="header" href="#configuration-validation">Configuration Validation</a></h2>
+<h3 id="check-current-configuration"><a class="header" href="#check-current-configuration">Check Current Configuration</a></h3>
+<pre><code class="language-bash"># View all current settings
+cgip config
+
+# Test configuration
+cgip "test query"
+
+# Verify model availability
+cgip -l
+</code></pre>
+<h3 id="common-configuration-issues"><a class="header" href="#common-configuration-issues">Common Configuration Issues</a></h3>
+<p><strong>Invalid Model</strong>:</p>
+<pre><code class="language-bash">cgip config --set model=gpt-4
+cgip -l  # Verify model is available
+</code></pre>
+<p><strong>Wrong API Endpoint</strong>:</p>
+<pre><code class="language-bash">cgip config --set base_url=https://api.openai.com
+# Test with a simple query
+cgip "hello"
+</code></pre>
+<p><strong>Missing API Key</strong>:</p>
+<pre><code class="language-bash">export OPENAI_API_KEY="your-key"
+# Or check if it's set
+echo $OPENAI_API_KEY
+</code></pre>
+<h2 id="advanced-configuration"><a class="header" href="#advanced-configuration">Advanced Configuration</a></h2>
+<h3 id="project-specific-configuration"><a class="header" href="#project-specific-configuration">Project-Specific Configuration</a></h3>
+<p>Create project-specific configuration with shell functions:</p>
+<pre><code class="language-bash"># In project directory
+project_cgip() {
+    local config_file="$(pwd)/.cgip.toml"
+    if [[ -f "$config_file" ]]; then
+        CGIP_CONFIG_FILE="$config_file" cgip "$@"
+    else
+        cgip "$@"
+    fi
+}
+</code></pre>
+<h3 id="conditional-configuration"><a class="header" href="#conditional-configuration">Conditional Configuration</a></h3>
+<p>Configure based on environment:</p>
+<pre><code class="language-bash"># In ~/.bashrc or ~/.zshrc
+if [[ "$ENVIRONMENT" == "development" ]]; then
+    export OPENAI_BASE_URL="http://localhost:11434/v1"
+    export OPENAI_API_KEY="ollama"
+else
+    export OPENAI_API_KEY="$PRODUCTION_OPENAI_KEY"
+fi
+</code></pre>
+<h3 id="configuration-templates"><a class="header" href="#configuration-templates">Configuration Templates</a></h3>
+<p>Save common configurations as templates:</p>
+<pre><code class="language-bash"># Save current config as template
+cp ~/.config/cgip/config.toml ~/.config/cgip/templates/dev.toml
+
+# Load template
+cp ~/.config/cgip/templates/dev.toml ~/.config/cgip/config.toml
+</code></pre>
+<h2 id="troubleshooting-configuration"><a class="header" href="#troubleshooting-configuration">Troubleshooting Configuration</a></h2>
+<h3 id="debug-configuration"><a class="header" href="#debug-configuration">Debug Configuration</a></h3>
+<pre><code class="language-bash"># Check where config file should be
+cgip config --get model 2&gt;&amp;1 | grep -i "config"
+
+# Verify environment variables
+env | grep -E "(OPENAI|CGIP)"
+
+# Test with explicit options
+cgip -M gpt-3.5-turbo "test"
+</code></pre>
+<h3 id="reset-configuration"><a class="header" href="#reset-configuration">Reset Configuration</a></h3>
+<pre><code class="language-bash"># Remove config file to reset to defaults
+rm ~/.config/cgip/config.toml
+
+# Or reset specific settings
+cgip config --set model=gpt-4
+cgip config --set base_url=https://api.openai.com
+</code></pre>
+<h3 id="configuration-precedence-testing"><a class="header" href="#configuration-precedence-testing">Configuration Precedence Testing</a></h3>
+<pre><code class="language-bash"># Test precedence (command line &gt; env &gt; config)
+# 1. Set in config file
+cgip config --set model=gpt-3.5-turbo
+
+# 2. Override with environment
+CGIP_MODEL=gpt-4 cgip "test"
+
+# 3. Override with command line
+CGIP_MODEL=gpt-4 cgip -M gpt-4-turbo "test"
+</code></pre>
+<h2 id="security-considerations"><a class="header" href="#security-considerations">Security Considerations</a></h2>
+<h3 id="api-key-security"><a class="header" href="#api-key-security">API Key Security</a></h3>
+<ul>
+<li>Never commit API keys to version control</li>
+<li>Use environment variables for sensitive data</li>
+<li>Consider using secret management systems</li>
+<li>Rotate keys regularly</li>
+</ul>
+<h3 id="configuration-file-permissions"><a class="header" href="#configuration-file-permissions">Configuration File Permissions</a></h3>
+<pre><code class="language-bash"># Secure config file
+chmod 600 ~/.config/cgip/config.toml
+
+# Verify permissions
+ls -la ~/.config/cgip/config.toml
+</code></pre>
+<h3 id="environment-variable-security"><a class="header" href="#environment-variable-security">Environment Variable Security</a></h3>
+<pre><code class="language-bash"># Use env files that are gitignored
+echo "OPENAI_API_KEY=your-key" &gt; .env
+echo ".env" &gt;&gt; .gitignore
+source .env
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="upgrade-command.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="environment-variables.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="upgrade-command.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="environment-variables.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
