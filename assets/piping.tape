@@ -52,7 +52,7 @@
 #   Hide                            Hide the subsequent commands from the output
 #   Show                            Show the subsequent commands in the output
 
-Output docs/piping.gif
+Output assets/piping.gif
 
 Set Shell "bash"
 Set FontSize 32

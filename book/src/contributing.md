@@ -173,7 +173,7 @@ The project uses Git tags and GitHub Actions for releases. Here's how releases a
 
 ### 1. Update Version Numbers
 - Edit `Cargo.toml` and set the new `version`
-- Update the version in `docs/cgip.1` and `scripts/build_deb.sh`
+- Update the version in `assets/cgip.1` and `scripts/build_deb.sh`
 - Run `cargo build --release` to update `Cargo.lock`
 
 ### 2. Write Release Notes

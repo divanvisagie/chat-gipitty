@@ -25,10 +25,10 @@ clean:
 install:
 	cargo build --release
 	cp target/release/cgip /usr/local/bin/
-	cp docs/cgip.1 /usr/local/share/man/man1/
+	cp assets/cgip.1 /usr/local/share/man/man1/
 
 man:
-	groff -man -Tascii docs/cgip.1 | less
+	groff -man -Tascii assets/cgip.1 | less
 
 book:
 	@echo "Building mdBook documentation..."
@@ -50,10 +50,10 @@ tarball: build
 	@echo "Packaging the release..."
 	@mkdir -p $(RELEASE_DIR)
 	@if [ "$(TARGET)" = "" ]; then \
-		cp docs/cgip.1 target/release/; \
+		cp assets/cgip.1 target/release/; \
 		tar -czf $(RELEASE_DIR)/$(BINARY_NAME)-$(PLATFORM)-$(ARCH).tar.gz -C target/release $(BINARY_NAME) cgip.1; \
 	else \
-		cp docs/cgip.1 target/$(TARGET)/release/; \
+		cp assets/cgip.1 target/$(TARGET)/release/; \
 		tar -czf $(RELEASE_DIR)/$(BINARY_NAME)-$(PLATFORM)-$(ARCH).tar.gz -C target/$(TARGET)/release $(BINARY_NAME) cgip.1; \
 	fi
 	@echo "Release package created: $(RELEASE_DIR)/$(BINARY_NAME)-$(PLATFORM)-$(ARCH).tar.gz"
