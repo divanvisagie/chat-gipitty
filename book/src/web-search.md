@@ -1,6 +1,6 @@
 # Web Search
 
-Chat Gipitty supports web search functionality through the `/search` command prefix. When you start your message with `/search`, the application will enable web search capabilities to provide you with up-to-date information from the internet.
+Chat Gipitty supports web search functionality through the `/search` command prefix or the `--search` flag. When you start your message with `/search` or pass the `--search` option, the application will enable web search capabilities to provide you with up-to-date information from the internet.
 
 ## How Web Search Works
 
@@ -11,50 +11,54 @@ The web search feature adapts based on your configured model:
 
 ## Basic Usage
 
-To use web search, simply prefix your query with `/search`:
+To use web search, you can either prefix your query with `/search` or use the `--search` flag:
 
 ```bash
+# Using the /search prefix
 cgip "/search What are the latest developments in AI?"
+
+# Using the --search flag
+cgip --search "What are the latest developments in AI?"
 ```
 
-The `/search` prefix will be automatically removed from your message before it's sent to the model, so you don't need to worry about it affecting the actual prompt.
+The `/search` prefix will be automatically removed from your message before it's sent to the model. Using `--search` applies the same behavior without needing the prefix.
 
 ## Usage Examples
 
 ### Current Events
 ```bash
 # Search for recent news
-cgip "/search What are the latest developments in renewable energy?"
+cgip --search "What are the latest developments in renewable energy?"
 
 # Get current market information
-cgip "/search What is the current price of Bitcoin?"
+cgip --search "What is the current price of Bitcoin?"
 
 # Find recent technology updates
-cgip "/search What are the new features in the latest Python release?"
+cgip --search "What are the new features in the latest Python release?"
 ```
 
 ### Technical Information
 ```bash
 # Search for current best practices
-cgip "/search What are the current best practices for React performance optimization?"
+cgip --search "What are the current best practices for React performance optimization?"
 
 # Find up-to-date documentation
-cgip "/search How to configure Docker containers for production in 2024?"
+cgip --search "How to configure Docker containers for production in 2024?"
 
 # Get current software versions
-cgip "/search What is the current stable version of Rust?"
+echo "What is the current stable version of Rust?" | cgip --search
 ```
 
 ### Research and Analysis
 ```bash
 # Market research
-cgip "/search What are the current trends in mobile app development?"
+cgip --search "What are the current trends in mobile app development?"
 
 # Academic research
-cgip "/search What are the latest findings on climate change mitigation?"
+cgip --search "What are the latest findings on climate change mitigation?"
 
 # Competitive analysis
-cgip "/search What are the main competitors to OpenAI in the AI space?"
+cgip --search "What are the main competitors to OpenAI in the AI space?"
 ```
 
 ## Combining Web Search with Other Features
@@ -64,10 +68,10 @@ You can combine web search with file analysis:
 
 ```bash
 # Search for context about your code
-cgip "/search How can I optimize this code for performance?" -f my_script.py
+cgip --search "How can I optimize this code for performance?" -f my_script.py
 
 # Get current information about technologies in your project
-cgip "/search What are the latest security best practices for this framework?" -f package.json
+cgip --search "What are the latest security best practices for this framework?" -f package.json
 ```
 
 ### Web Search with Piped Input
