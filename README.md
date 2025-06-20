@@ -40,7 +40,7 @@ cgip "convert this to python" -f src/main.rs
 
 # Web Search Feature
 
-Chat Gipitty supports web search functionality through the `/search` command prefix or the `--serach` flag. When you start your message with `/search` or pass the `--serach` option, the application will enable web search capabilities to provide you with up-to-date information from the internet.
+Chat Gipitty supports web search functionality through the `/search` command prefix or the `--search` flag. When you start your message with `/search` or pass the `--search` option, the application will enable web search capabilities to provide you with up-to-date information from the internet.
 
 ## How Web Search Works
 
@@ -51,16 +51,16 @@ Chat Gipitty supports web search functionality through the `/search` command pre
 
 ```sh
 # Search for current events
-cgip --serach "What are the latest developments in AI?"
+cgip --search "What are the latest developments in AI?"
 
 # Search for technical information
-echo "What is the current stable version of Rust?" | cgip --serach
+echo "What is the current stable version of Rust?" | cgip --search
 
 # Search combined with file input
-cgip --serach "How can I optimize this code for performance?" -f my_script.py
+cgip --search "How can I optimize this code for performance?" -f my_script.py
 ```
 
-The `/search` prefix will be automatically removed from your message before it's sent to the model. Using `--serach` applies the same behavior without needing the prefix.
+The `/search` prefix will be automatically removed from your message before it's sent to the model. Using `--search` applies the same behavior without needing the prefix.
 
 # Image Analysis Feature
 

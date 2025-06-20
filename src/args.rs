@@ -66,8 +66,8 @@ pub struct Args {
     pub jarjar: bool,
 
     /// Use the web search feature (same as prefixing the query with `/search`)
-    #[arg(long = "serach")]
-    pub serach: bool,
+    #[arg(long = "search")]
+    pub search: bool,
 
     #[command(subcommand)]
     pub subcmd: Option<SubCommands>,

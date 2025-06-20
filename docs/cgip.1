@@ -20,7 +20,7 @@ export OPENAI_BASE_URL=http://localhost:11434/v1
 .RE
 
 .SS Web Search
-cgip supports web search functionality through the \fB/search\fR command prefix or the \fB--serach\fR flag. When you start your message with \fB/search\fR or pass \fB--serach\fR, the application will enable web search capabilities to provide up-to-date information from the internet. For GPT models, it automatically switches to \fBgpt-4o-search-preview\fR for optimal search results.
+cgip supports web search functionality through the \fB/search\fR command prefix or the \fB--search\fR flag. When you start your message with \fB/search\fR or pass \fB--search\fR, the application will enable web search capabilities to provide up-to-date information from the internet. For GPT models, it automatically switches to \fBgpt-4o-search-preview\fR for optimal search results.
 
 .SH COMMANDS
 .TP
@@ -83,7 +83,7 @@ Don't use messages from the session in this request.
 \fB\-j\fR, \fB\-\-jarjar\fR
 Speak like Jar Jar Binks.
 .TP
-\fB\-\-serach\fR
+\fB\-\-search\fR
 Enable web search for the request (equivalent to prefixing the query with \fB/search\fR).
 .TP
 \fB\-h\fR, \fB\-\-help\fR
@@ -124,7 +124,7 @@ To extract text from a screenshot:
 To search for current information:
 .P
 .RS
-\fBcgip\fR --serach "What are the latest developments in AI?"
+\fBcgip\fR --search "What are the latest developments in AI?"
 .RE
 To convert text to speech:
 .P
