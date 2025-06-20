@@ -119,7 +119,7 @@ fn select_and_execute(args: Args, client: &mut GptClient) {
         messages_to_save.push(message);
     }
 
-    if args.serach {
+    if args.search {
         if let Some(last_msg) = client.messages.last_mut() {
             if last_msg.role == "user" {
                 if let MessageContent::Text(ref mut content) = last_msg.content {
