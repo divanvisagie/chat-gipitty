@@ -1,0 +1,610 @@
+/* Custom CSS for Reservoir Documentation - Clean Style */
+
+:root {
+    /* Light mode colors */
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --border-color: #444444;
+    --header-bg: transparent;
+    --nav-bg: transparent;
+    --main-bg: transparent;
+    --pre-bg: #f8f8f8;
+    --copy-btn-bg: #444444;
+    --copy-btn-text: #ffffff;
+    --copy-btn-hover: #222222;
+    --hr-color: #444444;
+    --link-color: #0066cc;
+    --footer-bg: #e6e6e6;
+    --footer-text: #666666;
+    --reservoir-primary: #e77500;
+    --reservoir-secondary: #0066cc;
+    --sidebar-bg: #fafafa;
+    --sidebar-text: #333333;
+    --sidebar-active: #e77500;
+    --code-inline-bg: #f0f0f0;
+    --code-inline-text: #333333;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark mode colors */
+        --bg-color: #1e1e1e;
+        --text-color: #ddd;
+        --border-color: #444444;
+        --header-bg: transparent;
+        --nav-bg: transparent;
+        --main-bg: transparent;
+        --pre-bg: #222222;
+        --copy-btn-bg: #444444;
+        --copy-btn-text: #ffffff;
+        --copy-btn-hover: #666666;
+        --hr-color: #444444;
+        --link-color: #0066cc;
+        --footer-bg: #161616;
+        --footer-text: #888888;
+        --reservoir-primary: #e77500;
+        --reservoir-secondary: #0066cc;
+        --sidebar-bg: #2a2a2a;
+        --sidebar-text: #ddd;
+        --sidebar-active: #e77500;
+        --code-inline-bg: #333333;
+        --code-inline-text: #ddd;
+    }
+}
+
+/* Force complete system theme override */
+html[data-theme="light"],
+html[data-theme="dark"],
+html[data-theme="coal"],
+html[data-theme="navy"],
+html[data-theme="ayu"],
+html[data-theme="rust"],
+html.light,
+html.dark,
+html.coal,
+html.navy,
+html.ayu,
+html.rust {
+    /* Override all possible theme combinations */
+    --bg: var(--bg-color) !important;
+    --fg: var(--text-color) !important;
+    --sidebar-bg: var(--sidebar-bg) !important;
+    --sidebar-fg: var(--sidebar-text) !important;
+}
+
+/* Force system theme detection - disable mdBook theme switcher */
+html {
+    /* Override all mdBook color variables with our system-detected ones */
+    --bg: var(--bg-color) !important;
+    --fg: var(--text-color) !important;
+    --sidebar-bg: var(--sidebar-bg) !important;
+    --sidebar-fg: var(--sidebar-text) !important;
+    --sidebar-non-existant: var(--sidebar-text) !important;
+    --sidebar-active: var(--sidebar-active) !important;
+    --sidebar-spacer: var(--border-color) !important;
+    --scrollbar: var(--border-color) !important;
+    --icons: var(--text-color) !important;
+    --icons-hover: var(--reservoir-primary) !important;
+    --links: var(--link-color) !important;
+    --inline-code-color: var(--code-inline-text) !important;
+    --theme-popup-bg: var(--sidebar-bg) !important;
+    --theme-popup-border: var(--border-color) !important;
+    --theme-hover: var(--pre-bg) !important;
+    --quote-bg: var(--pre-bg) !important;
+    --quote-border: var(--border-color) !important;
+    --table-border-color: var(--border-color) !important;
+    --table-header-bg: var(--pre-bg) !important;
+    --table-alternate-bg: var(--pre-bg) !important;
+    --searchbar-border-color: var(--border-color) !important;
+    --searchbar-bg: var(--pre-bg) !important;
+    --searchbar-fg: var(--text-color) !important;
+    --searchbar-shadow-color: var(--border-color) !important;
+    --searchresults-header-fg: var(--text-color) !important;
+    --searchresults-border-color: var(--border-color) !important;
+    --searchresults-li-bg: var(--bg-color) !important;
+    --search-mark-bg: var(--reservoir-primary) !important;
+}
+
+/* Hide theme selector completely */
+#theme-toggle,
+.theme-popup {
+    display: none !important;
+}
+
+/* Ensure body uses our colors */
+body {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+}
+
+/* Override any remaining mdBook theme classes */
+.light,
+.coal,
+.navy,
+.ayu,
+.rust {
+    --bg: var(--bg-color) !important;
+    --fg: var(--text-color) !important;
+}
+
+/* Override mdBook default fonts */
+html {
+    font-family:
+        "Lexend",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        sans-serif;
+    font-weight: 300;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+body {
+    font-family:
+        "Lexend",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        sans-serif;
+    font-weight: 300;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Header styling */
+.menu-title {
+    font-family:
+        "Roboto Mono", "Source Code Pro", Consolas, "Ubuntu Mono", Menlo,
+        monospace;
+    font-weight: 500;
+    font-size: 1.2em;
+    color: var(--reservoir-primary);
+    text-decoration: none;
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.menu-title:hover {
+    opacity: 0.8;
+    color: var(--reservoir-secondary);
+    text-decoration: none;
+}
+
+/* Sidebar styling */
+.sidebar {
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar-scrollbox {
+    background-color: var(--sidebar-bg);
+}
+
+.chapter {
+    color: var(--sidebar-text);
+}
+
+.chapter li.chapter-item {
+    margin: 0.25rem 0;
+}
+
+.chapter li.part-title {
+    color: var(--reservoir-primary);
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.chapter .chapter-item a {
+    color: var(--sidebar-text);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+.chapter .chapter-item a:hover {
+    color: var(--sidebar-active);
+    background-color: rgba(0, 102, 204, 0.1);
+}
+
+.chapter .chapter-item a.active {
+    color: var(--sidebar-active);
+    background-color: rgba(0, 102, 204, 0.15);
+    font-weight: 500;
+}
+
+/* Main content area */
+#content {
+    background-color: var(--main-bg);
+    color: var(--text-color);
+}
+
+#content main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    line-height: 1.6;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family:
+        "Lexend",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+    font-weight: 400;
+    color: var(--text-color);
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--reservoir-primary);
+    padding-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 2em;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--reservoir-primary);
+}
+
+h3 {
+    font-size: 1.5em;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+p {
+    font-size: large;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+/* Links */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Code blocks */
+pre {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--pre-bg);
+    padding: 1em;
+    overflow-x: auto;
+    position: relative;
+    margin: 1rem 0 2rem 0;
+    font-family:
+        "Roboto Mono", "Source Code Pro", Consolas, "Ubuntu Mono", Menlo,
+        monospace;
+}
+
+/* Code inside pre blocks - no additional styling */
+pre code {
+    font-family:
+        "Roboto Mono", "Source Code Pro", Consolas, "Ubuntu Mono", Menlo,
+        monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    background: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+}
+
+/* Inline code - only applies to code NOT inside pre */
+code:not(pre code) {
+    font-family:
+        "Roboto Mono", "Source Code Pro", Consolas, "Ubuntu Mono", Menlo,
+        monospace;
+    font-size: 0.9em;
+    background-color: var(--code-inline-bg);
+    color: var(--code-inline-text);
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
+    border: 1px solid var(--border-color);
+}
+
+/* Copy button for code blocks */
+.copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    background: var(--copy-btn-bg);
+    color: var(--copy-btn-text);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.9em;
+    cursor: pointer;
+    opacity: 0.7;
+    z-index: 2;
+    user-select: none;
+    border: none;
+    transition: opacity 0.2s;
+}
+
+pre:hover .copy-btn {
+    opacity: 1;
+}
+
+.copy-btn:active {
+    background: var(--copy-btn-hover);
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th,
+td {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+th {
+    background-color: var(--pre-bg);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+@media (prefers-color-scheme: dark) {
+    tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+}
+
+/* Horizontal rules */
+hr {
+    border: none;
+    border-top: 1px solid var(--hr-color);
+    margin: 2rem 0;
+}
+
+/* Callout boxes */
+.info {
+    background-color: rgba(0, 102, 204, 0.1);
+    border-left: 4px solid var(--link-color);
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.warning {
+    background-color: rgba(231, 117, 0, 0.1);
+    border-left: 4px solid #e77500;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.error {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #ef4444;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.success {
+    background-color: rgba(34, 197, 94, 0.1);
+    border-left: 4px solid #22c55e;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Button styling */
+.btn {
+    display: inline-block;
+    background-color: var(--reservoir-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: var(--copy-btn-hover);
+    color: white;
+    text-decoration: none;
+}
+
+/* Search box styling */
+#searchbar {
+    background-color: var(--pre-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-color);
+}
+
+#searchbar:focus {
+    border-color: var(--reservoir-primary);
+    outline: none;
+}
+
+/* Navigation arrows */
+.nav-chapters {
+    color: var(--text-color);
+}
+
+.nav-chapters:hover {
+    color: var(--reservoir-primary);
+    text-decoration: none;
+}
+
+/* Hide theme toggle completely */
+#theme-toggle,
+.theme-popup,
+.theme-list {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Print button */
+#print-button {
+    color: var(--text-color);
+}
+
+#print-button:hover {
+    color: var(--reservoir-primary);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    #content main {
+        padding: 1rem;
+    }
+
+    pre {
+        padding: 0.75rem;
+        font-size: 0.8em;
+    }
+
+    table {
+        font-size: 0.875em;
+    }
+
+    th,
+    td {
+        padding: 0.5rem;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+}
+
+/* Fix for mdBook's menu bar */
+.menu-bar {
+    background-color: var(--bg-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.menu-bar .menu-title {
+    color: var(--reservoir-primary) !important;
+}
+
+/* Force menu bar icons to use our colors */
+.menu-bar i {
+    color: var(--text-color) !important;
+}
+
+.menu-bar i:hover {
+    color: var(--reservoir-primary) !important;
+}
+
+/* Ensure menu bar respects system theme */
+.menu-bar,
+.menu-bar * {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+}
+
+/* Ensure proper spacing */
+.content {
+    padding: 0;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    margin-left: 0.5rem;
+}
+
+.status-experimental {
+    background-color: rgba(231, 117, 0, 0.2);
+    color: #e77500;
+}
+
+.status-stable {
+    background-color: rgba(34, 197, 94, 0.2);
+    color: #16a34a;
+}
+
+.status-deprecated {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #dc2626;
+}
+
+/* Command line examples */
+.command-example {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 6px;
+    font-family: "Roboto Mono", monospace;
+    margin: 1rem 0;
+    position: relative;
+}
+
+.command-example::before {
+    content: "$ ";
+    color: #22c55e;
+    font-weight: bold;
+}
+
+/* API endpoint styling */
+.endpoint {
+    font-family: "Roboto Mono", monospace;
+    background-color: var(--pre-bg);
+    padding: 0.5rem;
+    border-radius: 4px;
+    border-left: 3px solid var(--reservoir-primary);
+    margin: 0.5rem 0;
+    font-size: 0.9em;
+}
