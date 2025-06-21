@@ -525,7 +525,7 @@ hr {
 
 /* Fix for mdBook's menu bar */
 .menu-bar {
-    background-color: var(--bg-color) !important;
+    background-color: #1e1e1e !important;
     border-bottom: 1px solid var(--border-color) !important;
 }
 
@@ -533,9 +533,9 @@ hr {
     color: var(--reservoir-primary) !important;
 }
 
-/* Force menu bar icons to use our colors */
+/* Force menu bar icons to use light colors for dark navbar */
 .menu-bar i {
-    color: var(--text-color) !important;
+    color: #ddd !important;
 }
 
 .menu-bar i:hover {
@@ -545,7 +545,7 @@ hr {
 /* Ensure menu bar respects system theme */
 .menu-bar,
 .menu-bar * {
-    background-color: var(--bg-color) !important;
+    /* background-color: var(--bg-color) !important; */
     color: var(--text-color) !important;
 }
 
