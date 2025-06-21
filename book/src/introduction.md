@@ -2,7 +2,7 @@
 
 Chat Gipitty (Chat Get Information, Print Information TTY) is a command line client primarily intended for the **official OpenAI Chat Completions API**. It allows you to chat with language models in a terminal and even pipe output into it. While optimized for OpenAI's ChatGPT (with GPT-4 as the default model), it can also work with other providers that expose OpenAI-compatible endpoints.
 
-![Chat GipiTTY Logo](../docs/logo-256.png)
+![Chat GipiTTY Logo](logo-256.png)
 
 ## What is Chat GipiTTY?
 
