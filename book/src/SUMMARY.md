@@ -29,7 +29,6 @@
   - [Text Processing](./text-processing.md)
   - [Image Analysis](./image-analysis.md)
   - [Voice Synthesis](./voice-synthesis.md)
-- [Troubleshooting](./troubleshooting.md)
 - [Development](./development-workflow.md)
 - [Contributing](./contributing.md)
 - [Reference](./reference.md)
