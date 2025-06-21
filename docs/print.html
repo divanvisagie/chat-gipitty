@@ -3998,7 +3998,398 @@ dmesg | tail -20 | cgip "analyze system messages" -f /etc/fstab -f /etc/systemd/
 </code></pre>
 <p>File input is one of Chat GipiTTY's most powerful features, enabling you to provide rich context for AI analysis while maintaining the flexibility of command-line workflows.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="model-selection-3"><a class="header" href="#model-selection-3">Model Selection</a></h1>
+<p>Chat GipiTTY supports multiple AI models and providers, giving you flexibility to choose the right model for your specific task. This section covers how to select models, understand their capabilities, and optimize your usage.</p>
+<h2 id="default-model-1"><a class="header" href="#default-model-1">Default Model</a></h2>
+<p>By default, Chat GipiTTY uses <code>gpt-4o</code> when connected to OpenAI. This provides a good balance of capability and performance for most tasks.</p>
+<h2 id="selecting-models"><a class="header" href="#selecting-models">Selecting Models</a></h2>
+<h3 id="command-line-selection"><a class="header" href="#command-line-selection">Command Line Selection</a></h3>
+<p>Use the <code>-M</code> or <code>--model</code> flag to specify a model for a single query:</p>
+<pre><code class="language-sh">cgip -M gpt-3.5-turbo "Simple question that doesn't need GPT-4"
+cgip -M gpt-4o "Complex reasoning task"
+cgip -M claude-3-sonnet "Detailed code analysis"
+</code></pre>
+<h3 id="configuration-1"><a class="header" href="#configuration-1">Configuration</a></h3>
+<p>Set a default model in your configuration:</p>
+<pre><code class="language-sh">cgip config --set model=gpt-4o
+</code></pre>
+<h3 id="list-available-models-1"><a class="header" href="#list-available-models-1">List Available Models</a></h3>
+<p>See what models are available with your current provider:</p>
+<pre><code class="language-sh">cgip --list-models
+</code></pre>
+<h2 id="model-categories"><a class="header" href="#model-categories">Model Categories</a></h2>
+<h3 id="openai-models"><a class="header" href="#openai-models">OpenAI Models</a></h3>
+<p>For up-to-date information about OpenAI models, capabilities, and pricing, see the <a href="https://platform.openai.com/docs/models">official OpenAI documentation</a>.</p>
+<p>Common models include:</p>
+<ul>
+<li><strong>GPT-4 family</strong> - Most capable models for complex reasoning</li>
+<li><strong>GPT-3.5 family</strong> - Fast and cost-effective for simple tasks</li>
+<li><strong>Specialized models</strong> - Vision, search, and other specialized capabilities</li>
+</ul>
+<h3 id="local-models-via-ollama"><a class="header" href="#local-models-via-ollama">Local Models (via Ollama)</a></h3>
+<p>When using Ollama (<code>OPENAI_BASE_URL=http://localhost:11434/v1</code>):</p>
+<pre><code class="language-sh"># Popular local models
+cgip -M llama2:7b "Question for local Llama model"
+cgip -M codellama:13b "Code-related question"
+cgip -M mistral:7b "General purpose query"
+cgip -M phi:2.7b "Lightweight model for simple tasks"
+</code></pre>
+<h3 id="other-providers"><a class="header" href="#other-providers">Other Providers</a></h3>
+<h4 id="claude-anthropic"><a class="header" href="#claude-anthropic">Claude (Anthropic)</a></h4>
+<p>For current Claude model information, see <a href="https://docs.anthropic.com/claude/docs/models-overview">Anthropic's documentation</a>.</p>
+<pre><code class="language-sh">cgip -M claude-3-opus "Most capable Claude model"
+cgip -M claude-3-sonnet "Balanced Claude model"
+cgip -M claude-3-haiku "Fast Claude model"
+</code></pre>
+<h4 id="gemini-google"><a class="header" href="#gemini-google">Gemini (Google)</a></h4>
+<p>For current Gemini model information, see <a href="https://ai.google.dev/models/gemini">Google's AI documentation</a>.</p>
+<pre><code class="language-sh">cgip -M gemini-pro "Google's flagship model"
+cgip -M gemini-pro-vision "Gemini with vision capabilities"
+</code></pre>
+<h2 id="model-selection-strategy"><a class="header" href="#model-selection-strategy">Model Selection Strategy</a></h2>
+<h3 id="by-task-type"><a class="header" href="#by-task-type">By Task Type</a></h3>
+<h4 id="code-analysis-and-programming"><a class="header" href="#code-analysis-and-programming">Code Analysis and Programming</a></h4>
+<pre><code class="language-sh"># Best models for code
+cgip -M gpt-4o "review this code" -f complex_algorithm.py
+cgip -M claude-3-sonnet "explain this codebase" -f src/*.py
+cgip -M codellama:13b "simple code question" -f script.sh  # Local option
+</code></pre>
+<h4 id="creative-writing-and-content"><a class="header" href="#creative-writing-and-content">Creative Writing and Content</a></h4>
+<pre><code class="language-sh"># Creative tasks
+cgip -M gpt-4o "write a creative story about..."
+cgip -M claude-3-opus "generate marketing copy for..."
+</code></pre>
+<h4 id="data-analysis-3"><a class="header" href="#data-analysis-3">Data Analysis</a></h4>
+<pre><code class="language-sh"># Analytical tasks
+cgip -M gpt-4-turbo "analyze this dataset" -f data.csv
+cgip -M claude-3-sonnet "find patterns in this data" -f logs.txt
+</code></pre>
+<h4 id="quick-questions-and-simple-tasks"><a class="header" href="#quick-questions-and-simple-tasks">Quick Questions and Simple Tasks</a></h4>
+<pre><code class="language-sh"># Fast, simple queries
+cgip -M gpt-3.5-turbo "what's the capital of France?"
+cgip -M mistral:7b "simple calculation or fact check"  # Local option
+</code></pre>
+<h4 id="image-analysis-1"><a class="header" href="#image-analysis-1">Image Analysis</a></h4>
+<pre><code class="language-sh"># Vision-capable models
+cgip -M gpt-4o image --file photo.jpg "describe this image"
+cgip -M gpt-4-vision-preview image --file diagram.png "explain this diagram"
+</code></pre>
+<h4 id="web-search-1"><a class="header" href="#web-search-1">Web Search</a></h4>
+<pre><code class="language-sh"># Search automatically uses optimal model
+cgip --search "latest developments in AI"  # Auto-selects gpt-4o-search-preview
+</code></pre>
+<h3 id="by-performance-requirements"><a class="header" href="#by-performance-requirements">By Performance Requirements</a></h3>
+<h4 id="speed-optimized"><a class="header" href="#speed-optimized">Speed-Optimized</a></h4>
+<pre><code class="language-sh"># Fastest responses
+cgip -M gpt-3.5-turbo "quick question"
+cgip -M phi:2.7b "simple local query"  # Local, very fast
+</code></pre>
+<h4 id="quality-optimized"><a class="header" href="#quality-optimized">Quality-Optimized</a></h4>
+<pre><code class="language-sh"># Best quality responses
+cgip -M gpt-4o "complex reasoning task"
+cgip -M claude-3-opus "detailed analysis requiring nuance"
+</code></pre>
+<h4 id="cost-optimized"><a class="header" href="#cost-optimized">Cost-Optimized</a></h4>
+<pre><code class="language-sh"># Lower cost options
+cgip -M gpt-3.5-turbo "cost-sensitive query"
+cgip -M llama2:7b "free local processing"  # No API costs
+</code></pre>
+<h3 id="by-context-length"><a class="header" href="#by-context-length">By Context Length</a></h3>
+<h4 id="large-context-requirements"><a class="header" href="#large-context-requirements">Large Context Requirements</a></h4>
+<pre><code class="language-sh"># For large files or long conversations
+cgip -M gpt-4-turbo "analyze entire codebase" -f src/*.py  # 128k context
+cgip -M claude-3-sonnet "process long document" -f book.txt  # 200k context
+</code></pre>
+<h4 id="standard-context"><a class="header" href="#standard-context">Standard Context</a></h4>
+<pre><code class="language-sh"># Normal usage
+cgip -M gpt-4o "regular queries"  # 128k context
+cgip -M gpt-3.5-turbo "simple tasks"  # 16k context
+</code></pre>
+<h2 id="advanced-model-usage"><a class="header" href="#advanced-model-usage">Advanced Model Usage</a></h2>
+<h3 id="model-specific-features"><a class="header" href="#model-specific-features">Model-Specific Features</a></h3>
+<h4 id="automatic-model-selection-1"><a class="header" href="#automatic-model-selection-1">Automatic Model Selection</a></h4>
+<p>Some features automatically select appropriate models:</p>
+<pre><code class="language-sh"># Web search auto-selects search-optimized model
+cgip --search "current events"
+
+# Image analysis ensures vision-capable model
+cgip image --file photo.jpg "describe this"
+
+# TTS uses speech models automatically
+cgip tts "text to convert"
+</code></pre>
+<h4 id="provider-specific-capabilities"><a class="header" href="#provider-specific-capabilities">Provider-Specific Capabilities</a></h4>
+<pre><code class="language-sh"># OpenAI specific
+cgip -M gpt-4o "/search with web browsing"
+
+# Claude specific (via compatible endpoint)
+cgip -M claude-3-opus "long-form analysis with nuanced reasoning"
+
+# Local model benefits
+cgip -M llama2:7b "private, offline processing"
+</code></pre>
+<h3 id="model-switching-in-sessions"><a class="header" href="#model-switching-in-sessions">Model Switching in Sessions</a></h3>
+<pre><code class="language-sh"># Start with fast model
+cgip -M gpt-3.5-turbo "initial question"
+
+# Switch to more capable model for follow-up
+cgip -M gpt-4o "complex follow up based on previous answer"
+</code></pre>
+<h3 id="environment-based-selection"><a class="header" href="#environment-based-selection">Environment-Based Selection</a></h3>
+<p>Set up different defaults for different environments:</p>
+<pre><code class="language-sh"># Development environment - use local models
+export OPENAI_BASE_URL=http://localhost:11434/v1
+cgip config --set model=codellama:13b
+
+# Production analysis - use best models
+export OPENAI_BASE_URL=https://api.openai.com
+cgip config --set model=gpt-4o
+</code></pre>
+<h2 id="best-practices-12"><a class="header" href="#best-practices-12">Best Practices</a></h2>
+<h3 id="model-selection-guidelines"><a class="header" href="#model-selection-guidelines">Model Selection Guidelines</a></h3>
+<ol>
+<li><strong>Start simple</strong>: Use <code>gpt-3.5-turbo</code> for straightforward queries</li>
+<li><strong>Upgrade when needed</strong>: Switch to <code>gpt-4o</code> for complex reasoning</li>
+<li><strong>Use specialized models</strong>: Choose vision models for images, code models for programming</li>
+<li><strong>Consider context</strong>: Use high-context models for large files</li>
+<li><strong>Balance cost and quality</strong>: Expensive models aren't always necessary</li>
+</ol>
+<h3 id="performance-tips-1"><a class="header" href="#performance-tips-1">Performance Tips</a></h3>
+<pre><code class="language-sh"># Cache expensive model responses in sessions
+export CGIP_SESSION_NAME="analysis-session"
+cgip -M gpt-4o "expensive analysis" -f large_dataset.csv
+
+# Use cheaper models for iteration
+cgip -M gpt-3.5-turbo "quick clarification about previous response"
+</code></pre>
+<h3 id="cost-management"><a class="header" href="#cost-management">Cost Management</a></h3>
+<pre><code class="language-sh"># Preview context before sending to expensive models
+cgip --show-context -M gpt-4o "preview what will be sent"
+
+# Use local models for development/testing
+cgip -M llama2:7b "test query structure before using paid API"
+</code></pre>
+<h2 id="troubleshooting-model-selection"><a class="header" href="#troubleshooting-model-selection">Troubleshooting Model Selection</a></h2>
+<h3 id="model-not-available"><a class="header" href="#model-not-available">Model Not Available</a></h3>
+<pre><code class="language-sh"># Check available models
+cgip --list-models
+
+# Verify provider configuration
+cgip config --get base_url
+</code></pre>
+<h3 id="feature-not-supported"><a class="header" href="#feature-not-supported">Feature Not Supported</a></h3>
+<pre><code class="language-sh"># Some features require specific model families
+cgip -M gpt-4o image --file photo.jpg  # Vision requires vision-capable model
+cgip -M gpt-4o-search-preview --search "query"  # Search requires search-enabled model
+</code></pre>
+<h3 id="performance-issues-1"><a class="header" href="#performance-issues-1">Performance Issues</a></h3>
+<pre><code class="language-sh"># Switch to faster model if response time is important
+cgip -M gpt-3.5-turbo "time-sensitive query"
+
+# Use local models to avoid network latency
+cgip -M llama2:7b "local processing"
+</code></pre>
+<h2 id="model-resources"><a class="header" href="#model-resources">Model Resources</a></h2>
+<p>For detailed model comparisons, capabilities, and current pricing:</p>
+<ul>
+<li><strong>OpenAI Models</strong>: <a href="https://platform.openai.com/docs/models">OpenAI Platform Documentation</a></li>
+<li><strong>Anthropic Claude</strong>: <a href="https://docs.anthropic.com/claude/docs/models-overview">Claude Model Overview</a></li>
+<li><strong>Google Gemini</strong>: <a href="https://ai.google.dev/models/gemini">Gemini Model Documentation</a></li>
+<li><strong>Ollama Models</strong>: <a href="https://ollama.com/library">Ollama Model Library</a></li>
+</ul>
+<p>These official sources provide the most up-to-date information about model capabilities, context lengths, pricing, and availability.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="system-prompts-1"><a class="header" href="#system-prompts-1">System Prompts</a></h1>
+<p>System prompts allow you to customize the AI's behavior by providing persistent instructions that apply to all interactions. They're like setting the "personality" or "role" for the AI model, helping it respond in a specific way that matches your needs.</p>
+<h2 id="what-are-system-prompts"><a class="header" href="#what-are-system-prompts">What are System Prompts?</a></h2>
+<p>System prompts are special instructions that:</p>
+<ul>
+<li>Set the AI's role, personality, or expertise level</li>
+<li>Apply to all messages in a conversation</li>
+<li>Influence how the AI interprets and responds to queries</li>
+<li>Remain active throughout a session</li>
+</ul>
+<h2 id="setting-system-prompts"><a class="header" href="#setting-system-prompts">Setting System Prompts</a></h2>
+<h3 id="command-line"><a class="header" href="#command-line">Command Line</a></h3>
+<p>Use the <code>--system</code> flag to set a system prompt for a single query:</p>
+<pre><code class="language-sh">cgip --system "You are a senior Rust developer" "explain this error" -f error.log
+</code></pre>
+<h3 id="configuration-2"><a class="header" href="#configuration-2">Configuration</a></h3>
+<p>Set a default system prompt that applies to all queries:</p>
+<pre><code class="language-sh"># Set a default system prompt
+cgip config --set system_prompt="You are a helpful assistant specializing in software development"
+
+# View current system prompt
+cgip config --get system_prompt
+
+# Clear system prompt
+cgip config --unset system_prompt
+</code></pre>
+<h3 id="session-specific-prompts"><a class="header" href="#session-specific-prompts">Session-Specific Prompts</a></h3>
+<p>System prompts work great with sessions:</p>
+<pre><code class="language-sh"># Set session and system prompt for a specific project
+export CGIP_SESSION_NAME="rust-project"
+cgip --system "You are a Rust expert helping with systems programming" "initial question"
+
+# Subsequent queries in the same session maintain the system prompt context
+cgip "follow-up question"
+</code></pre>
+<h2 id="common-system-prompt-patterns"><a class="header" href="#common-system-prompt-patterns">Common System Prompt Patterns</a></h2>
+<h3 id="role-based-prompts"><a class="header" href="#role-based-prompts">Role-Based Prompts</a></h3>
+<h4 id="senior-developer"><a class="header" href="#senior-developer">Senior Developer</a></h4>
+<pre><code class="language-sh">cgip --system "You are a senior software engineer with 15 years of experience. Provide detailed, production-ready advice." "review this code" -f app.py
+</code></pre>
+<h4 id="code-reviewer"><a class="header" href="#code-reviewer">Code Reviewer</a></h4>
+<pre><code class="language-sh">cgip config --set system_prompt="You are a thorough code reviewer. Focus on security, performance, maintainability, and best practices."
+</code></pre>
+<h4 id="devops-engineer"><a class="header" href="#devops-engineer">DevOps Engineer</a></h4>
+<pre><code class="language-sh">cgip --system "You are a DevOps engineer specializing in containerization and CI/CD pipelines." "analyze this Docker setup" -f docker-compose.yml
+</code></pre>
+<h3 id="expertise-level-prompts"><a class="header" href="#expertise-level-prompts">Expertise Level Prompts</a></h3>
+<h4 id="beginner-friendly"><a class="header" href="#beginner-friendly">Beginner-Friendly</a></h4>
+<pre><code class="language-sh">cgip --system "Explain everything in simple terms suitable for a beginner. Use analogies and avoid jargon." "what is a REST API?"
+</code></pre>
+<h4 id="expert-level"><a class="header" href="#expert-level">Expert Level</a></h4>
+<pre><code class="language-sh">cgip --system "Assume deep technical expertise. Provide advanced insights and implementation details." "optimize this algorithm" -f algorithm.py
+</code></pre>
+<h3 id="communication-style-prompts"><a class="header" href="#communication-style-prompts">Communication Style Prompts</a></h3>
+<h4 id="concise-responses-1"><a class="header" href="#concise-responses-1">Concise Responses</a></h4>
+<pre><code class="language-sh">cgip config --set system_prompt="Be extremely concise. Provide only essential information."
+</code></pre>
+<h4 id="detailed-explanations"><a class="header" href="#detailed-explanations">Detailed Explanations</a></h4>
+<pre><code class="language-sh">cgip --system "Provide comprehensive explanations with examples, reasoning, and context." "explain this concept"
+</code></pre>
+<h4 id="structured-output"><a class="header" href="#structured-output">Structured Output</a></h4>
+<pre><code class="language-sh">cgip --system "Always structure responses with clear headings, bullet points, and numbered steps." "analyze this issue"
+</code></pre>
+<h2 id="specialized-system-prompts"><a class="header" href="#specialized-system-prompts">Specialized System Prompts</a></h2>
+<h3 id="security-analysis"><a class="header" href="#security-analysis">Security Analysis</a></h3>
+<pre><code class="language-sh">cgip --system "You are a cybersecurity expert. Focus on identifying vulnerabilities, security best practices, and potential attack vectors." "review this authentication code" -f auth.py
+</code></pre>
+<h3 id="performance-optimization-1"><a class="header" href="#performance-optimization-1">Performance Optimization</a></h3>
+<pre><code class="language-sh">cgip --system "You are a performance optimization specialist. Focus on efficiency, scalability, and resource usage." "analyze this query" -f slow-query.sql
+</code></pre>
+<h3 id="documentation-writing"><a class="header" href="#documentation-writing">Documentation Writing</a></h3>
+<pre><code class="language-sh">cgip --system "You are a technical writer. Create clear, well-structured documentation with examples." "document this API" -f api.py
+</code></pre>
+<h3 id="testing-and-qa"><a class="header" href="#testing-and-qa">Testing and QA</a></h3>
+<pre><code class="language-sh">cgip --system "You are a QA engineer. Focus on test coverage, edge cases, and quality assurance." "create test cases for this function" -f function.js
+</code></pre>
+<h2 id="context-specific-prompts"><a class="header" href="#context-specific-prompts">Context-Specific Prompts</a></h2>
+<h3 id="project-specific"><a class="header" href="#project-specific">Project-Specific</a></h3>
+<pre><code class="language-sh"># For a React project
+export CGIP_SESSION_NAME="react-app"
+cgip --system "You are a React expert working on a modern web application using hooks, TypeScript, and Next.js."
+
+# For a data science project
+export CGIP_SESSION_NAME="data-analysis"
+cgip --system "You are a data scientist specializing in Python, pandas, and machine learning."
+</code></pre>
+<h3 id="technology-specific"><a class="header" href="#technology-specific">Technology-Specific</a></h3>
+<pre><code class="language-sh"># Rust development
+cgip --system "You are a Rust systems programmer. Focus on memory safety, performance, and idiomatic Rust patterns."
+
+# Cloud architecture
+cgip --system "You are a cloud architect specializing in AWS. Consider scalability, cost optimization, and best practices."
+</code></pre>
+<h2 id="advanced-system-prompt-techniques"><a class="header" href="#advanced-system-prompt-techniques">Advanced System Prompt Techniques</a></h2>
+<h3 id="multi-role-prompts"><a class="header" href="#multi-role-prompts">Multi-Role Prompts</a></h3>
+<pre><code class="language-sh">cgip --system "You are both a senior developer and a mentor. Provide code solutions while teaching underlying concepts." "help me understand this pattern" -f design-pattern.py
+</code></pre>
+<h3 id="output-format-specifications"><a class="header" href="#output-format-specifications">Output Format Specifications</a></h3>
+<pre><code class="language-sh">cgip --system "Always respond in this format: 1) Problem Summary 2) Solution 3) Implementation Steps 4) Testing Approach" "debug this issue"
+</code></pre>
+<h3 id="constraint-based-prompts"><a class="header" href="#constraint-based-prompts">Constraint-Based Prompts</a></h3>
+<pre><code class="language-sh">cgip --system "You can only suggest solutions using standard library functions. No external dependencies allowed." "implement this feature" -f requirements.txt
+</code></pre>
+<h3 id="industry-specific"><a class="header" href="#industry-specific">Industry-Specific</a></h3>
+<pre><code class="language-sh"># Financial technology
+cgip --system "You are a fintech developer. Consider regulatory compliance, security, and financial accuracy."
+
+# Healthcare
+cgip --system "You are a healthcare software developer. Prioritize HIPAA compliance, data privacy, and reliability."
+</code></pre>
+<h2 id="best-practices-13"><a class="header" href="#best-practices-13">Best Practices</a></h2>
+<h3 id="effective-system-prompts"><a class="header" href="#effective-system-prompts">Effective System Prompts</a></h3>
+<ol>
+<li><strong>Be Specific</strong>: Clear, specific instructions work better than vague ones</li>
+<li><strong>Set Expertise Level</strong>: Specify the level of technical detail you want</li>
+<li><strong>Define Output Format</strong>: Tell the AI how to structure responses</li>
+<li><strong>Include Constraints</strong>: Mention any limitations or requirements</li>
+<li><strong>Set Context</strong>: Provide relevant background information</li>
+</ol>
+<h3 id="examples-of-good-vs-poor-system-prompts"><a class="header" href="#examples-of-good-vs-poor-system-prompts">Examples of Good vs. Poor System Prompts</a></h3>
+<h4 id="good-system-prompts"><a class="header" href="#good-system-prompts">Good System Prompts</a></h4>
+<pre><code class="language-sh"># Good: Specific role and output format
+cgip --system "You are a senior Python developer. Provide code solutions with explanations, focusing on readability and performance. Include error handling and type hints."
+
+# Good: Clear constraints and context
+cgip --system "You are a DevOps engineer working with Kubernetes. Suggest solutions that work in production environments and follow security best practices."
+</code></pre>
+<h4 id="poor-system-prompts"><a class="header" href="#poor-system-prompts">Poor System Prompts</a></h4>
+<pre><code class="language-sh"># Poor: Too vague
+cgip --system "Be helpful"
+
+# Poor: Contradictory instructions
+cgip --system "Be extremely detailed but also very concise"
+</code></pre>
+<h3 id="managing-system-prompts"><a class="header" href="#managing-system-prompts">Managing System Prompts</a></h3>
+<h4 id="environment-based-configuration-1"><a class="header" href="#environment-based-configuration-1">Environment-Based Configuration</a></h4>
+<pre><code class="language-sh"># Development environment
+cgip config --set system_prompt="You are a developer focused on rapid prototyping and debugging."
+
+# Production environment
+cgip config --set system_prompt="You are a senior engineer focused on reliability, security, and maintainability."
+</code></pre>
+<h4 id="project-specific-setup"><a class="header" href="#project-specific-setup">Project-Specific Setup</a></h4>
+<p>Create project-specific configurations:</p>
+<pre><code class="language-sh"># In project directory
+echo 'export CGIP_SESSION_NAME="$(basename $(pwd))"' &gt;&gt; .envrc
+echo 'cgip config --set system_prompt="You are a [PROJECT_TYPE] expert working on [PROJECT_NAME]."' &gt;&gt; .envrc
+</code></pre>
+<h2 id="system-prompt-examples-by-use-case"><a class="header" href="#system-prompt-examples-by-use-case">System Prompt Examples by Use Case</a></h2>
+<h3 id="code-development"><a class="header" href="#code-development">Code Development</a></h3>
+<pre><code class="language-sh"># General development
+cgip config --set system_prompt="You are a senior full-stack developer. Provide clean, maintainable code with proper error handling and documentation."
+
+# Specific language
+cgip --system "You are a Go expert. Focus on idiomatic Go patterns, concurrency, and performance." "optimize this function" -f handler.go
+</code></pre>
+<h3 id="system-administration-3"><a class="header" href="#system-administration-3">System Administration</a></h3>
+<pre><code class="language-sh"># Linux administration
+cgip config --set system_prompt="You are a Linux system administrator. Focus on security, performance, and best practices for production systems."
+
+# Network administration
+cgip --system "You are a network engineer. Consider security, performance, and monitoring when suggesting solutions."
+</code></pre>
+<h3 id="data-analysis-4"><a class="header" href="#data-analysis-4">Data Analysis</a></h3>
+<pre><code class="language-sh"># Data science
+cgip --system "You are a data scientist. Provide Python solutions using pandas, numpy, and matplotlib. Include data validation and visualization suggestions."
+
+# Database optimization
+cgip --system "You are a database administrator specializing in PostgreSQL. Focus on query optimization, indexing, and performance tuning."
+</code></pre>
+<h2 id="troubleshooting-system-prompts"><a class="header" href="#troubleshooting-system-prompts">Troubleshooting System Prompts</a></h2>
+<h3 id="system-prompt-not-working"><a class="header" href="#system-prompt-not-working">System Prompt Not Working</a></h3>
+<pre><code class="language-sh"># Check if system prompt is set
+cgip config --get system_prompt
+
+# Verify with context display
+cgip --show-context "test query"
+</code></pre>
+<h3 id="conflicting-instructions"><a class="header" href="#conflicting-instructions">Conflicting Instructions</a></h3>
+<p>If system prompts conflict with query instructions:</p>
+<ul>
+<li>System prompts take precedence</li>
+<li>Be specific in your query to override system behavior</li>
+<li>Consider updating the system prompt for better alignment</li>
+</ul>
+<h3 id="session-confusion"><a class="header" href="#session-confusion">Session Confusion</a></h3>
+<p>If the AI seems confused about its role:</p>
+<ul>
+<li>Clear the session: <code>cgip session --clear</code></li>
+<li>Restart with a clearer system prompt</li>
+<li>Make system prompts more specific</li>
+</ul>
+<p>System prompts are a powerful way to customize Chat GipiTTY's behavior for your specific workflows and requirements. Experiment with different prompts to find what works best for your use cases.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="examples-5"><a class="header" href="#examples-5">Examples</a></h1>
 <p>This section provides practical examples of using Chat GipiTTY in real-world scenarios. These examples demonstrate the versatility and power of integrating AI assistance into your terminal workflow.</p>
 <h2 id="quick-start-examples"><a class="header" href="#quick-start-examples">Quick Start Examples</a></h2>
@@ -4102,7 +4493,7 @@ cgip "extract all email addresses and phone numbers" -f contact_list.txt
 cgip "convert this to markdown table format" -f data.txt
 </code></pre>
 <h2 id="multi-modal-examples"><a class="header" href="#multi-modal-examples">Multi-modal Examples</a></h2>
-<h3 id="image-analysis-1"><a class="header" href="#image-analysis-1">Image Analysis</a></h3>
+<h3 id="image-analysis-2"><a class="header" href="#image-analysis-2">Image Analysis</a></h3>
 <pre><code class="language-sh"># Analyze screenshots
 cgip image --file error_screenshot.png "what error is shown and how to fix it?"
 
@@ -4134,7 +4525,7 @@ cgip "optimize this SQL query" -f slow_query.sql
 # Review database logs
 tail -200 /var/log/postgresql/postgresql.log | cgip "any database performance issues?"
 </code></pre>
-<h3 id="security-analysis"><a class="header" href="#security-analysis">Security Analysis</a></h3>
+<h3 id="security-analysis-1"><a class="header" href="#security-analysis-1">Security Analysis</a></h3>
 <pre><code class="language-sh"># Analyze access logs for suspicious activity
 tail -1000 /var/log/auth.log | cgip "any suspicious login attempts?"
 
@@ -4195,7 +4586,7 @@ cat raw_data.txt | sort | uniq -c | sort -nr | cgip "what are the most common en
 </code></pre>
 <p>These examples showcase the flexibility of Chat GipiTTY in various contexts. The key is to think of it as a smart filter or analyzer that can be inserted into any part of your workflow where you need AI assistance.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="text-processing-2"><a class="header" href="#text-processing-2">Text Processing</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="image-analysis-2"><a class="header" href="#image-analysis-2">Image Analysis</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="image-analysis-3"><a class="header" href="#image-analysis-3">Image Analysis</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="voice-synthesis-1"><a class="header" href="#voice-synthesis-1">Voice Synthesis</a></h1>
 <p>Chat GipiTTY supports text-to-speech (TTS) conversion using OpenAI's TTS models. You can convert text to high-quality audio with various voice options and customization settings.</p>
 <p>For detailed information about the TTS feature, see the <a href="./tts-command.html">TTS Command</a> documentation.</p>
@@ -4246,7 +4637,6 @@ cgip tts --voice onyx -f presentation_script.txt --output presentation.mp3
 make build &amp;&amp; cgip tts --voice alloy "Build completed successfully" || cgip tts --voice echo "Build failed"
 </code></pre>
 <p>For complete documentation including all options, voice samples, and advanced usage patterns, see the <a href="./tts-command.html">full TTS command documentation</a>.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="troubleshooting-9"><a class="header" href="#troubleshooting-9">Troubleshooting</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="development-workflow-3"><a class="header" href="#development-workflow-3">Development Workflow</a></h1>
 <p>This section covers development setup and workflow for Chat GipiTTY contributors and advanced users who want to build from source.</p>
 <h2 id="development-setup-1"><a class="header" href="#development-setup-1">Development Setup</a></h2>
@@ -4377,7 +4767,7 @@ cargo run -- "test prompt"
 </ol>
 <p>For detailed release instructions, see the project's internal documentation.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contributing"><a class="header" href="#contributing">Contributing</a></h1>
-<p>Thank you for your interest in contributing to Chat Gipitty! This guide covers how to contribute to the project, from reporting bugs to submitting code changes.</p>
+<p>Thank you for your interest in contributing to Chat GipiTTY! This guide covers how to contribute to the project, from reporting bugs to submitting code changes.</p>
 <h2 id="ways-to-contribute"><a class="header" href="#ways-to-contribute">Ways to Contribute</a></h2>
 <h3 id="reporting-issues"><a class="header" href="#reporting-issues">Reporting Issues</a></h3>
 <ul>
@@ -4394,32 +4784,16 @@ cargo run -- "test prompt"
 <li><strong>Tests</strong>: Add or improve test coverage</li>
 <li><strong>Documentation</strong>: Update code comments and documentation</li>
 </ul>
-<h2 id="getting-started-1"><a class="header" href="#getting-started-1">Getting Started</a></h2>
-<h3 id="prerequisites-3"><a class="header" href="#prerequisites-3">Prerequisites</a></h3>
+<h2 id="development-setup-2"><a class="header" href="#development-setup-2">Development Setup</a></h2>
+<p>For detailed development setup instructions, see the <a href="./development-workflow.html">Development Workflow</a> section, which covers:</p>
 <ul>
-<li><strong>Rust</strong>: Install the latest stable version from <a href="https://rustup.rs/">rustup.rs</a></li>
-<li><strong>Git</strong>: For version control and submitting changes</li>
-<li><strong>Code Editor</strong>: Any editor with Rust support (VSCode, IntelliJ, etc.)</li>
+<li>Prerequisites and dependencies</li>
+<li>Building from source</li>
+<li>Running tests</li>
+<li>Project structure</li>
+<li>Development tools and debugging</li>
 </ul>
-<h3 id="development-setup-2"><a class="header" href="#development-setup-2">Development Setup</a></h3>
-<pre><code class="language-bash"># Clone the repository
-git clone https://github.com/divanvisagie/chat-gipitty.git
-cd chat-gipitty
-
-# Build the project
-cargo build
-
-# Run tests
-cargo test
-
-# Run the development version
-cargo run -- --help
-</code></pre>
-<h3 id="ubuntu-development-setup-1"><a class="header" href="#ubuntu-development-setup-1">Ubuntu Development Setup</a></h3>
-<p>On Ubuntu, additional packages are required for building distribution packages:</p>
-<pre><code class="language-bash">sudo apt-get install build-essential dh-make debhelper devscripts
-</code></pre>
-<h2 id="development-workflow-4"><a class="header" href="#development-workflow-4">Development Workflow</a></h2>
+<h2 id="contribution-process"><a class="header" href="#contribution-process">Contribution Process</a></h2>
 <h3 id="1-fork-and-clone"><a class="header" href="#1-fork-and-clone">1. Fork and Clone</a></h3>
 <ol>
 <li>Fork the repository on GitHub</li>
@@ -4444,17 +4818,18 @@ git checkout -b fix/issue-number
 <li>Update documentation as needed</li>
 </ul>
 <h3 id="4-test-your-changes"><a class="header" href="#4-test-your-changes">4. Test Your Changes</a></h3>
+<p>Before submitting, ensure your changes work correctly:</p>
 <pre><code class="language-bash"># Run the full test suite
 cargo test
-
-# Test your changes manually
-cargo run -- "test query"
 
 # Check formatting
 cargo fmt --check
 
 # Run clippy for linting
 cargo clippy
+
+# Test manually
+cargo run -- "test query"
 </code></pre>
 <h3 id="5-commit-and-push"><a class="header" href="#5-commit-and-push">5. Commit and Push</a></h3>
 <pre><code class="language-bash"># Stage your changes
@@ -4495,107 +4870,16 @@ git push origin feature/your-feature-name
 <li>Update relevant documentation for new features</li>
 <li>Add examples for new functionality</li>
 <li>Keep the README up to date</li>
-<li>Add or update man page content if needed</li>
+<li>Update the book documentation for user-facing changes</li>
 </ul>
-<h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
-<h3 id="running-tests-1"><a class="header" href="#running-tests-1">Running Tests</a></h3>
-<pre><code class="language-bash"># Run all tests
-cargo test
-
-# Run specific test
-cargo test test_name
-
-# Run with verbose output
-cargo test -- --nocapture
-</code></pre>
-<h3 id="adding-tests"><a class="header" href="#adding-tests">Adding Tests</a></h3>
-<ul>
-<li>Add unit tests for new functions</li>
-<li>Add integration tests for new features</li>
-<li>Test error conditions and edge cases</li>
-<li>Ensure tests are deterministic and isolated</li>
-</ul>
-<h3 id="manual-testing"><a class="header" href="#manual-testing">Manual Testing</a></h3>
-<p>Test your changes with real scenarios:</p>
-<pre><code class="language-bash"># Test basic functionality
-cargo run -- "test query"
-
-# Test with files
-cargo run -- -f test_file.txt "analyze this"
-
-# Test subcommands
-cargo run -- image --help
-cargo run -- tts "test speech"
-</code></pre>
-<h2 id="release-process-1"><a class="header" href="#release-process-1">Release Process</a></h2>
-<p>The project uses Git tags and GitHub Actions for releases. Here's how releases are prepared:</p>
-<h3 id="1-update-version-numbers"><a class="header" href="#1-update-version-numbers">1. Update Version Numbers</a></h3>
-<ul>
-<li>Edit <code>Cargo.toml</code> and set the new <code>version</code></li>
-<li>Update the version in <code>assets/cgip.1</code> and <code>scripts/build_deb.sh</code></li>
-<li>Run <code>cargo build --release</code> to update <code>Cargo.lock</code></li>
-</ul>
-<h3 id="2-write-release-notes"><a class="header" href="#2-write-release-notes">2. Write Release Notes</a></h3>
-<ul>
-<li>Add a markdown file under <code>notes/</code> named after the version (e.g., <code>notes/0.5.0.md</code>)</li>
-<li>Summarize new features, fixes, and maintenance items</li>
-<li>Include any breaking changes or migration notes</li>
-</ul>
-<h3 id="3-commit-changes"><a class="header" href="#3-commit-changes">3. Commit Changes</a></h3>
-<pre><code class="language-bash">git add .
-git commit -m "Bump version to 0.5.0"
-</code></pre>
-<h3 id="4-tag-the-release"><a class="header" href="#4-tag-the-release">4. Tag the Release</a></h3>
-<pre><code class="language-bash"># Verify the tag first
-make tag-release-dry
-
-# Create and push the tag (triggers GitHub Actions)
-make tag-release
-</code></pre>
-<h3 id="5-publish-packages-optional"><a class="header" href="#5-publish-packages-optional">5. Publish Packages (Optional)</a></h3>
-<pre><code class="language-bash"># Build and upload artifacts to GitHub release
-make tarball-publish
-# or
-make deb-publish
-</code></pre>
-<p>This process ensures version consistency and triggers automated release builds.</p>
-<h2 id="project-structure-1"><a class="header" href="#project-structure-1">Project Structure</a></h2>
-<pre><code>chat-gipitty/
-├── src/                 # Source code
-│   ├── main.rs         # Entry point
-│   ├── args.rs         # Command line argument parsing
-│   ├── chat.rs         # Main chat functionality
-│   ├── config_manager.rs # Configuration management
-│   ├── printer.rs      # Output formatting
-│   ├── utils.rs        # Utility functions
-│   ├── chatgpt/        # ChatGPT API client
-│   └── sub/            # Subcommand implementations
-├── docs/               # Documentation
-├── book/               # mdBook documentation
-├── scripts/            # Build and release scripts
-├── notes/              # Release notes
-├── test_data/          # Test files
-├── Cargo.toml          # Rust project configuration
-├── Cargo.lock          # Dependency lock file
-└── Makefile           # Build automation
-</code></pre>
-<h2 id="code-organization"><a class="header" href="#code-organization">Code Organization</a></h2>
-<h3 id="main-components"><a class="header" href="#main-components">Main Components</a></h3>
-<ul>
-<li><strong><code>main.rs</code></strong>: Entry point and argument parsing</li>
-<li><strong><code>chat.rs</code></strong>: Core chat functionality and context management</li>
-<li><strong><code>config_manager.rs</code></strong>: Configuration file handling</li>
-<li><strong><code>chatgpt/</code></strong>: OpenAI API client implementation</li>
-<li><strong><code>sub/</code></strong>: Individual subcommand implementations</li>
-</ul>
-<h3 id="adding-new-features"><a class="header" href="#adding-new-features">Adding New Features</a></h3>
-<h4 id="new-command-line-options"><a class="header" href="#new-command-line-options">New Command Line Options</a></h4>
+<h2 id="adding-new-features"><a class="header" href="#adding-new-features">Adding New Features</a></h2>
+<h3 id="new-command-line-options"><a class="header" href="#new-command-line-options">New Command Line Options</a></h3>
 <ol>
 <li>Add to <code>args.rs</code> in the appropriate struct</li>
 <li>Handle the option in <code>main.rs</code></li>
 <li>Update help text and documentation</li>
 </ol>
-<h4 id="new-subcommands"><a class="header" href="#new-subcommands">New Subcommands</a></h4>
+<h3 id="new-subcommands"><a class="header" href="#new-subcommands">New Subcommands</a></h3>
 <ol>
 <li>Create a new file in <code>src/sub/</code></li>
 <li>Implement the subcommand logic</li>
@@ -4603,35 +4887,72 @@ make deb-publish
 <li>Update argument parsing in <code>args.rs</code></li>
 <li>Add documentation in <code>book/src/</code></li>
 </ol>
-<h4 id="new-api-endpoints"><a class="header" href="#new-api-endpoints">New API Endpoints</a></h4>
+<h3 id="new-api-features"><a class="header" href="#new-api-features">New API Features</a></h3>
 <ol>
 <li>Add to the <code>chatgpt/</code> module</li>
 <li>Update request/response structs</li>
 <li>Add error handling</li>
 <li>Update tests</li>
 </ol>
-<h2 id="common-issues-and-solutions-1"><a class="header" href="#common-issues-and-solutions-1">Common Issues and Solutions</a></h2>
-<h3 id="build-issues"><a class="header" href="#build-issues">Build Issues</a></h3>
-<pre><code class="language-bash"># Clean build artifacts
-cargo clean
-
-# Update dependencies
-cargo update
-
-# Check for compilation errors
-cargo check
-</code></pre>
-<h3 id="test-failures"><a class="header" href="#test-failures">Test Failures</a></h3>
+<h2 id="testing-guidelines"><a class="header" href="#testing-guidelines">Testing Guidelines</a></h2>
+<h3 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h3>
 <ul>
-<li>Ensure tests don't depend on external services</li>
-<li>Check for race conditions in concurrent tests</li>
-<li>Verify test data files exist and are correct</li>
+<li><strong>Unit tests</strong>: Test individual functions and modules</li>
+<li><strong>Integration tests</strong>: Test feature interactions</li>
+<li><strong>Manual testing</strong>: Test real-world scenarios</li>
 </ul>
-<h3 id="documentation-issues"><a class="header" href="#documentation-issues">Documentation Issues</a></h3>
+<h3 id="test-requirements"><a class="header" href="#test-requirements">Test Requirements</a></h3>
 <ul>
-<li>Run <code>mdbook build</code> to test documentation locally</li>
-<li>Check internal links are working</li>
-<li>Ensure code examples are correct</li>
+<li>Add tests for new functionality</li>
+<li>Test error conditions and edge cases</li>
+<li>Ensure tests are deterministic and isolated</li>
+<li>Don't depend on external services in tests</li>
+</ul>
+<h3 id="manual-testing-checklist"><a class="header" href="#manual-testing-checklist">Manual Testing Checklist</a></h3>
+<pre><code class="language-bash"># Test basic functionality
+cargo run -- "test query"
+
+# Test with different input sources
+echo "test" | cargo run -- "analyze this"
+cargo run -- -f test_file.txt "analyze this file"
+
+# Test subcommands
+cargo run -- config --help
+cargo run -- session --help
+</code></pre>
+<h2 id="review-process"><a class="header" href="#review-process">Review Process</a></h2>
+<h3 id="what-to-expect"><a class="header" href="#what-to-expect">What to Expect</a></h3>
+<ol>
+<li><strong>Initial Review</strong>: Maintainers will review your pull request</li>
+<li><strong>Feedback</strong>: You may receive suggestions for improvements</li>
+<li><strong>Iterations</strong>: Make requested changes and push updates</li>
+<li><strong>Approval</strong>: Once approved, your changes will be merged</li>
+</ol>
+<h3 id="review-criteria"><a class="header" href="#review-criteria">Review Criteria</a></h3>
+<ul>
+<li>Code quality and style</li>
+<li>Test coverage</li>
+<li>Documentation updates</li>
+<li>Backward compatibility</li>
+<li>Performance impact</li>
+</ul>
+<h2 id="issue-reporting"><a class="header" href="#issue-reporting">Issue Reporting</a></h2>
+<h3 id="bug-reports"><a class="header" href="#bug-reports">Bug Reports</a></h3>
+<p>When reporting bugs, please include:</p>
+<ul>
+<li>Steps to reproduce the issue</li>
+<li>Expected vs actual behavior</li>
+<li>System information (OS, Rust version)</li>
+<li>Relevant error messages or logs</li>
+<li>Minimal example if possible</li>
+</ul>
+<h3 id="feature-requests"><a class="header" href="#feature-requests">Feature Requests</a></h3>
+<p>For feature requests, please describe:</p>
+<ul>
+<li>The problem you're trying to solve</li>
+<li>Your proposed solution</li>
+<li>Alternative approaches considered</li>
+<li>Potential impact on existing functionality</li>
 </ul>
 <h2 id="community-guidelines"><a class="header" href="#community-guidelines">Community Guidelines</a></h2>
 <h3 id="code-of-conduct"><a class="header" href="#code-of-conduct">Code of Conduct</a></h3>
@@ -4649,7 +4970,7 @@ cargo check
 <li>Provide context and examples when reporting issues</li>
 </ul>
 <h2 id="recognition"><a class="header" href="#recognition">Recognition</a></h2>
-<p>Contributors are recognized in:</p>
+<p>Contributors are recognized through:</p>
 <ul>
 <li>Git commit history</li>
 <li>GitHub contributors list</li>
@@ -4659,179 +4980,14 @@ cargo check
 <h2 id="getting-help-1"><a class="header" href="#getting-help-1">Getting Help</a></h2>
 <p>If you need help contributing:</p>
 <ul>
-<li>Check existing issues and pull requests</li>
+<li>Check the <a href="./development-workflow.html">Development Workflow</a> for technical setup</li>
+<li>Review existing issues and pull requests</li>
 <li>Ask questions in GitHub discussions</li>
-<li>Review the documentation</li>
 <li>Look at recent commits for examples</li>
 </ul>
-<p>Thank you for contributing to Chat Gipitty! Every contribution, no matter how small, helps make the project better for everyone.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="reference"><a class="header" href="#reference">Reference</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="command-line-options-1"><a class="header" href="#command-line-options-1">Command Line Options</a></h1>
-<p>Chat Gipitty provides a comprehensive set of command-line options to customize its behavior. This page documents all available options and their usage.</p>
-<h2 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h2>
-<pre><code class="language-bash">cgip [OPTIONS] [QUERY] [COMMAND]
-</code></pre>
-<h2 id="global-options"><a class="header" href="#global-options">Global Options</a></h2>
-<h3 id="input-options"><a class="header" href="#input-options">Input Options</a></h3>
-<h4 id="-f---file-file"><a class="header" href="#-f---file-file"><code>-f, --file &lt;FILE&gt;</code></a></h4>
-<p>Read query from a file. If a query is present, the file content is added to the prompt after the query. If this option is present, stdin is ignored.</p>
-<pre><code class="language-bash"># Read from file only
-cgip -f input.txt
-
-# Combine query with file content
-cgip "analyze this code" -f script.py
-
-# Multiple files can be specified
-cgip -f file1.txt -f file2.txt "compare these files"
-</code></pre>
-<h4 id="-s---system-prompt-system_prompt"><a class="header" href="#-s---system-prompt-system_prompt"><code>-s, --system-prompt &lt;SYSTEM_PROMPT&gt;</code></a></h4>
-<p>Specify a custom system prompt to influence the model's behavior.</p>
-<pre><code class="language-bash"># Custom system prompt
-cgip -s "You are a helpful code reviewer" "check this function" -f code.py
-
-# Behavioral modification
-cgip -s "Respond only in bullet points" "summarize this article" -f article.txt
-</code></pre>
-<h3 id="model-options-1"><a class="header" href="#model-options-1">Model Options</a></h3>
-<h4 id="-m---model-model"><a class="header" href="#-m---model-model"><code>-M, --model &lt;MODEL&gt;</code></a></h4>
-<p>Specify which model to use. Defaults to <code>gpt-4</code>.</p>
-<pre><code class="language-bash"># Use GPT-3.5 Turbo
-cgip -M gpt-3.5-turbo "simple question"
-
-# Use GPT-4 Turbo
-cgip -M gpt-4-turbo "complex analysis task"
-
-# Use local model via Ollama
-cgip -M llama2 "local processing"
-</code></pre>
-<h4 id="-l---list-models"><a class="header" href="#-l---list-models"><code>-l, --list-models</code></a></h4>
-<p>List all available models for your configured API endpoint.</p>
-<pre><code class="language-bash">cgip -l
-</code></pre>
-<h3 id="output-options"><a class="header" href="#output-options">Output Options</a></h3>
-<h4 id="-p---show-progress"><a class="header" href="#-p---show-progress"><code>-p, --show-progress</code></a></h4>
-<p>Show progress indicator during processing. Note that this might interfere with stdout redirection.</p>
-<pre><code class="language-bash">cgip -p "long processing task"
-</code></pre>
-<h4 id="-c---show-context"><a class="header" href="#-c---show-context"><code>-c, --show-context</code></a></h4>
-<p>Output the full context used in the query, including chat context with all assistant and user messages.</p>
-<pre><code class="language-bash"># See what context is being sent
-ls | cgip -c "analyze these files"
-</code></pre>
-<h4 id="-m---markdown"><a class="header" href="#-m---markdown"><code>-m, --markdown</code></a></h4>
-<p>Show context in a human-readable table format.</p>
-<pre><code class="language-bash"># Formatted context display
-cgip -m "format this nicely" -f data.txt
-</code></pre>
-<h3 id="session-options"><a class="header" href="#session-options">Session Options</a></h3>
-<h4 id="-n---no-session"><a class="header" href="#-n---no-session"><code>-n, --no-session</code></a></h4>
-<p>Don't use messages from the session in this request. Useful for one-off queries or when you want to avoid session context.</p>
-<pre><code class="language-bash"># Isolated query without session history
-cgip -n "independent question"
-
-# Useful for sensitive queries
-sensitive_command | cgip -n "analyze this privately"
-</code></pre>
-<h3 id="special-options"><a class="header" href="#special-options">Special Options</a></h3>
-<h4 id="-j---jarjar"><a class="header" href="#-j---jarjar"><code>-j, --jarjar</code></a></h4>
-<p>Speak like Jar Jar Binks. A fun easter egg option.</p>
-<pre><code class="language-bash">cgip -j "explain quantum computing"
-</code></pre>
-<h3 id="help-and-version"><a class="header" href="#help-and-version">Help and Version</a></h3>
-<h4 id="-h---help"><a class="header" href="#-h---help"><code>-h, --help</code></a></h4>
-<p>Print help information. Use with subcommands to get specific help.</p>
-<pre><code class="language-bash"># General help
-cgip -h
-
-# Subcommand help
-cgip image -h
-cgip tts -h
-</code></pre>
-<h4 id="-v---version"><a class="header" href="#-v---version"><code>-V, --version</code></a></h4>
-<p>Print version information.</p>
-<pre><code class="language-bash">cgip -V
-</code></pre>
-<h2 id="option-combinations"><a class="header" href="#option-combinations">Option Combinations</a></h2>
-<h3 id="common-combinations"><a class="header" href="#common-combinations">Common Combinations</a></h3>
-<pre><code class="language-bash"># Analyze code with custom model and system prompt
-cgip -M gpt-4-turbo -s "You are a senior developer" "review this code" -f app.py
-
-# Debug with context visibility
-cargo build 2&gt;&amp;1 | cgip -c -m "explain this error"
-
-# One-off analysis without session
-cgip -n -f sensitive_data.txt "analyze this privately"
-
-# Progress tracking for long tasks
-cgip -p -M gpt-4-turbo "complex analysis task" -f large_dataset.csv
-</code></pre>
-<h3 id="file-input-combinations"><a class="header" href="#file-input-combinations">File Input Combinations</a></h3>
-<pre><code class="language-bash"># Multiple files with custom prompt
-cgip -f config.yaml -f docker-compose.yml "check these configurations for compatibility"
-
-# File input with model selection
-cgip -M gpt-3.5-turbo -f simple_script.py "explain this code"
-
-# File input with system prompt
-cgip -s "You are a security expert" -f app.py "find security vulnerabilities"
-</code></pre>
-<h2 id="order-of-operations"><a class="header" href="#order-of-operations">Order of Operations</a></h2>
-<p>Chat Gipitty processes input in this order:</p>
-<ol>
-<li><strong>stdin</strong> (if present and no <code>-f</code> flag)</li>
-<li><strong>File content</strong> (from <code>-f</code> flags, in order specified)</li>
-<li><strong>Query argument</strong> (the main text argument)</li>
-<li><strong>System prompt</strong> (applied as system message)</li>
-</ol>
-<h2 id="environment-integration"><a class="header" href="#environment-integration">Environment Integration</a></h2>
-<p>Options can be combined with environment variables:</p>
-<pre><code class="language-bash"># Use custom API endpoint with specific model
-export OPENAI_BASE_URL="http://localhost:11434/v1"
-cgip -M llama2 "local query"
-
-# Session management with options
-export CGIP_SESSION_NAME="project-review"
-cgip -c "continue our discussion"
-</code></pre>
-<h2 id="error-handling-6"><a class="header" href="#error-handling-6">Error Handling</a></h2>
-<h3 id="invalid-options"><a class="header" href="#invalid-options">Invalid Options</a></h3>
-<pre><code class="language-bash"># Invalid model
-cgip -M invalid-model "test"
-# Error: Model not available
-
-# Invalid file
-cgip -f nonexistent.txt "test"
-# Error: File not found
-</code></pre>
-<h3 id="option-conflicts"><a class="header" href="#option-conflicts">Option Conflicts</a></h3>
-<pre><code class="language-bash"># Conflicting input sources
-echo "stdin input" | cgip -f file.txt "query"
-# stdin is ignored when -f is used
-</code></pre>
-<h2 id="advanced-usage-4"><a class="header" href="#advanced-usage-4">Advanced Usage</a></h2>
-<h3 id="debugging-options"><a class="header" href="#debugging-options">Debugging Options</a></h3>
-<pre><code class="language-bash"># See exactly what's being sent to the API
-cgip -c -m "debug query" -f input.txt
-
-# Track progress on long operations
-cgip -p -M gpt-4-turbo "complex task" -f large_file.txt
-</code></pre>
-<h3 id="scripting-with-options"><a class="header" href="#scripting-with-options">Scripting with Options</a></h3>
-<pre><code class="language-bash">#!/bin/bash
-# Script example using multiple options
-
-MODEL="gpt-4-turbo"
-SYSTEM_PROMPT="You are a helpful assistant that responds concisely"
-
-cgip -M "$MODEL" -s "$SYSTEM_PROMPT" -f "$1" "analyze this file"
-</code></pre>
-<h3 id="pipeline-integration"><a class="header" href="#pipeline-integration">Pipeline Integration</a></h3>
-<pre><code class="language-bash"># Complex pipeline with options
-git log --oneline -10 | cgip -n -M gpt-3.5-turbo "summarize recent changes"
-
-# Chained operations
-cgip -f code.py "find issues" | cgip -n "prioritize these issues"
-</code></pre>
+<h2 id="release-process-1"><a class="header" href="#release-process-1">Release Process</a></h2>
+<p>For information about the release process, see the <a href="./development-workflow.html#release-process">Development Workflow</a> section.</p>
+<p>Thank you for contributing to Chat GipiTTY! Every contribution, no matter how small, helps make the project better for everyone.</p>
 
                     </main>
 

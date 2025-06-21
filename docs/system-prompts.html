@@ -157,6 +157,198 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="system-prompts"><a class="header" href="#system-prompts">System Prompts</a></h1>
+<p>System prompts allow you to customize the AI's behavior by providing persistent instructions that apply to all interactions. They're like setting the "personality" or "role" for the AI model, helping it respond in a specific way that matches your needs.</p>
+<h2 id="what-are-system-prompts"><a class="header" href="#what-are-system-prompts">What are System Prompts?</a></h2>
+<p>System prompts are special instructions that:</p>
+<ul>
+<li>Set the AI's role, personality, or expertise level</li>
+<li>Apply to all messages in a conversation</li>
+<li>Influence how the AI interprets and responds to queries</li>
+<li>Remain active throughout a session</li>
+</ul>
+<h2 id="setting-system-prompts"><a class="header" href="#setting-system-prompts">Setting System Prompts</a></h2>
+<h3 id="command-line"><a class="header" href="#command-line">Command Line</a></h3>
+<p>Use the <code>--system</code> flag to set a system prompt for a single query:</p>
+<pre><code class="language-sh">cgip --system "You are a senior Rust developer" "explain this error" -f error.log
+</code></pre>
+<h3 id="configuration"><a class="header" href="#configuration">Configuration</a></h3>
+<p>Set a default system prompt that applies to all queries:</p>
+<pre><code class="language-sh"># Set a default system prompt
+cgip config --set system_prompt="You are a helpful assistant specializing in software development"
+
+# View current system prompt
+cgip config --get system_prompt
+
+# Clear system prompt
+cgip config --unset system_prompt
+</code></pre>
+<h3 id="session-specific-prompts"><a class="header" href="#session-specific-prompts">Session-Specific Prompts</a></h3>
+<p>System prompts work great with sessions:</p>
+<pre><code class="language-sh"># Set session and system prompt for a specific project
+export CGIP_SESSION_NAME="rust-project"
+cgip --system "You are a Rust expert helping with systems programming" "initial question"
+
+# Subsequent queries in the same session maintain the system prompt context
+cgip "follow-up question"
+</code></pre>
+<h2 id="common-system-prompt-patterns"><a class="header" href="#common-system-prompt-patterns">Common System Prompt Patterns</a></h2>
+<h3 id="role-based-prompts"><a class="header" href="#role-based-prompts">Role-Based Prompts</a></h3>
+<h4 id="senior-developer"><a class="header" href="#senior-developer">Senior Developer</a></h4>
+<pre><code class="language-sh">cgip --system "You are a senior software engineer with 15 years of experience. Provide detailed, production-ready advice." "review this code" -f app.py
+</code></pre>
+<h4 id="code-reviewer"><a class="header" href="#code-reviewer">Code Reviewer</a></h4>
+<pre><code class="language-sh">cgip config --set system_prompt="You are a thorough code reviewer. Focus on security, performance, maintainability, and best practices."
+</code></pre>
+<h4 id="devops-engineer"><a class="header" href="#devops-engineer">DevOps Engineer</a></h4>
+<pre><code class="language-sh">cgip --system "You are a DevOps engineer specializing in containerization and CI/CD pipelines." "analyze this Docker setup" -f docker-compose.yml
+</code></pre>
+<h3 id="expertise-level-prompts"><a class="header" href="#expertise-level-prompts">Expertise Level Prompts</a></h3>
+<h4 id="beginner-friendly"><a class="header" href="#beginner-friendly">Beginner-Friendly</a></h4>
+<pre><code class="language-sh">cgip --system "Explain everything in simple terms suitable for a beginner. Use analogies and avoid jargon." "what is a REST API?"
+</code></pre>
+<h4 id="expert-level"><a class="header" href="#expert-level">Expert Level</a></h4>
+<pre><code class="language-sh">cgip --system "Assume deep technical expertise. Provide advanced insights and implementation details." "optimize this algorithm" -f algorithm.py
+</code></pre>
+<h3 id="communication-style-prompts"><a class="header" href="#communication-style-prompts">Communication Style Prompts</a></h3>
+<h4 id="concise-responses"><a class="header" href="#concise-responses">Concise Responses</a></h4>
+<pre><code class="language-sh">cgip config --set system_prompt="Be extremely concise. Provide only essential information."
+</code></pre>
+<h4 id="detailed-explanations"><a class="header" href="#detailed-explanations">Detailed Explanations</a></h4>
+<pre><code class="language-sh">cgip --system "Provide comprehensive explanations with examples, reasoning, and context." "explain this concept"
+</code></pre>
+<h4 id="structured-output"><a class="header" href="#structured-output">Structured Output</a></h4>
+<pre><code class="language-sh">cgip --system "Always structure responses with clear headings, bullet points, and numbered steps." "analyze this issue"
+</code></pre>
+<h2 id="specialized-system-prompts"><a class="header" href="#specialized-system-prompts">Specialized System Prompts</a></h2>
+<h3 id="security-analysis"><a class="header" href="#security-analysis">Security Analysis</a></h3>
+<pre><code class="language-sh">cgip --system "You are a cybersecurity expert. Focus on identifying vulnerabilities, security best practices, and potential attack vectors." "review this authentication code" -f auth.py
+</code></pre>
+<h3 id="performance-optimization"><a class="header" href="#performance-optimization">Performance Optimization</a></h3>
+<pre><code class="language-sh">cgip --system "You are a performance optimization specialist. Focus on efficiency, scalability, and resource usage." "analyze this query" -f slow-query.sql
+</code></pre>
+<h3 id="documentation-writing"><a class="header" href="#documentation-writing">Documentation Writing</a></h3>
+<pre><code class="language-sh">cgip --system "You are a technical writer. Create clear, well-structured documentation with examples." "document this API" -f api.py
+</code></pre>
+<h3 id="testing-and-qa"><a class="header" href="#testing-and-qa">Testing and QA</a></h3>
+<pre><code class="language-sh">cgip --system "You are a QA engineer. Focus on test coverage, edge cases, and quality assurance." "create test cases for this function" -f function.js
+</code></pre>
+<h2 id="context-specific-prompts"><a class="header" href="#context-specific-prompts">Context-Specific Prompts</a></h2>
+<h3 id="project-specific"><a class="header" href="#project-specific">Project-Specific</a></h3>
+<pre><code class="language-sh"># For a React project
+export CGIP_SESSION_NAME="react-app"
+cgip --system "You are a React expert working on a modern web application using hooks, TypeScript, and Next.js."
+
+# For a data science project
+export CGIP_SESSION_NAME="data-analysis"
+cgip --system "You are a data scientist specializing in Python, pandas, and machine learning."
+</code></pre>
+<h3 id="technology-specific"><a class="header" href="#technology-specific">Technology-Specific</a></h3>
+<pre><code class="language-sh"># Rust development
+cgip --system "You are a Rust systems programmer. Focus on memory safety, performance, and idiomatic Rust patterns."
+
+# Cloud architecture
+cgip --system "You are a cloud architect specializing in AWS. Consider scalability, cost optimization, and best practices."
+</code></pre>
+<h2 id="advanced-system-prompt-techniques"><a class="header" href="#advanced-system-prompt-techniques">Advanced System Prompt Techniques</a></h2>
+<h3 id="multi-role-prompts"><a class="header" href="#multi-role-prompts">Multi-Role Prompts</a></h3>
+<pre><code class="language-sh">cgip --system "You are both a senior developer and a mentor. Provide code solutions while teaching underlying concepts." "help me understand this pattern" -f design-pattern.py
+</code></pre>
+<h3 id="output-format-specifications"><a class="header" href="#output-format-specifications">Output Format Specifications</a></h3>
+<pre><code class="language-sh">cgip --system "Always respond in this format: 1) Problem Summary 2) Solution 3) Implementation Steps 4) Testing Approach" "debug this issue"
+</code></pre>
+<h3 id="constraint-based-prompts"><a class="header" href="#constraint-based-prompts">Constraint-Based Prompts</a></h3>
+<pre><code class="language-sh">cgip --system "You can only suggest solutions using standard library functions. No external dependencies allowed." "implement this feature" -f requirements.txt
+</code></pre>
+<h3 id="industry-specific"><a class="header" href="#industry-specific">Industry-Specific</a></h3>
+<pre><code class="language-sh"># Financial technology
+cgip --system "You are a fintech developer. Consider regulatory compliance, security, and financial accuracy."
+
+# Healthcare
+cgip --system "You are a healthcare software developer. Prioritize HIPAA compliance, data privacy, and reliability."
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="effective-system-prompts"><a class="header" href="#effective-system-prompts">Effective System Prompts</a></h3>
+<ol>
+<li><strong>Be Specific</strong>: Clear, specific instructions work better than vague ones</li>
+<li><strong>Set Expertise Level</strong>: Specify the level of technical detail you want</li>
+<li><strong>Define Output Format</strong>: Tell the AI how to structure responses</li>
+<li><strong>Include Constraints</strong>: Mention any limitations or requirements</li>
+<li><strong>Set Context</strong>: Provide relevant background information</li>
+</ol>
+<h3 id="examples-of-good-vs-poor-system-prompts"><a class="header" href="#examples-of-good-vs-poor-system-prompts">Examples of Good vs. Poor System Prompts</a></h3>
+<h4 id="good-system-prompts"><a class="header" href="#good-system-prompts">Good System Prompts</a></h4>
+<pre><code class="language-sh"># Good: Specific role and output format
+cgip --system "You are a senior Python developer. Provide code solutions with explanations, focusing on readability and performance. Include error handling and type hints."
+
+# Good: Clear constraints and context
+cgip --system "You are a DevOps engineer working with Kubernetes. Suggest solutions that work in production environments and follow security best practices."
+</code></pre>
+<h4 id="poor-system-prompts"><a class="header" href="#poor-system-prompts">Poor System Prompts</a></h4>
+<pre><code class="language-sh"># Poor: Too vague
+cgip --system "Be helpful"
+
+# Poor: Contradictory instructions
+cgip --system "Be extremely detailed but also very concise"
+</code></pre>
+<h3 id="managing-system-prompts"><a class="header" href="#managing-system-prompts">Managing System Prompts</a></h3>
+<h4 id="environment-based-configuration"><a class="header" href="#environment-based-configuration">Environment-Based Configuration</a></h4>
+<pre><code class="language-sh"># Development environment
+cgip config --set system_prompt="You are a developer focused on rapid prototyping and debugging."
+
+# Production environment
+cgip config --set system_prompt="You are a senior engineer focused on reliability, security, and maintainability."
+</code></pre>
+<h4 id="project-specific-setup"><a class="header" href="#project-specific-setup">Project-Specific Setup</a></h4>
+<p>Create project-specific configurations:</p>
+<pre><code class="language-sh"># In project directory
+echo 'export CGIP_SESSION_NAME="$(basename $(pwd))"' &gt;&gt; .envrc
+echo 'cgip config --set system_prompt="You are a [PROJECT_TYPE] expert working on [PROJECT_NAME]."' &gt;&gt; .envrc
+</code></pre>
+<h2 id="system-prompt-examples-by-use-case"><a class="header" href="#system-prompt-examples-by-use-case">System Prompt Examples by Use Case</a></h2>
+<h3 id="code-development"><a class="header" href="#code-development">Code Development</a></h3>
+<pre><code class="language-sh"># General development
+cgip config --set system_prompt="You are a senior full-stack developer. Provide clean, maintainable code with proper error handling and documentation."
+
+# Specific language
+cgip --system "You are a Go expert. Focus on idiomatic Go patterns, concurrency, and performance." "optimize this function" -f handler.go
+</code></pre>
+<h3 id="system-administration"><a class="header" href="#system-administration">System Administration</a></h3>
+<pre><code class="language-sh"># Linux administration
+cgip config --set system_prompt="You are a Linux system administrator. Focus on security, performance, and best practices for production systems."
+
+# Network administration
+cgip --system "You are a network engineer. Consider security, performance, and monitoring when suggesting solutions."
+</code></pre>
+<h3 id="data-analysis"><a class="header" href="#data-analysis">Data Analysis</a></h3>
+<pre><code class="language-sh"># Data science
+cgip --system "You are a data scientist. Provide Python solutions using pandas, numpy, and matplotlib. Include data validation and visualization suggestions."
+
+# Database optimization
+cgip --system "You are a database administrator specializing in PostgreSQL. Focus on query optimization, indexing, and performance tuning."
+</code></pre>
+<h2 id="troubleshooting-system-prompts"><a class="header" href="#troubleshooting-system-prompts">Troubleshooting System Prompts</a></h2>
+<h3 id="system-prompt-not-working"><a class="header" href="#system-prompt-not-working">System Prompt Not Working</a></h3>
+<pre><code class="language-sh"># Check if system prompt is set
+cgip config --get system_prompt
+
+# Verify with context display
+cgip --show-context "test query"
+</code></pre>
+<h3 id="conflicting-instructions"><a class="header" href="#conflicting-instructions">Conflicting Instructions</a></h3>
+<p>If system prompts conflict with query instructions:</p>
+<ul>
+<li>System prompts take precedence</li>
+<li>Be specific in your query to override system behavior</li>
+<li>Consider updating the system prompt for better alignment</li>
+</ul>
+<h3 id="session-confusion"><a class="header" href="#session-confusion">Session Confusion</a></h3>
+<p>If the AI seems confused about its role:</p>
+<ul>
+<li>Clear the session: <code>cgip session --clear</code></li>
+<li>Restart with a clearer system prompt</li>
+<li>Make system prompts more specific</li>
+</ul>
+<p>System prompts are a powerful way to customize Chat GipiTTY's behavior for your specific workflows and requirements. Experiment with different prompts to find what works best for your use cases.</p>
 
                     </main>
 

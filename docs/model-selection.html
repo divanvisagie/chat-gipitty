@@ -157,6 +157,205 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="model-selection"><a class="header" href="#model-selection">Model Selection</a></h1>
+<p>Chat GipiTTY supports multiple AI models and providers, giving you flexibility to choose the right model for your specific task. This section covers how to select models, understand their capabilities, and optimize your usage.</p>
+<h2 id="default-model"><a class="header" href="#default-model">Default Model</a></h2>
+<p>By default, Chat GipiTTY uses <code>gpt-4o</code> when connected to OpenAI. This provides a good balance of capability and performance for most tasks.</p>
+<h2 id="selecting-models"><a class="header" href="#selecting-models">Selecting Models</a></h2>
+<h3 id="command-line-selection"><a class="header" href="#command-line-selection">Command Line Selection</a></h3>
+<p>Use the <code>-M</code> or <code>--model</code> flag to specify a model for a single query:</p>
+<pre><code class="language-sh">cgip -M gpt-3.5-turbo "Simple question that doesn't need GPT-4"
+cgip -M gpt-4o "Complex reasoning task"
+cgip -M claude-3-sonnet "Detailed code analysis"
+</code></pre>
+<h3 id="configuration"><a class="header" href="#configuration">Configuration</a></h3>
+<p>Set a default model in your configuration:</p>
+<pre><code class="language-sh">cgip config --set model=gpt-4o
+</code></pre>
+<h3 id="list-available-models"><a class="header" href="#list-available-models">List Available Models</a></h3>
+<p>See what models are available with your current provider:</p>
+<pre><code class="language-sh">cgip --list-models
+</code></pre>
+<h2 id="model-categories"><a class="header" href="#model-categories">Model Categories</a></h2>
+<h3 id="openai-models"><a class="header" href="#openai-models">OpenAI Models</a></h3>
+<p>For up-to-date information about OpenAI models, capabilities, and pricing, see the <a href="https://platform.openai.com/docs/models">official OpenAI documentation</a>.</p>
+<p>Common models include:</p>
+<ul>
+<li><strong>GPT-4 family</strong> - Most capable models for complex reasoning</li>
+<li><strong>GPT-3.5 family</strong> - Fast and cost-effective for simple tasks</li>
+<li><strong>Specialized models</strong> - Vision, search, and other specialized capabilities</li>
+</ul>
+<h3 id="local-models-via-ollama"><a class="header" href="#local-models-via-ollama">Local Models (via Ollama)</a></h3>
+<p>When using Ollama (<code>OPENAI_BASE_URL=http://localhost:11434/v1</code>):</p>
+<pre><code class="language-sh"># Popular local models
+cgip -M llama2:7b "Question for local Llama model"
+cgip -M codellama:13b "Code-related question"
+cgip -M mistral:7b "General purpose query"
+cgip -M phi:2.7b "Lightweight model for simple tasks"
+</code></pre>
+<h3 id="other-providers"><a class="header" href="#other-providers">Other Providers</a></h3>
+<h4 id="claude-anthropic"><a class="header" href="#claude-anthropic">Claude (Anthropic)</a></h4>
+<p>For current Claude model information, see <a href="https://docs.anthropic.com/claude/docs/models-overview">Anthropic's documentation</a>.</p>
+<pre><code class="language-sh">cgip -M claude-3-opus "Most capable Claude model"
+cgip -M claude-3-sonnet "Balanced Claude model"
+cgip -M claude-3-haiku "Fast Claude model"
+</code></pre>
+<h4 id="gemini-google"><a class="header" href="#gemini-google">Gemini (Google)</a></h4>
+<p>For current Gemini model information, see <a href="https://ai.google.dev/models/gemini">Google's AI documentation</a>.</p>
+<pre><code class="language-sh">cgip -M gemini-pro "Google's flagship model"
+cgip -M gemini-pro-vision "Gemini with vision capabilities"
+</code></pre>
+<h2 id="model-selection-strategy"><a class="header" href="#model-selection-strategy">Model Selection Strategy</a></h2>
+<h3 id="by-task-type"><a class="header" href="#by-task-type">By Task Type</a></h3>
+<h4 id="code-analysis-and-programming"><a class="header" href="#code-analysis-and-programming">Code Analysis and Programming</a></h4>
+<pre><code class="language-sh"># Best models for code
+cgip -M gpt-4o "review this code" -f complex_algorithm.py
+cgip -M claude-3-sonnet "explain this codebase" -f src/*.py
+cgip -M codellama:13b "simple code question" -f script.sh  # Local option
+</code></pre>
+<h4 id="creative-writing-and-content"><a class="header" href="#creative-writing-and-content">Creative Writing and Content</a></h4>
+<pre><code class="language-sh"># Creative tasks
+cgip -M gpt-4o "write a creative story about..."
+cgip -M claude-3-opus "generate marketing copy for..."
+</code></pre>
+<h4 id="data-analysis"><a class="header" href="#data-analysis">Data Analysis</a></h4>
+<pre><code class="language-sh"># Analytical tasks
+cgip -M gpt-4-turbo "analyze this dataset" -f data.csv
+cgip -M claude-3-sonnet "find patterns in this data" -f logs.txt
+</code></pre>
+<h4 id="quick-questions-and-simple-tasks"><a class="header" href="#quick-questions-and-simple-tasks">Quick Questions and Simple Tasks</a></h4>
+<pre><code class="language-sh"># Fast, simple queries
+cgip -M gpt-3.5-turbo "what's the capital of France?"
+cgip -M mistral:7b "simple calculation or fact check"  # Local option
+</code></pre>
+<h4 id="image-analysis"><a class="header" href="#image-analysis">Image Analysis</a></h4>
+<pre><code class="language-sh"># Vision-capable models
+cgip -M gpt-4o image --file photo.jpg "describe this image"
+cgip -M gpt-4-vision-preview image --file diagram.png "explain this diagram"
+</code></pre>
+<h4 id="web-search"><a class="header" href="#web-search">Web Search</a></h4>
+<pre><code class="language-sh"># Search automatically uses optimal model
+cgip --search "latest developments in AI"  # Auto-selects gpt-4o-search-preview
+</code></pre>
+<h3 id="by-performance-requirements"><a class="header" href="#by-performance-requirements">By Performance Requirements</a></h3>
+<h4 id="speed-optimized"><a class="header" href="#speed-optimized">Speed-Optimized</a></h4>
+<pre><code class="language-sh"># Fastest responses
+cgip -M gpt-3.5-turbo "quick question"
+cgip -M phi:2.7b "simple local query"  # Local, very fast
+</code></pre>
+<h4 id="quality-optimized"><a class="header" href="#quality-optimized">Quality-Optimized</a></h4>
+<pre><code class="language-sh"># Best quality responses
+cgip -M gpt-4o "complex reasoning task"
+cgip -M claude-3-opus "detailed analysis requiring nuance"
+</code></pre>
+<h4 id="cost-optimized"><a class="header" href="#cost-optimized">Cost-Optimized</a></h4>
+<pre><code class="language-sh"># Lower cost options
+cgip -M gpt-3.5-turbo "cost-sensitive query"
+cgip -M llama2:7b "free local processing"  # No API costs
+</code></pre>
+<h3 id="by-context-length"><a class="header" href="#by-context-length">By Context Length</a></h3>
+<h4 id="large-context-requirements"><a class="header" href="#large-context-requirements">Large Context Requirements</a></h4>
+<pre><code class="language-sh"># For large files or long conversations
+cgip -M gpt-4-turbo "analyze entire codebase" -f src/*.py  # 128k context
+cgip -M claude-3-sonnet "process long document" -f book.txt  # 200k context
+</code></pre>
+<h4 id="standard-context"><a class="header" href="#standard-context">Standard Context</a></h4>
+<pre><code class="language-sh"># Normal usage
+cgip -M gpt-4o "regular queries"  # 128k context
+cgip -M gpt-3.5-turbo "simple tasks"  # 16k context
+</code></pre>
+<h2 id="advanced-model-usage"><a class="header" href="#advanced-model-usage">Advanced Model Usage</a></h2>
+<h3 id="model-specific-features"><a class="header" href="#model-specific-features">Model-Specific Features</a></h3>
+<h4 id="automatic-model-selection"><a class="header" href="#automatic-model-selection">Automatic Model Selection</a></h4>
+<p>Some features automatically select appropriate models:</p>
+<pre><code class="language-sh"># Web search auto-selects search-optimized model
+cgip --search "current events"
+
+# Image analysis ensures vision-capable model
+cgip image --file photo.jpg "describe this"
+
+# TTS uses speech models automatically
+cgip tts "text to convert"
+</code></pre>
+<h4 id="provider-specific-capabilities"><a class="header" href="#provider-specific-capabilities">Provider-Specific Capabilities</a></h4>
+<pre><code class="language-sh"># OpenAI specific
+cgip -M gpt-4o "/search with web browsing"
+
+# Claude specific (via compatible endpoint)
+cgip -M claude-3-opus "long-form analysis with nuanced reasoning"
+
+# Local model benefits
+cgip -M llama2:7b "private, offline processing"
+</code></pre>
+<h3 id="model-switching-in-sessions"><a class="header" href="#model-switching-in-sessions">Model Switching in Sessions</a></h3>
+<pre><code class="language-sh"># Start with fast model
+cgip -M gpt-3.5-turbo "initial question"
+
+# Switch to more capable model for follow-up
+cgip -M gpt-4o "complex follow up based on previous answer"
+</code></pre>
+<h3 id="environment-based-selection"><a class="header" href="#environment-based-selection">Environment-Based Selection</a></h3>
+<p>Set up different defaults for different environments:</p>
+<pre><code class="language-sh"># Development environment - use local models
+export OPENAI_BASE_URL=http://localhost:11434/v1
+cgip config --set model=codellama:13b
+
+# Production analysis - use best models
+export OPENAI_BASE_URL=https://api.openai.com
+cgip config --set model=gpt-4o
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="model-selection-guidelines"><a class="header" href="#model-selection-guidelines">Model Selection Guidelines</a></h3>
+<ol>
+<li><strong>Start simple</strong>: Use <code>gpt-3.5-turbo</code> for straightforward queries</li>
+<li><strong>Upgrade when needed</strong>: Switch to <code>gpt-4o</code> for complex reasoning</li>
+<li><strong>Use specialized models</strong>: Choose vision models for images, code models for programming</li>
+<li><strong>Consider context</strong>: Use high-context models for large files</li>
+<li><strong>Balance cost and quality</strong>: Expensive models aren't always necessary</li>
+</ol>
+<h3 id="performance-tips"><a class="header" href="#performance-tips">Performance Tips</a></h3>
+<pre><code class="language-sh"># Cache expensive model responses in sessions
+export CGIP_SESSION_NAME="analysis-session"
+cgip -M gpt-4o "expensive analysis" -f large_dataset.csv
+
+# Use cheaper models for iteration
+cgip -M gpt-3.5-turbo "quick clarification about previous response"
+</code></pre>
+<h3 id="cost-management"><a class="header" href="#cost-management">Cost Management</a></h3>
+<pre><code class="language-sh"># Preview context before sending to expensive models
+cgip --show-context -M gpt-4o "preview what will be sent"
+
+# Use local models for development/testing
+cgip -M llama2:7b "test query structure before using paid API"
+</code></pre>
+<h2 id="troubleshooting-model-selection"><a class="header" href="#troubleshooting-model-selection">Troubleshooting Model Selection</a></h2>
+<h3 id="model-not-available"><a class="header" href="#model-not-available">Model Not Available</a></h3>
+<pre><code class="language-sh"># Check available models
+cgip --list-models
+
+# Verify provider configuration
+cgip config --get base_url
+</code></pre>
+<h3 id="feature-not-supported"><a class="header" href="#feature-not-supported">Feature Not Supported</a></h3>
+<pre><code class="language-sh"># Some features require specific model families
+cgip -M gpt-4o image --file photo.jpg  # Vision requires vision-capable model
+cgip -M gpt-4o-search-preview --search "query"  # Search requires search-enabled model
+</code></pre>
+<h3 id="performance-issues"><a class="header" href="#performance-issues">Performance Issues</a></h3>
+<pre><code class="language-sh"># Switch to faster model if response time is important
+cgip -M gpt-3.5-turbo "time-sensitive query"
+
+# Use local models to avoid network latency
+cgip -M llama2:7b "local processing"
+</code></pre>
+<h2 id="model-resources"><a class="header" href="#model-resources">Model Resources</a></h2>
+<p>For detailed model comparisons, capabilities, and current pricing:</p>
+<ul>
+<li><strong>OpenAI Models</strong>: <a href="https://platform.openai.com/docs/models">OpenAI Platform Documentation</a></li>
+<li><strong>Anthropic Claude</strong>: <a href="https://docs.anthropic.com/claude/docs/models-overview">Claude Model Overview</a></li>
+<li><strong>Google Gemini</strong>: <a href="https://ai.google.dev/models/gemini">Gemini Model Documentation</a></li>
+<li><strong>Ollama Models</strong>: <a href="https://ollama.com/library">Ollama Model Library</a></li>
+</ul>
+<p>These official sources provide the most up-to-date information about model capabilities, context lengths, pricing, and availability.</p>
 
                     </main>
 
