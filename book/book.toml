@@ -7,3 +7,6 @@ title = "Chat GipiTTY"
 
 [output.html]
 additional-css = ["theme/custom.css"]
+git-repository-url = "https://github.com/divanvisagie/chat-gipitty"
+git-repository-icon = "fa-github"
+edit-url-template = "https://github.com/divanvisagie/chat-gipitty/edit/main/book/{path}"
