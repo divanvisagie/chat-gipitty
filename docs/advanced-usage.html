@@ -157,6 +157,112 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="advanced-usage"><a class="header" href="#advanced-usage">Advanced Usage</a></h1>
+<p>This section covers advanced usage patterns and features for power users who want to get the most out of Chat GipiTTY. These features allow for more sophisticated workflows and customization options.</p>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Advanced usage includes:</p>
+<ul>
+<li><strong><a href="./file-input.html">File Input</a></strong> - Advanced file handling and multiple file processing</li>
+<li><strong><a href="./model-selection.html">Model Selection</a></strong> - Choosing and switching between different AI models</li>
+<li><strong><a href="./system-prompts.html">System Prompts</a></strong> - Customizing AI behavior with system-level instructions</li>
+</ul>
+<h2 id="key-concepts"><a class="header" href="#key-concepts">Key Concepts</a></h2>
+<h3 id="context-management"><a class="header" href="#context-management">Context Management</a></h3>
+<p>Advanced users can precisely control how Chat GipiTTY builds context from multiple sources:</p>
+<pre><code class="language-sh"># Combine multiple inputs with priority control
+cat data.csv | cgip "analyze this data" -f config.yaml --no-session
+</code></pre>
+<h3 id="custom-workflows"><a class="header" href="#custom-workflows">Custom Workflows</a></h3>
+<p>Create sophisticated pipelines that leverage Chat GipiTTY's flexibility:</p>
+<pre><code class="language-sh"># Multi-step analysis pipeline
+find . -name "*.py" | xargs wc -l | sort -nr | head -10 | cgip "which files need refactoring?"
+</code></pre>
+<h3 id="provider-specific-features"><a class="header" href="#provider-specific-features">Provider-Specific Features</a></h3>
+<p>Take advantage of unique capabilities offered by different AI providers:</p>
+<pre><code class="language-sh"># Use specific models for specialized tasks
+cgip -M gpt-4o-search-preview "/search latest Python security vulnerabilities"
+cgip -M claude-3-sonnet "provide detailed code analysis" -f complex_algorithm.py
+</code></pre>
+<h2 id="advanced-configuration"><a class="header" href="#advanced-configuration">Advanced Configuration</a></h2>
+<h3 id="environment-based-configuration"><a class="header" href="#environment-based-configuration">Environment-Based Configuration</a></h3>
+<p>Set up different configurations for different environments:</p>
+<pre><code class="language-sh"># Development environment
+export CGIP_SESSION_NAME="dev-$(date +%Y-%m-%d)"
+export OPENAI_BASE_URL="http://localhost:11434/v1"
+
+# Production analysis environment  
+export CGIP_SESSION_NAME="prod-analysis"
+export OPENAI_BASE_URL="https://api.openai.com"
+</code></pre>
+<h3 id="custom-model-aliases"><a class="header" href="#custom-model-aliases">Custom Model Aliases</a></h3>
+<p>Create shortcuts for frequently used model configurations:</p>
+<pre><code class="language-sh"># Set up aliases in your shell
+alias cgip-fast="cgip -M gpt-3.5-turbo"
+alias cgip-smart="cgip -M gpt-4o"
+alias cgip-local="cgip -M llama2:7b"
+</code></pre>
+<h2 id="performance-optimization"><a class="header" href="#performance-optimization">Performance Optimization</a></h2>
+<h3 id="token-management"><a class="header" href="#token-management">Token Management</a></h3>
+<p>For large inputs, be strategic about token usage:</p>
+<pre><code class="language-sh"># Limit context size for faster responses
+head -100 large_file.log | cgip "summarize the key issues"
+
+# Use specific prompts to get concise answers
+cgip "list the top 3 issues only" -f error_log.txt
+</code></pre>
+<h3 id="batch-processing"><a class="header" href="#batch-processing">Batch Processing</a></h3>
+<p>Process multiple files efficiently:</p>
+<pre><code class="language-sh"># Process files in batches
+for file in *.py; do
+    echo "=== $file ===" 
+    cgip "review this code" -f "$file" --no-session
+    echo
+done
+</code></pre>
+<h2 id="integration-patterns"><a class="header" href="#integration-patterns">Integration Patterns</a></h2>
+<h3 id="shell-functions"><a class="header" href="#shell-functions">Shell Functions</a></h3>
+<p>Create reusable shell functions for common tasks:</p>
+<pre><code class="language-bash"># Add to your .bashrc or .zshrc
+analyze_logs() {
+    tail -n ${2:-100} "$1" | cgip "analyze these logs for issues"
+}
+
+review_code() {
+    cgip "review this code for bugs and improvements" -f "$1"
+}
+
+explain_command() {
+    man "$1" | cgip "explain this command in simple terms"
+}
+</code></pre>
+<h3 id="git-hooks"><a class="header" href="#git-hooks">Git Hooks</a></h3>
+<p>Integrate Chat GipiTTY into your git workflow:</p>
+<pre><code class="language-bash">#!/bin/bash
+# pre-commit hook
+git diff --cached | cgip "review these changes for potential issues" --no-session
+</code></pre>
+<h2 id="troubleshooting-advanced-usage"><a class="header" href="#troubleshooting-advanced-usage">Troubleshooting Advanced Usage</a></h2>
+<h3 id="context-too-large"><a class="header" href="#context-too-large">Context Too Large</a></h3>
+<p>If you hit token limits:</p>
+<ul>
+<li>Use <code>head</code>/<code>tail</code> to limit input size</li>
+<li>Use <code>--no-session</code> to exclude session history</li>
+<li>Be more specific in your prompts</li>
+</ul>
+<h3 id="model-compatibility"><a class="header" href="#model-compatibility">Model Compatibility</a></h3>
+<p>Different models have different capabilities:</p>
+<ul>
+<li>Vision models for image analysis</li>
+<li>Search-enabled models for web queries</li>
+<li>Local models may have limited features</li>
+</ul>
+<h3 id="performance-issues"><a class="header" href="#performance-issues">Performance Issues</a></h3>
+<p>To improve response times:</p>
+<ul>
+<li>Choose appropriate models for the task</li>
+<li>Limit context size</li>
+<li>Use local models for simple tasks</li>
+</ul>
+<p>For specific details on each advanced feature, see the individual sections in this chapter.</p>
 
                     </main>
 

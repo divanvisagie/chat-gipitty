@@ -157,7 +157,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="web-search"><a class="header" href="#web-search">Web Search</a></h1>
-<p>Chat Gipitty supports web search functionality through the <code>/search</code> command prefix. When you start your message with <code>/search</code>, the application will enable web search capabilities to provide you with up-to-date information from the internet.</p>
+<p>Chat Gipitty supports web search functionality through the <code>/search</code> command prefix or the <code>--search</code> flag. When you start your message with <code>/search</code> or pass the <code>--search</code> option, the application will enable web search capabilities to provide you with up-to-date information from the internet.</p>
 <h2 id="how-web-search-works"><a class="header" href="#how-web-search-works">How Web Search Works</a></h2>
 <p>The web search feature adapts based on your configured model:</p>
 <ul>
@@ -165,49 +165,53 @@
 <li><strong>For non-GPT models</strong> (like Claude, Llama, or other custom models): The application keeps your configured model and adds web search options to the request.</li>
 </ul>
 <h2 id="basic-usage"><a class="header" href="#basic-usage">Basic Usage</a></h2>
-<p>To use web search, simply prefix your query with <code>/search</code>:</p>
-<pre><code class="language-bash">cgip "/search What are the latest developments in AI?"
+<p>To use web search, you can either prefix your query with <code>/search</code> or use the <code>--search</code> flag:</p>
+<pre><code class="language-bash"># Using the /search prefix
+cgip "/search What are the latest developments in AI?"
+
+# Using the --search flag
+cgip --search "What are the latest developments in AI?"
 </code></pre>
-<p>The <code>/search</code> prefix will be automatically removed from your message before it's sent to the model, so you don't need to worry about it affecting the actual prompt.</p>
+<p>The <code>/search</code> prefix will be automatically removed from your message before it's sent to the model. Using <code>--search</code> applies the same behavior without needing the prefix.</p>
 <h2 id="usage-examples"><a class="header" href="#usage-examples">Usage Examples</a></h2>
 <h3 id="current-events"><a class="header" href="#current-events">Current Events</a></h3>
 <pre><code class="language-bash"># Search for recent news
-cgip "/search What are the latest developments in renewable energy?"
+cgip --search "What are the latest developments in renewable energy?"
 
 # Get current market information
-cgip "/search What is the current price of Bitcoin?"
+cgip --search "What is the current price of Bitcoin?"
 
 # Find recent technology updates
-cgip "/search What are the new features in the latest Python release?"
+cgip --search "What are the new features in the latest Python release?"
 </code></pre>
 <h3 id="technical-information"><a class="header" href="#technical-information">Technical Information</a></h3>
 <pre><code class="language-bash"># Search for current best practices
-cgip "/search What are the current best practices for React performance optimization?"
+cgip --search "What are the current best practices for React performance optimization?"
 
 # Find up-to-date documentation
-cgip "/search How to configure Docker containers for production in 2024?"
+cgip --search "How to configure Docker containers for production in 2024?"
 
 # Get current software versions
-cgip "/search What is the current stable version of Rust?"
+echo "What is the current stable version of Rust?" | cgip --search
 </code></pre>
 <h3 id="research-and-analysis"><a class="header" href="#research-and-analysis">Research and Analysis</a></h3>
 <pre><code class="language-bash"># Market research
-cgip "/search What are the current trends in mobile app development?"
+cgip --search "What are the current trends in mobile app development?"
 
 # Academic research
-cgip "/search What are the latest findings on climate change mitigation?"
+cgip --search "What are the latest findings on climate change mitigation?"
 
 # Competitive analysis
-cgip "/search What are the main competitors to OpenAI in the AI space?"
+cgip --search "What are the main competitors to OpenAI in the AI space?"
 </code></pre>
 <h2 id="combining-web-search-with-other-features"><a class="header" href="#combining-web-search-with-other-features">Combining Web Search with Other Features</a></h2>
 <h3 id="web-search-with-file-input"><a class="header" href="#web-search-with-file-input">Web Search with File Input</a></h3>
 <p>You can combine web search with file analysis:</p>
 <pre><code class="language-bash"># Search for context about your code
-cgip "/search How can I optimize this code for performance?" -f my_script.py
+cgip --search "How can I optimize this code for performance?" -f my_script.py
 
 # Get current information about technologies in your project
-cgip "/search What are the latest security best practices for this framework?" -f package.json
+cgip --search "What are the latest security best practices for this framework?" -f package.json
 </code></pre>
 <h3 id="web-search-with-piped-input"><a class="header" href="#web-search-with-piped-input">Web Search with Piped Input</a></h3>
 <p>Web search works with piped input as well:</p>

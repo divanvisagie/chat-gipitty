@@ -1006,7 +1006,7 @@ ls -la ~/Library/Application\ Support/cgip/sessions/  # macOS
 <li>Start a new session with a different name</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="web-search"><a class="header" href="#web-search">Web Search</a></h1>
-<p>Chat Gipitty supports web search functionality through the <code>/search</code> command prefix. When you start your message with <code>/search</code>, the application will enable web search capabilities to provide you with up-to-date information from the internet.</p>
+<p>Chat Gipitty supports web search functionality through the <code>/search</code> command prefix or the <code>--search</code> flag. When you start your message with <code>/search</code> or pass the <code>--search</code> option, the application will enable web search capabilities to provide you with up-to-date information from the internet.</p>
 <h2 id="how-web-search-works"><a class="header" href="#how-web-search-works">How Web Search Works</a></h2>
 <p>The web search feature adapts based on your configured model:</p>
 <ul>
@@ -1014,49 +1014,53 @@ ls -la ~/Library/Application\ Support/cgip/sessions/  # macOS
 <li><strong>For non-GPT models</strong> (like Claude, Llama, or other custom models): The application keeps your configured model and adds web search options to the request.</li>
 </ul>
 <h2 id="basic-usage-1"><a class="header" href="#basic-usage-1">Basic Usage</a></h2>
-<p>To use web search, simply prefix your query with <code>/search</code>:</p>
-<pre><code class="language-bash">cgip "/search What are the latest developments in AI?"
+<p>To use web search, you can either prefix your query with <code>/search</code> or use the <code>--search</code> flag:</p>
+<pre><code class="language-bash"># Using the /search prefix
+cgip "/search What are the latest developments in AI?"
+
+# Using the --search flag
+cgip --search "What are the latest developments in AI?"
 </code></pre>
-<p>The <code>/search</code> prefix will be automatically removed from your message before it's sent to the model, so you don't need to worry about it affecting the actual prompt.</p>
+<p>The <code>/search</code> prefix will be automatically removed from your message before it's sent to the model. Using <code>--search</code> applies the same behavior without needing the prefix.</p>
 <h2 id="usage-examples"><a class="header" href="#usage-examples">Usage Examples</a></h2>
 <h3 id="current-events"><a class="header" href="#current-events">Current Events</a></h3>
 <pre><code class="language-bash"># Search for recent news
-cgip "/search What are the latest developments in renewable energy?"
+cgip --search "What are the latest developments in renewable energy?"
 
 # Get current market information
-cgip "/search What is the current price of Bitcoin?"
+cgip --search "What is the current price of Bitcoin?"
 
 # Find recent technology updates
-cgip "/search What are the new features in the latest Python release?"
+cgip --search "What are the new features in the latest Python release?"
 </code></pre>
 <h3 id="technical-information"><a class="header" href="#technical-information">Technical Information</a></h3>
 <pre><code class="language-bash"># Search for current best practices
-cgip "/search What are the current best practices for React performance optimization?"
+cgip --search "What are the current best practices for React performance optimization?"
 
 # Find up-to-date documentation
-cgip "/search How to configure Docker containers for production in 2024?"
+cgip --search "How to configure Docker containers for production in 2024?"
 
 # Get current software versions
-cgip "/search What is the current stable version of Rust?"
+echo "What is the current stable version of Rust?" | cgip --search
 </code></pre>
 <h3 id="research-and-analysis"><a class="header" href="#research-and-analysis">Research and Analysis</a></h3>
 <pre><code class="language-bash"># Market research
-cgip "/search What are the current trends in mobile app development?"
+cgip --search "What are the current trends in mobile app development?"
 
 # Academic research
-cgip "/search What are the latest findings on climate change mitigation?"
+cgip --search "What are the latest findings on climate change mitigation?"
 
 # Competitive analysis
-cgip "/search What are the main competitors to OpenAI in the AI space?"
+cgip --search "What are the main competitors to OpenAI in the AI space?"
 </code></pre>
 <h2 id="combining-web-search-with-other-features"><a class="header" href="#combining-web-search-with-other-features">Combining Web Search with Other Features</a></h2>
 <h3 id="web-search-with-file-input"><a class="header" href="#web-search-with-file-input">Web Search with File Input</a></h3>
 <p>You can combine web search with file analysis:</p>
 <pre><code class="language-bash"># Search for context about your code
-cgip "/search How can I optimize this code for performance?" -f my_script.py
+cgip --search "How can I optimize this code for performance?" -f my_script.py
 
 # Get current information about technologies in your project
-cgip "/search What are the latest security best practices for this framework?" -f package.json
+cgip --search "What are the latest security best practices for this framework?" -f package.json
 </code></pre>
 <h3 id="web-search-with-piped-input"><a class="header" href="#web-search-with-piped-input">Web Search with Piped Input</a></h3>
 <p>Web search works with piped input as well:</p>
@@ -3683,16 +3687,695 @@ source .env
 </li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="custom-api-endpoints-2"><a class="header" href="#custom-api-endpoints-2">Custom API Endpoints</a></h1>
+<p>Chat GipiTTY is designed to work with any OpenAI Chat Completions API-compatible provider. You can specify a custom API endpoint by setting the <code>OPENAI_BASE_URL</code> environment variable. If not set, the default is <code>https://api.openai.com</code>.</p>
+<h2 id="url-construction"><a class="header" href="#url-construction">URL Construction</a></h2>
+<p>Chat GipiTTY intelligently constructs the API endpoint:</p>
+<ul>
+<li>If your base URL already contains <code>/chat/completions</code>, it uses it as-is</li>
+<li>If your base URL ends with <code>/v1</code> (or similar version pattern), it appends <code>/chat/completions</code></li>
+<li>Otherwise, it appends <code>/v1/chat/completions</code> (standard OpenAI pattern)</li>
+</ul>
+<h2 id="provider-examples-1"><a class="header" href="#provider-examples-1">Provider Examples</a></h2>
+<h3 id="local-ollama-instance-1"><a class="header" href="#local-ollama-instance-1">Local Ollama Instance</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=http://localhost:11434/v1
+</code></pre>
+<h3 id="google-gemini-via-openai-compatible-proxy-1"><a class="header" href="#google-gemini-via-openai-compatible-proxy-1">Google Gemini (via OpenAI-compatible proxy)</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+</code></pre>
+<h3 id="mistral-ai-via-openai-compatible-endpoint"><a class="header" href="#mistral-ai-via-openai-compatible-endpoint">Mistral AI (via OpenAI-compatible endpoint)</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://api.mistral.ai/v1
+</code></pre>
+<h3 id="anthropic-claude-via-openai-compatible-endpoint"><a class="header" href="#anthropic-claude-via-openai-compatible-endpoint">Anthropic Claude (via OpenAI-compatible endpoint)</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://api.anthropic.com/v1
+</code></pre>
+<h3 id="other-openai-compatible-services-1"><a class="header" href="#other-openai-compatible-services-1">Other OpenAI-compatible Services</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://your-provider.com/v1
+</code></pre>
+<h3 id="custom-endpoint-patterns-1"><a class="header" href="#custom-endpoint-patterns-1">Custom Endpoint Patterns</a></h3>
+<p>If your provider uses a different endpoint pattern, you can specify the full URL:</p>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://custom-api.com/v2/chat/completions
+</code></pre>
+<h2 id="supported-providers-1"><a class="header" href="#supported-providers-1">Supported Providers</a></h2>
+<p>Chat GipiTTY works with any service that implements the OpenAI Chat Completions API standard:</p>
+<ul>
+<li><strong>OpenAI</strong> (ChatGPT, GPT-4, GPT-3.5, etc.)</li>
+<li><strong>Local models</strong> via <a href="https://ollama.com">Ollama</a></li>
+<li><strong>Google Gemini</strong> (via OpenAI-compatible endpoints)</li>
+<li><strong>Mistral AI</strong> (via OpenAI-compatible endpoints)</li>
+<li><strong>Anthropic Claude</strong> (via OpenAI-compatible endpoints)</li>
+<li><strong>Any other provider</strong> implementing the OpenAI Chat Completions API standard</li>
+</ul>
+<h2 id="compatibility-notes"><a class="header" href="#compatibility-notes">Compatibility Notes</a></h2>
+<p>Custom <code>OPENAI_BASE_URL</code> values can point to these or other OpenAI-compatible endpoints, but such providers might not implement the complete API and compatibility cannot be guaranteed.</p>
+<p>As long as your provider implements the OpenAI Chat Completions API standard, Chat GipiTTY will work with it seamlessly.</p>
+<h2 id="authentication"><a class="header" href="#authentication">Authentication</a></h2>
+<p>Most providers will still require you to set an API key:</p>
+<pre><code class="language-sh">export OPENAI_API_KEY=your_provider_api_key_here
+</code></pre>
+<p>Some providers may use different authentication methods or environment variable names. Consult your provider's documentation for specific authentication requirements.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="advanced-usage-3"><a class="header" href="#advanced-usage-3">Advanced Usage</a></h1>
+<p>This section covers advanced usage patterns and features for power users who want to get the most out of Chat GipiTTY. These features allow for more sophisticated workflows and customization options.</p>
+<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
+<p>Advanced usage includes:</p>
+<ul>
+<li><strong><a href="./file-input.html">File Input</a></strong> - Advanced file handling and multiple file processing</li>
+<li><strong><a href="./model-selection.html">Model Selection</a></strong> - Choosing and switching between different AI models</li>
+<li><strong><a href="./system-prompts.html">System Prompts</a></strong> - Customizing AI behavior with system-level instructions</li>
+</ul>
+<h2 id="key-concepts"><a class="header" href="#key-concepts">Key Concepts</a></h2>
+<h3 id="context-management"><a class="header" href="#context-management">Context Management</a></h3>
+<p>Advanced users can precisely control how Chat GipiTTY builds context from multiple sources:</p>
+<pre><code class="language-sh"># Combine multiple inputs with priority control
+cat data.csv | cgip "analyze this data" -f config.yaml --no-session
+</code></pre>
+<h3 id="custom-workflows"><a class="header" href="#custom-workflows">Custom Workflows</a></h3>
+<p>Create sophisticated pipelines that leverage Chat GipiTTY's flexibility:</p>
+<pre><code class="language-sh"># Multi-step analysis pipeline
+find . -name "*.py" | xargs wc -l | sort -nr | head -10 | cgip "which files need refactoring?"
+</code></pre>
+<h3 id="provider-specific-features"><a class="header" href="#provider-specific-features">Provider-Specific Features</a></h3>
+<p>Take advantage of unique capabilities offered by different AI providers:</p>
+<pre><code class="language-sh"># Use specific models for specialized tasks
+cgip -M gpt-4o-search-preview "/search latest Python security vulnerabilities"
+cgip -M claude-3-sonnet "provide detailed code analysis" -f complex_algorithm.py
+</code></pre>
+<h2 id="advanced-configuration-3"><a class="header" href="#advanced-configuration-3">Advanced Configuration</a></h2>
+<h3 id="environment-based-configuration"><a class="header" href="#environment-based-configuration">Environment-Based Configuration</a></h3>
+<p>Set up different configurations for different environments:</p>
+<pre><code class="language-sh"># Development environment
+export CGIP_SESSION_NAME="dev-$(date +%Y-%m-%d)"
+export OPENAI_BASE_URL="http://localhost:11434/v1"
+
+# Production analysis environment  
+export CGIP_SESSION_NAME="prod-analysis"
+export OPENAI_BASE_URL="https://api.openai.com"
+</code></pre>
+<h3 id="custom-model-aliases"><a class="header" href="#custom-model-aliases">Custom Model Aliases</a></h3>
+<p>Create shortcuts for frequently used model configurations:</p>
+<pre><code class="language-sh"># Set up aliases in your shell
+alias cgip-fast="cgip -M gpt-3.5-turbo"
+alias cgip-smart="cgip -M gpt-4o"
+alias cgip-local="cgip -M llama2:7b"
+</code></pre>
+<h2 id="performance-optimization"><a class="header" href="#performance-optimization">Performance Optimization</a></h2>
+<h3 id="token-management-1"><a class="header" href="#token-management-1">Token Management</a></h3>
+<p>For large inputs, be strategic about token usage:</p>
+<pre><code class="language-sh"># Limit context size for faster responses
+head -100 large_file.log | cgip "summarize the key issues"
+
+# Use specific prompts to get concise answers
+cgip "list the top 3 issues only" -f error_log.txt
+</code></pre>
+<h3 id="batch-processing-2"><a class="header" href="#batch-processing-2">Batch Processing</a></h3>
+<p>Process multiple files efficiently:</p>
+<pre><code class="language-sh"># Process files in batches
+for file in *.py; do
+    echo "=== $file ===" 
+    cgip "review this code" -f "$file" --no-session
+    echo
+done
+</code></pre>
+<h2 id="integration-patterns"><a class="header" href="#integration-patterns">Integration Patterns</a></h2>
+<h3 id="shell-functions"><a class="header" href="#shell-functions">Shell Functions</a></h3>
+<p>Create reusable shell functions for common tasks:</p>
+<pre><code class="language-bash"># Add to your .bashrc or .zshrc
+analyze_logs() {
+    tail -n ${2:-100} "$1" | cgip "analyze these logs for issues"
+}
+
+review_code() {
+    cgip "review this code for bugs and improvements" -f "$1"
+}
+
+explain_command() {
+    man "$1" | cgip "explain this command in simple terms"
+}
+</code></pre>
+<h3 id="git-hooks"><a class="header" href="#git-hooks">Git Hooks</a></h3>
+<p>Integrate Chat GipiTTY into your git workflow:</p>
+<pre><code class="language-bash">#!/bin/bash
+# pre-commit hook
+git diff --cached | cgip "review these changes for potential issues" --no-session
+</code></pre>
+<h2 id="troubleshooting-advanced-usage"><a class="header" href="#troubleshooting-advanced-usage">Troubleshooting Advanced Usage</a></h2>
+<h3 id="context-too-large"><a class="header" href="#context-too-large">Context Too Large</a></h3>
+<p>If you hit token limits:</p>
+<ul>
+<li>Use <code>head</code>/<code>tail</code> to limit input size</li>
+<li>Use <code>--no-session</code> to exclude session history</li>
+<li>Be more specific in your prompts</li>
+</ul>
+<h3 id="model-compatibility-1"><a class="header" href="#model-compatibility-1">Model Compatibility</a></h3>
+<p>Different models have different capabilities:</p>
+<ul>
+<li>Vision models for image analysis</li>
+<li>Search-enabled models for web queries</li>
+<li>Local models may have limited features</li>
+</ul>
+<h3 id="performance-issues"><a class="header" href="#performance-issues">Performance Issues</a></h3>
+<p>To improve response times:</p>
+<ul>
+<li>Choose appropriate models for the task</li>
+<li>Limit context size</li>
+<li>Use local models for simple tasks</li>
+</ul>
+<p>For specific details on each advanced feature, see the individual sections in this chapter.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="file-input-1"><a class="header" href="#file-input-1">File Input</a></h1>
+<p>Chat GipiTTY provides powerful file input capabilities that allow you to include file contents as context for AI analysis. This section covers advanced file handling techniques and best practices.</p>
+<h2 id="basic-file-input"><a class="header" href="#basic-file-input">Basic File Input</a></h2>
+<p>The <code>-f</code> or <code>--file</code> flag includes file contents in your query:</p>
+<pre><code class="language-sh">cgip "explain this code" -f src/main.py
+</code></pre>
+<h2 id="multiple-file-input"><a class="header" href="#multiple-file-input">Multiple File Input</a></h2>
+<p>You can include multiple files by using the <code>-f</code> flag multiple times:</p>
+<pre><code class="language-sh">cgip "compare these implementations" -f version1.py -f version2.py
+</code></pre>
+<h2 id="file-input-with-other-context"><a class="header" href="#file-input-with-other-context">File Input with Other Context</a></h2>
+<p>File input works seamlessly with other input sources:</p>
+<pre><code class="language-sh"># Combine piped input, arguments, and files
+git diff | cgip "review these changes" -f CONTRIBUTING.md
+</code></pre>
+<h2 id="input-priority-order"><a class="header" href="#input-priority-order">Input Priority Order</a></h2>
+<p>Chat GipiTTY processes input in this priority order:</p>
+<ol>
+<li><strong>stdin</strong> (highest priority)</li>
+<li><strong>Command arguments</strong></li>
+<li><strong>Files</strong> (lowest priority)</li>
+</ol>
+<p>This means files provide background context while stdin and arguments take precedence.</p>
+<h2 id="advanced-file-patterns"><a class="header" href="#advanced-file-patterns">Advanced File Patterns</a></h2>
+<h3 id="wildcard-expansion"><a class="header" href="#wildcard-expansion">Wildcard Expansion</a></h3>
+<p>Use shell wildcards to include multiple files:</p>
+<pre><code class="language-sh"># Include all Python files (shell expands the wildcard)
+cgip "analyze this codebase" -f src/*.py
+
+# Include specific file types
+cgip "review configuration" -f config/*.yaml -f config/*.json
+</code></pre>
+<h3 id="directory-analysis"><a class="header" href="#directory-analysis">Directory Analysis</a></h3>
+<p>Analyze entire directories by combining with other tools:</p>
+<pre><code class="language-sh"># Analyze all files in a directory
+find src/ -name "*.py" | head -5 | xargs -I {} cgip "brief analysis" -f {}
+
+# Get file listing with analysis
+ls -la src/ | cgip "what can you tell me about this project structure?" -f README.md
+</code></pre>
+<h2 id="file-type-handling"><a class="header" href="#file-type-handling">File Type Handling</a></h2>
+<h3 id="text-files"><a class="header" href="#text-files">Text Files</a></h3>
+<p>Most text-based files work seamlessly:</p>
+<pre><code class="language-sh"># Code files
+cgip "review this code" -f app.py -f test.py
+
+# Configuration files  
+cgip "check this configuration" -f config.yaml -f .env
+
+# Documentation
+cgip "summarize these docs" -f README.md -f CHANGELOG.md
+</code></pre>
+<h3 id="binary-files"><a class="header" href="#binary-files">Binary Files</a></h3>
+<p>Binary files are not supported directly, but you can analyze them indirectly:</p>
+<pre><code class="language-sh"># Analyze binary metadata
+file suspicious_binary | cgip "what type of file is this?"
+
+# Check binary dependencies
+ldd my_program | cgip "analyze these dependencies"
+</code></pre>
+<h3 id="large-files"><a class="header" href="#large-files">Large Files</a></h3>
+<p>For large files, consider limiting content:</p>
+<pre><code class="language-sh"># First 100 lines
+head -100 large_log.txt | cgip "analyze these log entries"
+
+# Last 50 lines
+tail -50 large_log.txt | cgip "what are the recent issues?"
+
+# Specific sections
+sed -n '100,200p' large_file.txt | cgip "analyze this section"
+</code></pre>
+<h2 id="practical-examples"><a class="header" href="#practical-examples">Practical Examples</a></h2>
+<h3 id="code-review-workflow"><a class="header" href="#code-review-workflow">Code Review Workflow</a></h3>
+<pre><code class="language-sh"># Review changes with context
+git diff HEAD~1 | cgip "review these changes" -f README.md -f package.json
+
+# Analyze function with its tests
+cgip "review this function and its tests" -f src/utils.py -f tests/test_utils.py
+</code></pre>
+<h3 id="configuration-analysis"><a class="header" href="#configuration-analysis">Configuration Analysis</a></h3>
+<pre><code class="language-sh"># Check configuration consistency
+cgip "are these configs consistent?" -f prod.yaml -f staging.yaml -f dev.yaml
+
+# Analyze configuration with documentation
+cgip "validate this configuration" -f config.yaml -f config-schema.json
+</code></pre>
+<h3 id="documentation-tasks"><a class="header" href="#documentation-tasks">Documentation Tasks</a></h3>
+<pre><code class="language-sh"># Generate documentation from code
+cgip "create API docs for these modules" -f api/*.py
+
+# Update documentation based on changes
+git diff --name-only | grep '\.py$' | head -3 | xargs -I {} cgip "update docs for changes" -f {} -f docs/api.md
+</code></pre>
+<h3 id="data-analysis-2"><a class="header" href="#data-analysis-2">Data Analysis</a></h3>
+<pre><code class="language-sh"># Analyze data with metadata
+cgip "analyze this dataset" -f data.csv -f metadata.json
+
+# Compare data files
+cgip "what changed between these datasets?" -f old_data.csv -f new_data.csv
+</code></pre>
+<h2 id="best-practices-11"><a class="header" href="#best-practices-11">Best Practices</a></h2>
+<h3 id="file-size-considerations-1"><a class="header" href="#file-size-considerations-1">File Size Considerations</a></h3>
+<ul>
+<li><strong>Small files</strong> (&lt; 1KB): Include multiple files freely</li>
+<li><strong>Medium files</strong> (1-10KB): Include selectively</li>
+<li><strong>Large files</strong> (&gt; 10KB): Use <code>head</code>/<code>tail</code>/<code>grep</code> to extract relevant sections</li>
+</ul>
+<h3 id="context-management-1"><a class="header" href="#context-management-1">Context Management</a></h3>
+<pre><code class="language-sh"># Include relevant context files
+cgip "debug this error" -f error.log -f config.yaml -f README.md
+
+# Avoid overwhelming context
+cgip "analyze main function only" -f &lt;(grep -A 50 "def main" script.py)
+</code></pre>
+<h3 id="security-considerations-3"><a class="header" href="#security-considerations-3">Security Considerations</a></h3>
+<ul>
+<li>Never include files with secrets or API keys</li>
+<li>Be cautious with sensitive configuration files</li>
+<li>Use <code>.gitignore</code> patterns as a guide for what to exclude</li>
+</ul>
+<h3 id="performance-tips"><a class="header" href="#performance-tips">Performance Tips</a></h3>
+<pre><code class="language-sh"># Use specific file sections
+cgip "analyze the error handling" -f &lt;(grep -A 10 -B 5 "try:" app.py)
+
+# Combine preprocessing with file input
+cgip "analyze recent errors" -f &lt;(grep ERROR app.log | tail -20)
+</code></pre>
+<h2 id="error-handling-5"><a class="header" href="#error-handling-5">Error Handling</a></h2>
+<h3 id="file-not-found"><a class="header" href="#file-not-found">File Not Found</a></h3>
+<pre><code class="language-sh"># Check if file exists before using
+[[ -f "config.yaml" ]] &amp;&amp; cgip "analyze config" -f config.yaml || echo "Config file not found"
+</code></pre>
+<h3 id="permission-issues-2"><a class="header" href="#permission-issues-2">Permission Issues</a></h3>
+<pre><code class="language-sh"># Use sudo if needed for system files
+sudo cat /var/log/syslog | tail -50 | cgip "analyze system logs"
+</code></pre>
+<h3 id="large-context-warnings"><a class="header" href="#large-context-warnings">Large Context Warnings</a></h3>
+<p>If you get context too large errors:</p>
+<ul>
+<li>Reduce file count</li>
+<li>Use file excerpts instead of full files</li>
+<li>Process files individually</li>
+</ul>
+<h2 id="integration-with-workflows"><a class="header" href="#integration-with-workflows">Integration with Workflows</a></h2>
+<h3 id="cicd-integration"><a class="header" href="#cicd-integration">CI/CD Integration</a></h3>
+<pre><code class="language-sh"># Analyze test failures with source
+npm test 2&gt;&amp;1 | cgip "analyze test failures" -f package.json -f src/main.js
+</code></pre>
+<h3 id="development-workflow-1"><a class="header" href="#development-workflow-1">Development Workflow</a></h3>
+<pre><code class="language-sh"># Pre-commit analysis
+git diff --cached --name-only | grep -E '\.(py|js|ts)$' | head -3 | xargs -I {} cgip "quick review" -f {}
+</code></pre>
+<h3 id="system-administration-2"><a class="header" href="#system-administration-2">System Administration</a></h3>
+<pre><code class="language-sh"># Analyze system issues with config context
+dmesg | tail -20 | cgip "analyze system messages" -f /etc/fstab -f /etc/systemd/system/my-service.service
+</code></pre>
+<p>File input is one of Chat GipiTTY's most powerful features, enabling you to provide rich context for AI analysis while maintaining the flexibility of command-line workflows.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="model-selection-3"><a class="header" href="#model-selection-3">Model Selection</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="system-prompts-1"><a class="header" href="#system-prompts-1">System Prompts</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="examples-5"><a class="header" href="#examples-5">Examples</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="development-workflow-1"><a class="header" href="#development-workflow-1">Development Workflow</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="text-processing-1"><a class="header" href="#text-processing-1">Text Processing</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="image-analysis-1"><a class="header" href="#image-analysis-1">Image Analysis</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="voice-synthesis"><a class="header" href="#voice-synthesis">Voice Synthesis</a></h1>
+<p>This section provides practical examples of using Chat GipiTTY in real-world scenarios. These examples demonstrate the versatility and power of integrating AI assistance into your terminal workflow.</p>
+<h2 id="quick-start-examples"><a class="header" href="#quick-start-examples">Quick Start Examples</a></h2>
+<h3 id="basic-debugging"><a class="header" href="#basic-debugging">Basic Debugging</a></h3>
+<p>Debug a Rust program that doesn't compile:</p>
+<pre><code class="language-sh">cargo build 2&gt;&amp;1 | cgip "give me a short summary of the kind of error this is"
+</code></pre>
+<p>Result:</p>
+<pre><code class="language-sh">❯ cargo build 2&gt;&amp;1 | cgip 'give me a short summary of the kind of error this is'
+The error you're encountering is a **lifetime error** in Rust, specifically an issue with **borrowed values not living long enough**.
+</code></pre>
+<h3 id="code-conversion"><a class="header" href="#code-conversion">Code Conversion</a></h3>
+<p>Convert code from one language to another:</p>
+<pre><code class="language-sh">cgip "convert this to python" -f src/main.rs
+</code></pre>
+<h2 id="development-workflow-examples"><a class="header" href="#development-workflow-examples">Development Workflow Examples</a></h2>
+<h3 id="git-analysis"><a class="header" href="#git-analysis">Git Analysis</a></h3>
+<pre><code class="language-sh"># Summarize recent commits
+git log --oneline -10 | cgip "summarize these recent changes"
+
+# Analyze a specific commit
+git show HEAD | cgip "explain what this commit does"
+
+# Review staged changes
+git diff --cached | cgip "review these changes for potential issues"
+</code></pre>
+<h3 id="code-review"><a class="header" href="#code-review">Code Review</a></h3>
+<pre><code class="language-sh"># Review a specific file
+cgip "review this code for bugs and improvements" -f utils.py
+
+# Analyze function complexity
+cgip "is this function too complex?" -f complex_function.js
+
+# Check for security issues
+cgip "are there any security concerns in this code?" -f auth.py
+</code></pre>
+<h3 id="testing-and-debugging"><a class="header" href="#testing-and-debugging">Testing and Debugging</a></h3>
+<pre><code class="language-sh"># Understand test failures
+npm test 2&gt;&amp;1 | cgip "why are these tests failing?"
+
+# Debug performance issues
+perf record -g ./my_program &amp;&amp; perf report | cgip "what's causing the performance bottleneck?"
+
+# Analyze memory usage
+valgrind ./my_program 2&gt;&amp;1 | cgip "are there memory leaks?"
+</code></pre>
+<h2 id="system-administration-examples"><a class="header" href="#system-administration-examples">System Administration Examples</a></h2>
+<h3 id="log-analysis"><a class="header" href="#log-analysis">Log Analysis</a></h3>
+<pre><code class="language-sh"># Analyze system logs
+sudo tail -100 /var/log/syslog | cgip "are there any critical issues?"
+
+# Web server log analysis
+tail -500 /var/log/nginx/access.log | cgip "what are the most common requests?"
+
+# Application error analysis
+grep ERROR /var/log/app.log | cgip "categorize these errors"
+</code></pre>
+<h3 id="system-monitoring"><a class="header" href="#system-monitoring">System Monitoring</a></h3>
+<pre><code class="language-sh"># Check system resources
+top -b -n 1 | cgip "which processes are consuming the most resources?"
+
+# Disk usage analysis
+df -h | cgip "do I have any disk space issues?"
+
+# Network analysis
+netstat -tuln | cgip "what services are running and are any ports concerning?"
+</code></pre>
+<h3 id="configuration-review"><a class="header" href="#configuration-review">Configuration Review</a></h3>
+<pre><code class="language-sh"># Check configuration files
+cgip "review this configuration for best practices" -f /etc/nginx/nginx.conf
+
+# Analyze system settings
+sysctl -a | grep net | cgip "review these network settings"
+</code></pre>
+<h2 id="data-processing-examples"><a class="header" href="#data-processing-examples">Data Processing Examples</a></h2>
+<h3 id="csv-analysis"><a class="header" href="#csv-analysis">CSV Analysis</a></h3>
+<pre><code class="language-sh"># Basic data analysis
+head -20 sales_data.csv | cgip "what patterns do you see in this sales data?"
+
+# Calculate statistics
+cgip "calculate the average and median from this data" -f numbers.csv
+
+# Data validation
+cgip "check this CSV for data quality issues" -f messy_data.csv
+</code></pre>
+<h3 id="json-processing"><a class="header" href="#json-processing">JSON Processing</a></h3>
+<pre><code class="language-sh"># Pretty print and explain JSON
+curl -s https://api.github.com/users/octocat | cgip "explain this JSON structure"
+
+# Validate JSON structure
+cgip "is this valid JSON and what could be improved?" -f config.json
+</code></pre>
+<h3 id="text-processing-1"><a class="header" href="#text-processing-1">Text Processing</a></h3>
+<pre><code class="language-sh"># Summarize long documents
+cgip "provide a 3-sentence summary" -f long_report.md
+
+# Extract key information
+cgip "extract all email addresses and phone numbers" -f contact_list.txt
+
+# Format conversion
+cgip "convert this to markdown table format" -f data.txt
+</code></pre>
+<h2 id="multi-modal-examples"><a class="header" href="#multi-modal-examples">Multi-modal Examples</a></h2>
+<h3 id="image-analysis-1"><a class="header" href="#image-analysis-1">Image Analysis</a></h3>
+<pre><code class="language-sh"># Analyze screenshots
+cgip image --file error_screenshot.png "what error is shown and how to fix it?"
+
+# Extract text from images
+cgip image --file receipt.jpg "extract all text and format as a list"
+
+# Diagram analysis
+cgip image --file architecture.png "explain this system architecture"
+</code></pre>
+<h3 id="voice-synthesis"><a class="header" href="#voice-synthesis">Voice Synthesis</a></h3>
+<pre><code class="language-sh"># Convert text to speech
+echo "Important announcement" | cgip tts --voice nova --output announcement.mp3
+
+# Read file contents aloud
+cgip tts --voice echo "reading the README file" -f README.md --output readme_audio.mp3
+</code></pre>
+<h2 id="advanced-workflow-examples"><a class="header" href="#advanced-workflow-examples">Advanced Workflow Examples</a></h2>
+<h3 id="cicd-pipeline-integration"><a class="header" href="#cicd-pipeline-integration">CI/CD Pipeline Integration</a></h3>
+<pre><code class="language-sh"># Analyze build failures
+jenkins_build_log.txt | cgip "why did this build fail and how to fix it?"
+
+# Review deployment logs
+kubectl logs deployment/myapp | cgip "are there any deployment issues?"
+</code></pre>
+<h3 id="database-administration"><a class="header" href="#database-administration">Database Administration</a></h3>
+<pre><code class="language-sh"># Analyze slow queries
+cgip "optimize this SQL query" -f slow_query.sql
+
+# Review database logs
+tail -200 /var/log/postgresql/postgresql.log | cgip "any database performance issues?"
+</code></pre>
+<h3 id="security-analysis"><a class="header" href="#security-analysis">Security Analysis</a></h3>
+<pre><code class="language-sh"># Analyze access logs for suspicious activity
+tail -1000 /var/log/auth.log | cgip "any suspicious login attempts?"
+
+# Review firewall rules
+iptables -L | cgip "review these firewall rules for security"
+
+# Scan for vulnerabilities
+nmap localhost | cgip "analyze these open ports for security risks"
+</code></pre>
+<h2 id="creative-and-productivity-examples"><a class="header" href="#creative-and-productivity-examples">Creative and Productivity Examples</a></h2>
+<h3 id="documentation-generation"><a class="header" href="#documentation-generation">Documentation Generation</a></h3>
+<pre><code class="language-sh"># Generate API documentation
+cgip "create API documentation for these functions" -f api_handlers.py
+
+# Write README sections
+cgip "write a usage section for this tool" -f main.py
+
+# Create changelog entries
+git log --oneline v1.0..HEAD | cgip "create changelog entries for these commits"
+</code></pre>
+<h3 id="learning-and-exploration"><a class="header" href="#learning-and-exploration">Learning and Exploration</a></h3>
+<pre><code class="language-sh"># Understand new codebases
+find . -name "*.py" | head -5 | xargs cat | cgip "explain the structure of this Python project"
+
+# Learn from examples
+cgip "explain how this algorithm works" -f sorting_algorithm.c
+
+# Get coding help
+cgip "show me how to implement a REST API client in Python"
+</code></pre>
+<h3 id="content-creation"><a class="header" href="#content-creation">Content Creation</a></h3>
+<pre><code class="language-sh"># Generate commit messages
+git diff --cached | cgip "write a concise commit message for these changes"
+
+# Create shell scripts
+cgip "write a bash script to backup these directories" -f directory_list.txt
+
+# Generate test cases
+cgip "create unit tests for this function" -f my_function.py
+</code></pre>
+<h2 id="integration-examples-3"><a class="header" href="#integration-examples-3">Integration Examples</a></h2>
+<h3 id="with-other-tools"><a class="header" href="#with-other-tools">With Other Tools</a></h3>
+<pre><code class="language-sh"># Combine with grep
+grep -r "TODO" src/ | cgip "prioritize these TODO items"
+
+# Combine with find
+find . -name "*.log" -mtime -1 | xargs cat | cgip "summarize today's log activity"
+
+# Combine with curl
+curl -s https://api.weather.com/current | cgip "what's the weather forecast?"
+</code></pre>
+<h3 id="pipeline-compositions"><a class="header" href="#pipeline-compositions">Pipeline Compositions</a></h3>
+<pre><code class="language-sh"># Complex analysis pipeline
+ps aux | grep python | awk '{print $2}' | xargs -I {} lsof -p {} | cgip "what files are these Python processes using?"
+
+# Multi-step data processing
+cat raw_data.txt | sort | uniq -c | sort -nr | cgip "what are the most common entries?"
+</code></pre>
+<p>These examples showcase the flexibility of Chat GipiTTY in various contexts. The key is to think of it as a smart filter or analyzer that can be inserted into any part of your workflow where you need AI assistance.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="text-processing-2"><a class="header" href="#text-processing-2">Text Processing</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="image-analysis-2"><a class="header" href="#image-analysis-2">Image Analysis</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="voice-synthesis-1"><a class="header" href="#voice-synthesis-1">Voice Synthesis</a></h1>
+<p>Chat GipiTTY supports text-to-speech (TTS) conversion using OpenAI's TTS models. You can convert text to high-quality audio with various voice options and customization settings.</p>
+<p>For detailed information about the TTS feature, see the <a href="./tts-command.html">TTS Command</a> documentation.</p>
+<h2 id="quick-overview"><a class="header" href="#quick-overview">Quick Overview</a></h2>
+<p>The <code>tts</code> subcommand allows you to:</p>
+<ul>
+<li>Convert text to speech with natural-sounding voices</li>
+<li>Choose from multiple voice options (alloy, echo, fable, onyx, nova, shimmer)</li>
+<li>Control speech speed and audio quality</li>
+<li>Support multiple audio formats (MP3, OPUS, AAC, FLAC)</li>
+<li>Process text from command arguments, files, or stdin</li>
+</ul>
+<h2 id="basic-usage-6"><a class="header" href="#basic-usage-6">Basic Usage</a></h2>
+<pre><code class="language-sh"># Simple text-to-speech
+cgip tts "Hello, this is a test of text-to-speech functionality"
+
+# Use a different voice
+cgip tts --voice nova "Welcome to our application!"
+
+# Read from stdin
+echo "This text comes from stdin" | cgip tts --output speech.mp3
+</code></pre>
+<h2 id="key-features-1"><a class="header" href="#key-features-1">Key Features</a></h2>
+<ul>
+<li><strong>High-Quality Voices</strong>: Choose from 6 distinct AI voices</li>
+<li><strong>Flexible Input</strong>: Accept text from arguments, stdin, or both</li>
+<li><strong>Audio Formats</strong>: Support for MP3, OPUS, AAC, and FLAC</li>
+<li><strong>Speed Control</strong>: Adjust speech rate from 0.25x to 4.0x</li>
+<li><strong>Quality Options</strong>: Standard (<code>tts-1</code>) and HD (<code>tts-1-hd</code>) models</li>
+</ul>
+<h2 id="common-use-cases-2"><a class="header" href="#common-use-cases-2">Common Use Cases</a></h2>
+<h3 id="accessibility"><a class="header" href="#accessibility">Accessibility</a></h3>
+<pre><code class="language-sh"># Read documentation aloud
+cgip tts --voice echo -f README.md --output readme_audio.mp3
+
+# Convert articles to audio
+curl -s https://example.com/article.txt | cgip tts --voice nova
+</code></pre>
+<h3 id="content-creation-1"><a class="header" href="#content-creation-1">Content Creation</a></h3>
+<pre><code class="language-sh"># Create audio announcements
+cgip tts --voice shimmer "This is an important announcement" --output announcement.mp3
+
+# Generate audio for presentations
+cgip tts --voice onyx -f presentation_script.txt --output presentation.mp3
+</code></pre>
+<h3 id="development-workflow-2"><a class="header" href="#development-workflow-2">Development Workflow</a></h3>
+<pre><code class="language-sh"># Audio alerts for long-running commands
+make build &amp;&amp; cgip tts --voice alloy "Build completed successfully" || cgip tts --voice echo "Build failed"
+</code></pre>
+<p>For complete documentation including all options, voice samples, and advanced usage patterns, see the <a href="./tts-command.html">full TTS command documentation</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="troubleshooting-9"><a class="header" href="#troubleshooting-9">Troubleshooting</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="development-workflow-3"><a class="header" href="#development-workflow-3">Development Workflow</a></h1>
+<p>This section covers development setup and workflow for Chat GipiTTY contributors and advanced users who want to build from source.</p>
+<h2 id="development-setup-1"><a class="header" href="#development-setup-1">Development Setup</a></h2>
+<h3 id="prerequisites-2"><a class="header" href="#prerequisites-2">Prerequisites</a></h3>
+<p>To build Chat GipiTTY from source, you'll need:</p>
+<ul>
+<li><a href="https://rustup.rs/">Rust</a> (latest stable version)</li>
+<li>Git</li>
+<li>A POSIX-compliant system (Linux, macOS, or WSL on Windows)</li>
+</ul>
+<h3 id="clone-and-build"><a class="header" href="#clone-and-build">Clone and Build</a></h3>
+<pre><code class="language-sh">git clone https://github.com/divanvisagie/chat-gipitty.git
+cd chat-gipitty
+cargo build
+</code></pre>
+<h3 id="running-from-source"><a class="header" href="#running-from-source">Running from Source</a></h3>
+<p>You can run Chat GipiTTY directly from the source directory:</p>
+<pre><code class="language-sh">cargo run -- --help
+</code></pre>
+<h3 id="running-tests"><a class="header" href="#running-tests">Running Tests</a></h3>
+<pre><code class="language-sh">cargo test
+</code></pre>
+<h2 id="ubuntu-development-setup"><a class="header" href="#ubuntu-development-setup">Ubuntu Development Setup</a></h2>
+<p>On Ubuntu, some additional packages are required to build the deb package:</p>
+<pre><code class="language-sh">sudo apt-get install build-essential dh-make debhelper devscripts
+</code></pre>
+<h2 id="development-tools"><a class="header" href="#development-tools">Development Tools</a></h2>
+<h3 id="building-documentation"><a class="header" href="#building-documentation">Building Documentation</a></h3>
+<p>The documentation is built using mdBook:</p>
+<pre><code class="language-sh"># Install mdbook if not already installed
+cargo install mdbook
+
+# Build the book
+cd book
+mdbook build
+
+# Serve locally for development
+mdbook serve
+</code></pre>
+<h3 id="creating-releases"><a class="header" href="#creating-releases">Creating Releases</a></h3>
+<p>For maintainers, see the release process documentation for preparing new releases.</p>
+<h3 id="package-building"><a class="header" href="#package-building">Package Building</a></h3>
+<h4 id="debian-package"><a class="header" href="#debian-package">Debian Package</a></h4>
+<pre><code class="language-sh"># Build deb package (Ubuntu/Debian)
+./scripts/build_deb.sh
+</code></pre>
+<h4 id="homebrew-formula"><a class="header" href="#homebrew-formula">Homebrew Formula</a></h4>
+<pre><code class="language-sh"># Update homebrew formula
+./scripts/homebrew.sh
+</code></pre>
+<h2 id="project-structure"><a class="header" href="#project-structure">Project Structure</a></h2>
+<pre><code>chat-gipitty/
+├── src/                    # Main Rust source code
+│   ├── main.rs            # Application entry point
+│   ├── args.rs            # Command line argument parsing
+│   ├── chat.rs            # Core chat functionality
+│   ├── chatgpt/           # OpenAI API client
+│   ├── sub/               # Subcommands
+│   └── ...
+├── book/                   # Documentation source
+├── docs/                   # Generated documentation
+├── assets/                 # Logo and assets
+├── scripts/               # Build and release scripts
+└── test_data/             # Test files
+</code></pre>
+<h2 id="contributing-guidelines"><a class="header" href="#contributing-guidelines">Contributing Guidelines</a></h2>
+<ol>
+<li><strong>Fork the repository</strong> on GitHub</li>
+<li><strong>Create a feature branch</strong> from main</li>
+<li><strong>Make your changes</strong> with appropriate tests</li>
+<li><strong>Run the test suite</strong> to ensure nothing breaks</li>
+<li><strong>Submit a pull request</strong> with a clear description</li>
+</ol>
+<h3 id="code-style"><a class="header" href="#code-style">Code Style</a></h3>
+<ul>
+<li>Follow standard Rust formatting (<code>cargo fmt</code>)</li>
+<li>Run clippy for linting (<code>cargo clippy</code>)</li>
+<li>Add tests for new functionality</li>
+<li>Update documentation as needed</li>
+</ul>
+<h3 id="testing-your-changes"><a class="header" href="#testing-your-changes">Testing Your Changes</a></h3>
+<p>Before submitting a pull request:</p>
+<pre><code class="language-sh"># Format code
+cargo fmt
+
+# Run linter
+cargo clippy
+
+# Run tests
+cargo test
+
+# Test the binary
+cargo run -- --help
+</code></pre>
+<h2 id="debugging"><a class="header" href="#debugging">Debugging</a></h2>
+<h3 id="environment-variables-2"><a class="header" href="#environment-variables-2">Environment Variables</a></h3>
+<p>Useful environment variables for development:</p>
+<pre><code class="language-sh"># Enable debug logging
+export RUST_LOG=debug
+
+# Show API requests (be careful with sensitive data)
+export CGIP_DEBUG_API=1
+</code></pre>
+<h3 id="common-development-tasks"><a class="header" href="#common-development-tasks">Common Development Tasks</a></h3>
+<h4 id="adding-a-new-subcommand"><a class="header" href="#adding-a-new-subcommand">Adding a New Subcommand</a></h4>
+<ol>
+<li>Create a new file in <code>src/sub/</code></li>
+<li>Implement the subcommand logic</li>
+<li>Add the subcommand to <code>src/sub/mod.rs</code></li>
+<li>Update argument parsing in <code>src/args.rs</code></li>
+<li>Add documentation in <code>book/src/</code></li>
+</ol>
+<h4 id="testing-api-changes"><a class="header" href="#testing-api-changes">Testing API Changes</a></h4>
+<pre><code class="language-sh"># Test with different models
+cargo run -- -M gpt-3.5-turbo "test prompt"
+
+# Test with custom endpoint
+export OPENAI_BASE_URL=http://localhost:11434/v1
+cargo run -- "test prompt"
+</code></pre>
+<h2 id="release-process"><a class="header" href="#release-process">Release Process</a></h2>
+<p>Maintainers should follow these steps for releases:</p>
+<ol>
+<li>Update version in <code>Cargo.toml</code></li>
+<li>Update <code>CHANGELOG.md</code></li>
+<li>Create and push version tag</li>
+<li>GitHub Actions will handle the rest</li>
+</ol>
+<p>For detailed release instructions, see the project's internal documentation.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contributing"><a class="header" href="#contributing">Contributing</a></h1>
 <p>Thank you for your interest in contributing to Chat Gipitty! This guide covers how to contribute to the project, from reporting bugs to submitting code changes.</p>
 <h2 id="ways-to-contribute"><a class="header" href="#ways-to-contribute">Ways to Contribute</a></h2>
@@ -3712,13 +4395,13 @@ source .env
 <li><strong>Documentation</strong>: Update code comments and documentation</li>
 </ul>
 <h2 id="getting-started-1"><a class="header" href="#getting-started-1">Getting Started</a></h2>
-<h3 id="prerequisites-2"><a class="header" href="#prerequisites-2">Prerequisites</a></h3>
+<h3 id="prerequisites-3"><a class="header" href="#prerequisites-3">Prerequisites</a></h3>
 <ul>
 <li><strong>Rust</strong>: Install the latest stable version from <a href="https://rustup.rs/">rustup.rs</a></li>
 <li><strong>Git</strong>: For version control and submitting changes</li>
 <li><strong>Code Editor</strong>: Any editor with Rust support (VSCode, IntelliJ, etc.)</li>
 </ul>
-<h3 id="development-setup-1"><a class="header" href="#development-setup-1">Development Setup</a></h3>
+<h3 id="development-setup-2"><a class="header" href="#development-setup-2">Development Setup</a></h3>
 <pre><code class="language-bash"># Clone the repository
 git clone https://github.com/divanvisagie/chat-gipitty.git
 cd chat-gipitty
@@ -3732,11 +4415,11 @@ cargo test
 # Run the development version
 cargo run -- --help
 </code></pre>
-<h3 id="ubuntu-development-setup"><a class="header" href="#ubuntu-development-setup">Ubuntu Development Setup</a></h3>
+<h3 id="ubuntu-development-setup-1"><a class="header" href="#ubuntu-development-setup-1">Ubuntu Development Setup</a></h3>
 <p>On Ubuntu, additional packages are required for building distribution packages:</p>
 <pre><code class="language-bash">sudo apt-get install build-essential dh-make debhelper devscripts
 </code></pre>
-<h2 id="development-workflow-2"><a class="header" href="#development-workflow-2">Development Workflow</a></h2>
+<h2 id="development-workflow-4"><a class="header" href="#development-workflow-4">Development Workflow</a></h2>
 <h3 id="1-fork-and-clone"><a class="header" href="#1-fork-and-clone">1. Fork and Clone</a></h3>
 <ol>
 <li>Fork the repository on GitHub</li>
@@ -3815,7 +4498,7 @@ git push origin feature/your-feature-name
 <li>Add or update man page content if needed</li>
 </ul>
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
-<h3 id="running-tests"><a class="header" href="#running-tests">Running Tests</a></h3>
+<h3 id="running-tests-1"><a class="header" href="#running-tests-1">Running Tests</a></h3>
 <pre><code class="language-bash"># Run all tests
 cargo test
 
@@ -3844,12 +4527,12 @@ cargo run -- -f test_file.txt "analyze this"
 cargo run -- image --help
 cargo run -- tts "test speech"
 </code></pre>
-<h2 id="release-process"><a class="header" href="#release-process">Release Process</a></h2>
+<h2 id="release-process-1"><a class="header" href="#release-process-1">Release Process</a></h2>
 <p>The project uses Git tags and GitHub Actions for releases. Here's how releases are prepared:</p>
 <h3 id="1-update-version-numbers"><a class="header" href="#1-update-version-numbers">1. Update Version Numbers</a></h3>
 <ul>
 <li>Edit <code>Cargo.toml</code> and set the new <code>version</code></li>
-<li>Update the version in <code>docs/cgip.1</code> and <code>scripts/build_deb.sh</code></li>
+<li>Update the version in <code>assets/cgip.1</code> and <code>scripts/build_deb.sh</code></li>
 <li>Run <code>cargo build --release</code> to update <code>Cargo.lock</code></li>
 </ul>
 <h3 id="2-write-release-notes"><a class="header" href="#2-write-release-notes">2. Write Release Notes</a></h3>
@@ -3876,7 +4559,7 @@ make tarball-publish
 make deb-publish
 </code></pre>
 <p>This process ensures version consistency and triggers automated release builds.</p>
-<h2 id="project-structure"><a class="header" href="#project-structure">Project Structure</a></h2>
+<h2 id="project-structure-1"><a class="header" href="#project-structure-1">Project Structure</a></h2>
 <pre><code>chat-gipitty/
 ├── src/                 # Source code
 │   ├── main.rs         # Entry point
@@ -4110,7 +4793,7 @@ cgip -M llama2 "local query"
 export CGIP_SESSION_NAME="project-review"
 cgip -c "continue our discussion"
 </code></pre>
-<h2 id="error-handling-5"><a class="header" href="#error-handling-5">Error Handling</a></h2>
+<h2 id="error-handling-6"><a class="header" href="#error-handling-6">Error Handling</a></h2>
 <h3 id="invalid-options"><a class="header" href="#invalid-options">Invalid Options</a></h3>
 <pre><code class="language-bash"># Invalid model
 cgip -M invalid-model "test"
@@ -4149,8 +4832,6 @@ git log --oneline -10 | cgip -n -M gpt-3.5-turbo "summarize recent changes"
 # Chained operations
 cgip -f code.py "find issues" | cgip -n "prioritize these issues"
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="supported-models"><a class="header" href="#supported-models">Supported Models</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="api-compatibility"><a class="header" href="#api-compatibility">API Compatibility</a></h1>
 
                     </main>
 

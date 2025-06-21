@@ -157,6 +157,162 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="file-input"><a class="header" href="#file-input">File Input</a></h1>
+<p>Chat GipiTTY provides powerful file input capabilities that allow you to include file contents as context for AI analysis. This section covers advanced file handling techniques and best practices.</p>
+<h2 id="basic-file-input"><a class="header" href="#basic-file-input">Basic File Input</a></h2>
+<p>The <code>-f</code> or <code>--file</code> flag includes file contents in your query:</p>
+<pre><code class="language-sh">cgip "explain this code" -f src/main.py
+</code></pre>
+<h2 id="multiple-file-input"><a class="header" href="#multiple-file-input">Multiple File Input</a></h2>
+<p>You can include multiple files by using the <code>-f</code> flag multiple times:</p>
+<pre><code class="language-sh">cgip "compare these implementations" -f version1.py -f version2.py
+</code></pre>
+<h2 id="file-input-with-other-context"><a class="header" href="#file-input-with-other-context">File Input with Other Context</a></h2>
+<p>File input works seamlessly with other input sources:</p>
+<pre><code class="language-sh"># Combine piped input, arguments, and files
+git diff | cgip "review these changes" -f CONTRIBUTING.md
+</code></pre>
+<h2 id="input-priority-order"><a class="header" href="#input-priority-order">Input Priority Order</a></h2>
+<p>Chat GipiTTY processes input in this priority order:</p>
+<ol>
+<li><strong>stdin</strong> (highest priority)</li>
+<li><strong>Command arguments</strong></li>
+<li><strong>Files</strong> (lowest priority)</li>
+</ol>
+<p>This means files provide background context while stdin and arguments take precedence.</p>
+<h2 id="advanced-file-patterns"><a class="header" href="#advanced-file-patterns">Advanced File Patterns</a></h2>
+<h3 id="wildcard-expansion"><a class="header" href="#wildcard-expansion">Wildcard Expansion</a></h3>
+<p>Use shell wildcards to include multiple files:</p>
+<pre><code class="language-sh"># Include all Python files (shell expands the wildcard)
+cgip "analyze this codebase" -f src/*.py
+
+# Include specific file types
+cgip "review configuration" -f config/*.yaml -f config/*.json
+</code></pre>
+<h3 id="directory-analysis"><a class="header" href="#directory-analysis">Directory Analysis</a></h3>
+<p>Analyze entire directories by combining with other tools:</p>
+<pre><code class="language-sh"># Analyze all files in a directory
+find src/ -name "*.py" | head -5 | xargs -I {} cgip "brief analysis" -f {}
+
+# Get file listing with analysis
+ls -la src/ | cgip "what can you tell me about this project structure?" -f README.md
+</code></pre>
+<h2 id="file-type-handling"><a class="header" href="#file-type-handling">File Type Handling</a></h2>
+<h3 id="text-files"><a class="header" href="#text-files">Text Files</a></h3>
+<p>Most text-based files work seamlessly:</p>
+<pre><code class="language-sh"># Code files
+cgip "review this code" -f app.py -f test.py
+
+# Configuration files  
+cgip "check this configuration" -f config.yaml -f .env
+
+# Documentation
+cgip "summarize these docs" -f README.md -f CHANGELOG.md
+</code></pre>
+<h3 id="binary-files"><a class="header" href="#binary-files">Binary Files</a></h3>
+<p>Binary files are not supported directly, but you can analyze them indirectly:</p>
+<pre><code class="language-sh"># Analyze binary metadata
+file suspicious_binary | cgip "what type of file is this?"
+
+# Check binary dependencies
+ldd my_program | cgip "analyze these dependencies"
+</code></pre>
+<h3 id="large-files"><a class="header" href="#large-files">Large Files</a></h3>
+<p>For large files, consider limiting content:</p>
+<pre><code class="language-sh"># First 100 lines
+head -100 large_log.txt | cgip "analyze these log entries"
+
+# Last 50 lines
+tail -50 large_log.txt | cgip "what are the recent issues?"
+
+# Specific sections
+sed -n '100,200p' large_file.txt | cgip "analyze this section"
+</code></pre>
+<h2 id="practical-examples"><a class="header" href="#practical-examples">Practical Examples</a></h2>
+<h3 id="code-review-workflow"><a class="header" href="#code-review-workflow">Code Review Workflow</a></h3>
+<pre><code class="language-sh"># Review changes with context
+git diff HEAD~1 | cgip "review these changes" -f README.md -f package.json
+
+# Analyze function with its tests
+cgip "review this function and its tests" -f src/utils.py -f tests/test_utils.py
+</code></pre>
+<h3 id="configuration-analysis"><a class="header" href="#configuration-analysis">Configuration Analysis</a></h3>
+<pre><code class="language-sh"># Check configuration consistency
+cgip "are these configs consistent?" -f prod.yaml -f staging.yaml -f dev.yaml
+
+# Analyze configuration with documentation
+cgip "validate this configuration" -f config.yaml -f config-schema.json
+</code></pre>
+<h3 id="documentation-tasks"><a class="header" href="#documentation-tasks">Documentation Tasks</a></h3>
+<pre><code class="language-sh"># Generate documentation from code
+cgip "create API docs for these modules" -f api/*.py
+
+# Update documentation based on changes
+git diff --name-only | grep '\.py$' | head -3 | xargs -I {} cgip "update docs for changes" -f {} -f docs/api.md
+</code></pre>
+<h3 id="data-analysis"><a class="header" href="#data-analysis">Data Analysis</a></h3>
+<pre><code class="language-sh"># Analyze data with metadata
+cgip "analyze this dataset" -f data.csv -f metadata.json
+
+# Compare data files
+cgip "what changed between these datasets?" -f old_data.csv -f new_data.csv
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="file-size-considerations"><a class="header" href="#file-size-considerations">File Size Considerations</a></h3>
+<ul>
+<li><strong>Small files</strong> (&lt; 1KB): Include multiple files freely</li>
+<li><strong>Medium files</strong> (1-10KB): Include selectively</li>
+<li><strong>Large files</strong> (&gt; 10KB): Use <code>head</code>/<code>tail</code>/<code>grep</code> to extract relevant sections</li>
+</ul>
+<h3 id="context-management"><a class="header" href="#context-management">Context Management</a></h3>
+<pre><code class="language-sh"># Include relevant context files
+cgip "debug this error" -f error.log -f config.yaml -f README.md
+
+# Avoid overwhelming context
+cgip "analyze main function only" -f &lt;(grep -A 50 "def main" script.py)
+</code></pre>
+<h3 id="security-considerations"><a class="header" href="#security-considerations">Security Considerations</a></h3>
+<ul>
+<li>Never include files with secrets or API keys</li>
+<li>Be cautious with sensitive configuration files</li>
+<li>Use <code>.gitignore</code> patterns as a guide for what to exclude</li>
+</ul>
+<h3 id="performance-tips"><a class="header" href="#performance-tips">Performance Tips</a></h3>
+<pre><code class="language-sh"># Use specific file sections
+cgip "analyze the error handling" -f &lt;(grep -A 10 -B 5 "try:" app.py)
+
+# Combine preprocessing with file input
+cgip "analyze recent errors" -f &lt;(grep ERROR app.log | tail -20)
+</code></pre>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="file-not-found"><a class="header" href="#file-not-found">File Not Found</a></h3>
+<pre><code class="language-sh"># Check if file exists before using
+[[ -f "config.yaml" ]] &amp;&amp; cgip "analyze config" -f config.yaml || echo "Config file not found"
+</code></pre>
+<h3 id="permission-issues"><a class="header" href="#permission-issues">Permission Issues</a></h3>
+<pre><code class="language-sh"># Use sudo if needed for system files
+sudo cat /var/log/syslog | tail -50 | cgip "analyze system logs"
+</code></pre>
+<h3 id="large-context-warnings"><a class="header" href="#large-context-warnings">Large Context Warnings</a></h3>
+<p>If you get context too large errors:</p>
+<ul>
+<li>Reduce file count</li>
+<li>Use file excerpts instead of full files</li>
+<li>Process files individually</li>
+</ul>
+<h2 id="integration-with-workflows"><a class="header" href="#integration-with-workflows">Integration with Workflows</a></h2>
+<h3 id="cicd-integration"><a class="header" href="#cicd-integration">CI/CD Integration</a></h3>
+<pre><code class="language-sh"># Analyze test failures with source
+npm test 2&gt;&amp;1 | cgip "analyze test failures" -f package.json -f src/main.js
+</code></pre>
+<h3 id="development-workflow"><a class="header" href="#development-workflow">Development Workflow</a></h3>
+<pre><code class="language-sh"># Pre-commit analysis
+git diff --cached --name-only | grep -E '\.(py|js|ts)$' | head -3 | xargs -I {} cgip "quick review" -f {}
+</code></pre>
+<h3 id="system-administration"><a class="header" href="#system-administration">System Administration</a></h3>
+<pre><code class="language-sh"># Analyze system issues with config context
+dmesg | tail -20 | cgip "analyze system messages" -f /etc/fstab -f /etc/systemd/system/my-service.service
+</code></pre>
+<p>File input is one of Chat GipiTTY's most powerful features, enabling you to provide rich context for AI analysis while maintaining the flexibility of command-line workflows.</p>
 
                     </main>
 

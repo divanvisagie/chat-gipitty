@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Development Workflow - Chat GipiTTY</title>
+        <title>Development - Chat GipiTTY</title>
 
 
         <!-- Custom HTML head -->
@@ -157,16 +157,144 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="development-workflow"><a class="header" href="#development-workflow">Development Workflow</a></h1>
+<p>This section covers development setup and workflow for Chat GipiTTY contributors and advanced users who want to build from source.</p>
+<h2 id="development-setup"><a class="header" href="#development-setup">Development Setup</a></h2>
+<h3 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h3>
+<p>To build Chat GipiTTY from source, you'll need:</p>
+<ul>
+<li><a href="https://rustup.rs/">Rust</a> (latest stable version)</li>
+<li>Git</li>
+<li>A POSIX-compliant system (Linux, macOS, or WSL on Windows)</li>
+</ul>
+<h3 id="clone-and-build"><a class="header" href="#clone-and-build">Clone and Build</a></h3>
+<pre><code class="language-sh">git clone https://github.com/divanvisagie/chat-gipitty.git
+cd chat-gipitty
+cargo build
+</code></pre>
+<h3 id="running-from-source"><a class="header" href="#running-from-source">Running from Source</a></h3>
+<p>You can run Chat GipiTTY directly from the source directory:</p>
+<pre><code class="language-sh">cargo run -- --help
+</code></pre>
+<h3 id="running-tests"><a class="header" href="#running-tests">Running Tests</a></h3>
+<pre><code class="language-sh">cargo test
+</code></pre>
+<h2 id="ubuntu-development-setup"><a class="header" href="#ubuntu-development-setup">Ubuntu Development Setup</a></h2>
+<p>On Ubuntu, some additional packages are required to build the deb package:</p>
+<pre><code class="language-sh">sudo apt-get install build-essential dh-make debhelper devscripts
+</code></pre>
+<h2 id="development-tools"><a class="header" href="#development-tools">Development Tools</a></h2>
+<h3 id="building-documentation"><a class="header" href="#building-documentation">Building Documentation</a></h3>
+<p>The documentation is built using mdBook:</p>
+<pre><code class="language-sh"># Install mdbook if not already installed
+cargo install mdbook
+
+# Build the book
+cd book
+mdbook build
+
+# Serve locally for development
+mdbook serve
+</code></pre>
+<h3 id="creating-releases"><a class="header" href="#creating-releases">Creating Releases</a></h3>
+<p>For maintainers, see the release process documentation for preparing new releases.</p>
+<h3 id="package-building"><a class="header" href="#package-building">Package Building</a></h3>
+<h4 id="debian-package"><a class="header" href="#debian-package">Debian Package</a></h4>
+<pre><code class="language-sh"># Build deb package (Ubuntu/Debian)
+./scripts/build_deb.sh
+</code></pre>
+<h4 id="homebrew-formula"><a class="header" href="#homebrew-formula">Homebrew Formula</a></h4>
+<pre><code class="language-sh"># Update homebrew formula
+./scripts/homebrew.sh
+</code></pre>
+<h2 id="project-structure"><a class="header" href="#project-structure">Project Structure</a></h2>
+<pre><code>chat-gipitty/
+├── src/                    # Main Rust source code
+│   ├── main.rs            # Application entry point
+│   ├── args.rs            # Command line argument parsing
+│   ├── chat.rs            # Core chat functionality
+│   ├── chatgpt/           # OpenAI API client
+│   ├── sub/               # Subcommands
+│   └── ...
+├── book/                   # Documentation source
+├── docs/                   # Generated documentation
+├── assets/                 # Logo and assets
+├── scripts/               # Build and release scripts
+└── test_data/             # Test files
+</code></pre>
+<h2 id="contributing-guidelines"><a class="header" href="#contributing-guidelines">Contributing Guidelines</a></h2>
+<ol>
+<li><strong>Fork the repository</strong> on GitHub</li>
+<li><strong>Create a feature branch</strong> from main</li>
+<li><strong>Make your changes</strong> with appropriate tests</li>
+<li><strong>Run the test suite</strong> to ensure nothing breaks</li>
+<li><strong>Submit a pull request</strong> with a clear description</li>
+</ol>
+<h3 id="code-style"><a class="header" href="#code-style">Code Style</a></h3>
+<ul>
+<li>Follow standard Rust formatting (<code>cargo fmt</code>)</li>
+<li>Run clippy for linting (<code>cargo clippy</code>)</li>
+<li>Add tests for new functionality</li>
+<li>Update documentation as needed</li>
+</ul>
+<h3 id="testing-your-changes"><a class="header" href="#testing-your-changes">Testing Your Changes</a></h3>
+<p>Before submitting a pull request:</p>
+<pre><code class="language-sh"># Format code
+cargo fmt
+
+# Run linter
+cargo clippy
+
+# Run tests
+cargo test
+
+# Test the binary
+cargo run -- --help
+</code></pre>
+<h2 id="debugging"><a class="header" href="#debugging">Debugging</a></h2>
+<h3 id="environment-variables"><a class="header" href="#environment-variables">Environment Variables</a></h3>
+<p>Useful environment variables for development:</p>
+<pre><code class="language-sh"># Enable debug logging
+export RUST_LOG=debug
+
+# Show API requests (be careful with sensitive data)
+export CGIP_DEBUG_API=1
+</code></pre>
+<h3 id="common-development-tasks"><a class="header" href="#common-development-tasks">Common Development Tasks</a></h3>
+<h4 id="adding-a-new-subcommand"><a class="header" href="#adding-a-new-subcommand">Adding a New Subcommand</a></h4>
+<ol>
+<li>Create a new file in <code>src/sub/</code></li>
+<li>Implement the subcommand logic</li>
+<li>Add the subcommand to <code>src/sub/mod.rs</code></li>
+<li>Update argument parsing in <code>src/args.rs</code></li>
+<li>Add documentation in <code>book/src/</code></li>
+</ol>
+<h4 id="testing-api-changes"><a class="header" href="#testing-api-changes">Testing API Changes</a></h4>
+<pre><code class="language-sh"># Test with different models
+cargo run -- -M gpt-3.5-turbo "test prompt"
+
+# Test with custom endpoint
+export OPENAI_BASE_URL=http://localhost:11434/v1
+cargo run -- "test prompt"
+</code></pre>
+<h2 id="release-process"><a class="header" href="#release-process">Release Process</a></h2>
+<p>Maintainers should follow these steps for releases:</p>
+<ol>
+<li>Update version in <code>Cargo.toml</code></li>
+<li>Update <code>CHANGELOG.md</code></li>
+<li>Create and push version tag</li>
+<li>GitHub Actions will handle the rest</li>
+</ol>
+<p>For detailed release instructions, see the project's internal documentation.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="examples.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="troubleshooting.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="text-processing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="contributing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -176,11 +304,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="examples.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="troubleshooting.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="text-processing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="contributing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

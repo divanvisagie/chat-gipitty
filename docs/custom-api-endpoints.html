@@ -157,6 +157,52 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="custom-api-endpoints"><a class="header" href="#custom-api-endpoints">Custom API Endpoints</a></h1>
+<p>Chat GipiTTY is designed to work with any OpenAI Chat Completions API-compatible provider. You can specify a custom API endpoint by setting the <code>OPENAI_BASE_URL</code> environment variable. If not set, the default is <code>https://api.openai.com</code>.</p>
+<h2 id="url-construction"><a class="header" href="#url-construction">URL Construction</a></h2>
+<p>Chat GipiTTY intelligently constructs the API endpoint:</p>
+<ul>
+<li>If your base URL already contains <code>/chat/completions</code>, it uses it as-is</li>
+<li>If your base URL ends with <code>/v1</code> (or similar version pattern), it appends <code>/chat/completions</code></li>
+<li>Otherwise, it appends <code>/v1/chat/completions</code> (standard OpenAI pattern)</li>
+</ul>
+<h2 id="provider-examples"><a class="header" href="#provider-examples">Provider Examples</a></h2>
+<h3 id="local-ollama-instance"><a class="header" href="#local-ollama-instance">Local Ollama Instance</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=http://localhost:11434/v1
+</code></pre>
+<h3 id="google-gemini-via-openai-compatible-proxy"><a class="header" href="#google-gemini-via-openai-compatible-proxy">Google Gemini (via OpenAI-compatible proxy)</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+</code></pre>
+<h3 id="mistral-ai-via-openai-compatible-endpoint"><a class="header" href="#mistral-ai-via-openai-compatible-endpoint">Mistral AI (via OpenAI-compatible endpoint)</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://api.mistral.ai/v1
+</code></pre>
+<h3 id="anthropic-claude-via-openai-compatible-endpoint"><a class="header" href="#anthropic-claude-via-openai-compatible-endpoint">Anthropic Claude (via OpenAI-compatible endpoint)</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://api.anthropic.com/v1
+</code></pre>
+<h3 id="other-openai-compatible-services"><a class="header" href="#other-openai-compatible-services">Other OpenAI-compatible Services</a></h3>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://your-provider.com/v1
+</code></pre>
+<h3 id="custom-endpoint-patterns"><a class="header" href="#custom-endpoint-patterns">Custom Endpoint Patterns</a></h3>
+<p>If your provider uses a different endpoint pattern, you can specify the full URL:</p>
+<pre><code class="language-sh">export OPENAI_BASE_URL=https://custom-api.com/v2/chat/completions
+</code></pre>
+<h2 id="supported-providers"><a class="header" href="#supported-providers">Supported Providers</a></h2>
+<p>Chat GipiTTY works with any service that implements the OpenAI Chat Completions API standard:</p>
+<ul>
+<li><strong>OpenAI</strong> (ChatGPT, GPT-4, GPT-3.5, etc.)</li>
+<li><strong>Local models</strong> via <a href="https://ollama.com">Ollama</a></li>
+<li><strong>Google Gemini</strong> (via OpenAI-compatible endpoints)</li>
+<li><strong>Mistral AI</strong> (via OpenAI-compatible endpoints)</li>
+<li><strong>Anthropic Claude</strong> (via OpenAI-compatible endpoints)</li>
+<li><strong>Any other provider</strong> implementing the OpenAI Chat Completions API standard</li>
+</ul>
+<h2 id="compatibility-notes"><a class="header" href="#compatibility-notes">Compatibility Notes</a></h2>
+<p>Custom <code>OPENAI_BASE_URL</code> values can point to these or other OpenAI-compatible endpoints, but such providers might not implement the complete API and compatibility cannot be guaranteed.</p>
+<p>As long as your provider implements the OpenAI Chat Completions API standard, Chat GipiTTY will work with it seamlessly.</p>
+<h2 id="authentication"><a class="header" href="#authentication">Authentication</a></h2>
+<p>Most providers will still require you to set an API key:</p>
+<pre><code class="language-sh">export OPENAI_API_KEY=your_provider_api_key_here
+</code></pre>
+<p>Some providers may use different authentication methods or environment variable names. Consult your provider's documentation for specific authentication requirements.</p>
 
                     </main>
 
