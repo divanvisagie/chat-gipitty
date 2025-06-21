@@ -177,13 +177,32 @@
 <li><strong>Agentic Workflows</strong>: Let the AI execute shell commands to accomplish tasks</li>
 <li><strong>Flexible Configuration</strong>: Extensive customization options and provider support</li>
 </ul>
-<h2 id="quick-example"><a class="header" href="#quick-example">Quick Example</a></h2>
+<h2 id="quick-examples"><a class="header" href="#quick-examples">Quick Examples</a></h2>
+<h3 id="debugging-output"><a class="header" href="#debugging-output">Debugging Output</a></h3>
 <p>Debug a Rust compilation error by piping the build output directly to ChatGPT:</p>
 <pre><code class="language-sh">cargo build 2&gt;&amp;1 | cgip "give me a short summary of the kind of error this is"
 </code></pre>
 <p>This results in something like:</p>
 <pre><code class="language-sh">❯ cargo build 2&gt;&amp;1 | cgip 'give me a short summary of the kind of error this is'
 The error you're encountering is a **lifetime error** in Rust, specifically an issue with **borrowed values not living long enough**.
+</code></pre>
+<h3 id="prototyping-new-command-line-programs"><a class="header" href="#prototyping-new-command-line-programs">Prototyping New Command Line Programs</a></h3>
+<p>You can create useful command line utilities by combining cgip with shell aliases:</p>
+<h4 id="language-translation-utility"><a class="header" href="#language-translation-utility">Language Translation Utility</a></h4>
+<pre><code class="language-sh"># Set up the alias
+alias translate='cgip --system-prompt "You are a translator, you translate text to Spanish"'
+
+# Use it
+echo "Hello, world!" | translate
+echo "Good morning" | translate
+</code></pre>
+<h4 id="code-review-assistant"><a class="header" href="#code-review-assistant">Code Review Assistant</a></h4>
+<pre><code class="language-sh"># Set up the alias
+alias review='cgip --system-prompt "You are a senior developer" "review this code for bugs and improvements"'
+
+# Use it
+git diff | review
+cat src/main.py | review
 </code></pre>
 <h2 id="supported-providers"><a class="header" href="#supported-providers">Supported Providers</a></h2>
 <p>Chat GipiTTY works with any service that implements the OpenAI Chat Completions API standard:</p>

@@ -18,8 +18,9 @@ Chat GipiTTY is designed to make AI assistance seamlessly available in your term
 - **Agentic Workflows**: Let the AI execute shell commands to accomplish tasks
 - **Flexible Configuration**: Extensive customization options and provider support
 
-## Quick Example
+## Quick Examples
 
+### Debugging Output
 Debug a Rust compilation error by piping the build output directly to ChatGPT:
 
 ```sh
@@ -30,6 +31,30 @@ This results in something like:
 ```sh
 ❯ cargo build 2>&1 | cgip 'give me a short summary of the kind of error this is'
 The error you're encountering is a **lifetime error** in Rust, specifically an issue with **borrowed values not living long enough**.
+```
+
+### Prototyping New Command Line Programs
+
+You can create useful command line utilities by combining cgip with shell aliases:
+
+#### Language Translation Utility
+```sh
+# Set up the alias
+alias translate='cgip --system-prompt "You are a translator, you translate text to Spanish"'
+
+# Use it
+echo "Hello, world!" | translate
+echo "Good morning" | translate
+```
+
+#### Code Review Assistant
+```sh
+# Set up the alias
+alias review='cgip --system-prompt "You are a senior developer" "review this code for bugs and improvements"'
+
+# Use it
+git diff | review
+cat src/main.py | review
 ```
 
 ## Supported Providers
