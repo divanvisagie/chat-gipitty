@@ -31,5 +31,3 @@
   - [Voice Synthesis](./voice-synthesis.md)
 - [Development](./development-workflow.md)
 - [Contributing](./contributing.md)
-- [Reference](./reference.md)
-  - [Command Line Options](./cli-options.md)
